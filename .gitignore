@@ -1,0 +1,37 @@
+# ─── .NET ───────────────────────────────────────────────────────────
+rollplan-api/bin/
+rollplan-api/obj/
+rollplan-api/*.user
+rollplan-api/.vs/
+
+# CRITICAL: local secrets — never commit
+rollplan-api/appsettings.Development.json
+
+# ─── Angular ─────────────────────────────────────────────────────────
+rollplan-client/node_modules/
+rollplan-client/dist/
+rollplan-client/.angular/
+
+# ─── Environment / Secrets ───────────────────────────────────────────
+*.env
+*.env.local
+.env.*
+!.env.example
+
+# ─── IDEs ────────────────────────────────────────────────────────────
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.swp
+*.sln.docstates
+
+# ─── OS ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Logs ────────────────────────────────────────────────────────────
+*.log
+logs/
