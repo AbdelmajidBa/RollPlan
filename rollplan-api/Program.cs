@@ -1,10 +1,16 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using RollPlan.Api.Data;
 using RollPlan.Api.Middleware;
 using RollPlan.Api.Models.Entities;
+using RollPlan.Api.Services;
 using RollPlan.Api.Storage;
 using Serilog;
+using System.Text;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -28,6 +34,40 @@ try
                   .AllowAnyHeader()
                   .AllowAnyMethod());
     });
+
+    // Data Protection (required by AddDefaultTokenProviders when using AddIdentityCore)
+    builder.Services.AddDataProtection();
+
+    // Validate required JWT config at startup — fail fast before any user data is touched
+    var jwtKey = builder.Configuration["Jwt:Key"]
+        ?? throw new InvalidOperationException("Jwt:Key is missing from configuration.");
+    if (jwtKey.Length < 32)
+        throw new InvalidOperationException("Jwt:Key must be at least 32 characters.");
+
+    // JWT Bearer Authentication
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(jwtKey))
+            };
+        });
+
+    // FluentValidation
+    builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+    builder.Services.AddFluentValidationAutoValidation();
+
+    // Application Services
+    builder.Services.AddScoped<IAuthService, AuthService>();
+    builder.Services.AddScoped<IUserService, UserService>();
 
     // Data
     builder.Services.AddDbContext<AppDbContext>(options =>
@@ -66,7 +106,7 @@ try
     app.UseHttpsRedirection();
     app.UseStaticFiles(); // serves /uploads/ in dev
     app.UseCors("AllowAngularDev");
-    // app.UseAuthentication(); — added in Story 1.3 after JWT Bearer scheme configured
+    app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();
 

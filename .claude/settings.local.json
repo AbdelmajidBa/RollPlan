@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 \"D:/Projects/RollPlan/.claude/skills/bmad-init/scripts/bmad_init.py\" load --project-root \"D:/Projects/RollPlan\" --module bmm --all)",
+      "Bash(py \"D:/Projects/RollPlan/.claude/skills/bmad-init/scripts/bmad_init.py\" load --project-root \"D:/Projects/RollPlan\" --module bmm --all)",
+      "Bash(git:*)"
+    ]
+  }
+}

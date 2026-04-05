@@ -1,5 +1,5 @@
 # generated: 2026-04-04
-# last_updated: 2026-04-04
+# last_updated: 2026-04-05
 # project: RollPlan
 # project_key: NOKEY
 # tracking_system: file-system
@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-04-04
-last_updated: 2026-04-04
+last_updated: 2026-04-05
 project: RollPlan
 project_key: NOKEY
 tracking_system: file-system
@@ -45,10 +45,10 @@ development_status:
   # ─── Epic 1: Project Foundation & Authentication ───
   epic-1: in-progress
   1-1-initialize-monorepo-and-project-scaffolding: done
-  1-2-configure-backend-data-layer: ready-for-dev
-  1-3-user-registration: backlog
-  1-4-user-login-and-logout: backlog
-  1-5-user-profile-view-and-edit: backlog
+  1-2-configure-backend-data-layer: done
+  1-3-user-registration: done
+  1-4-user-login-and-logout: done
+  1-5-user-profile-view-and-edit: done
   epic-1-retrospective: optional
 
   # ─── Epic 2: Trip Management ───

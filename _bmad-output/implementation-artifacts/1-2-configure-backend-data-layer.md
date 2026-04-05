@@ -1,6 +1,6 @@
 # Story 1.2: Configure Backend Data Layer
 
-Status: in-progress
+Status: complete
 
 ## Story
 
@@ -81,12 +81,12 @@ so that subsequent stories can define and migrate entity schemas.
   - [x] Clean up deferred item from Story 1.1: replace stale `Logging` section in `appsettings.json` with Serilog-based config
   - [x] Add `app.UseAuthentication()` placeholder comment in pipeline (JWT Bearer scheme added in Story 1.3)
 
-- [ ] Task 11: Run and verify initial EF migration (AC: #1) — DEFERRED (no local PostgreSQL at time of implementation)
-  - [ ] Fill in `ConnectionStrings:DefaultConnection` in `appsettings.Development.json` with local PostgreSQL connection string
-  - [ ] Run: `dotnet ef migrations add Initial --project rollplan-api`
-  - [ ] Inspect generated migration — should contain Identity tables (AspNetUsers, AspNetRoles, etc.) with snake_case column names
-  - [ ] Run: `dotnet ef database update --project rollplan-api`
-  - [ ] Confirm migration applied (check `__ef_migrations_history` table in PostgreSQL)
+- [x] Task 11: Run and verify initial EF migration (AC: #1)
+  - [x] Fill in `ConnectionStrings:DefaultConnection` in `appsettings.Development.json` with local PostgreSQL connection string (Docker: `Host=localhost;Port=5432;Database=rollplan_dev;Username=postgres;Password=postgres`)
+  - [x] Run: `dotnet ef migrations add Initial --project rollplan-api`
+  - [x] Inspect generated migration — Identity tables with snake_case names (`asp_net_users`, `asp_net_roles`, etc.) and snake_case columns confirmed
+  - [x] Run: `dotnet ef database update --project rollplan-api`
+  - [x] Confirmed migration applied (`__EFMigrationsHistory` table present; all 7 Identity tables created)
 
 ## Dev Notes
 
@@ -471,7 +471,10 @@ claude-sonnet-4-6
 - AC3 ✅ `IStorageService` interface + `LocalStorageService` (dev) + `AzureBlobStorageService` (prod) created and registered
 - AC4 ✅ `ErrorHandlingMiddleware` first in pipeline; returns RFC 7807 ProblemDetails; never exposes `ex.Message`
 - Deferred: Task 1.1 cleanup item resolved — `appsettings.json` stale `Logging` section replaced with Serilog config
-- Deferred: Task 11 (EF migration) — requires PostgreSQL connection; all code in place; run when DB available
+- AC1 ✅ Migration `Initial` applied to Docker PostgreSQL; all 7 Identity tables created with snake_case names and columns
+- Fix: `builder.Services.AddDataProtection()` added — required by `AddDefaultTokenProviders()` when using `AddIdentityCore` (not auto-registered unlike `AddIdentity`)
+- Fix: `AppDbContext.OnModelCreating` explicitly renames Identity tables to snake_case — Identity's `base.OnModelCreating` calls `ToTable("AspNetUsers")` which overrides `UseSnakeCaseNamingConvention()`
+- Docker PostgreSQL: `postgres:16-alpine`, container `rollplan-postgres`, port 5432
 
 ### File List
 
@@ -484,3 +487,7 @@ claude-sonnet-4-6
 - `rollplan-api/Program.cs` (MODIFIED — added DbContext, Identity, Storage, ErrorHandlingMiddleware, UseStaticFiles)
 - `rollplan-api/appsettings.json` (MODIFIED — replaced stale Logging section with Serilog config)
 - `rollplan-api/RollPlan.Api.csproj` (MODIFIED — added Microsoft.EntityFrameworkCore.Design 9.0.14)
+- `rollplan-api/Data/AppDbContext.cs` (MODIFIED — added snake_case Identity table name overrides)
+- `rollplan-api/Program.cs` (MODIFIED — added AddDataProtection())
+- `rollplan-api/appsettings.Development.json` (MODIFIED — added DefaultConnection for Docker PostgreSQL)
+- `rollplan-api/Data/Migrations/` (GENERATED — Initial migration)

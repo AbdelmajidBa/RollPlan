@@ -1,0 +1,28 @@
+@if (isAuthenticated()) {
+  <nav class="bg-white border-b border-gray-200 px-4 py-3">
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
+      <span class="font-bold text-gray-900 text-lg">RollPlan</span>
+
+      <div class="flex items-center gap-4">
+        <a
+          routerLink="/trips"
+          class="text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors"
+        >
+          Trips
+        </a>
+        <a
+          routerLink="/profile"
+          class="text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors"
+        >
+          Profile
+        </a>
+        <button
+          (click)="logout()"
+          class="text-sm text-red-600 hover:text-red-700 font-medium transition-colors"
+        >
+          Log out
+        </button>
+      </div>
+    </div>
+  </nav>
+}
