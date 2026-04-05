@@ -1,98 +1,84 @@
-<div class="min-h-screen bg-slate-950 text-slate-100">
-  <div class="mx-auto flex min-h-screen max-w-6xl items-center justify-center px-6 py-12">
-    <div class="grid w-full gap-10 lg:grid-cols-[1.1fr,0.9fr]">
-      <div class="hidden rounded-[2rem] bg-gradient-to-br from-sky-500/20 via-slate-950 to-slate-950 p-10 shadow-[0_40px_120px_rgba(15,23,42,0.45)] text-white lg:block">
+<div class="page-auth min-h-screen bg-slate-950 text-slate-100">
+  <div class="auth-grid mx-auto flex min-h-screen max-w-6xl items-center justify-center px-4 py-10">
+    <aside class="auth-panel hidden rounded-[2rem] bg-gradient-to-br from-sky-600/10 via-slate-950 to-slate-950 p-10 text-slate-100 lg:block">
         <div class="mb-8 rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl">
           <p class="text-sm uppercase tracking-[0.24em] text-sky-200/80">RollPlan</p>
-          <h2 class="mt-4 text-4xl font-semibold leading-tight">Travel planning that feels effortless.</h2>
-          <p class="mt-4 max-w-sm text-slate-200/90">Build your itinerary, capture memories, and share your trip with family in one polished, map-forward experience.</p>
+          <h2 class="mt-4 text-4xl font-semibold leading-tight">Get back to planning in seconds.</h2>
+          <p class="mt-4 max-w-sm text-slate-200/90">Secure sign in and one-click access to your trip board, memories, and shared family plans.</p>
         </div>
 
         <div class="space-y-6 text-slate-200/90">
           <div class="rounded-3xl bg-slate-900/70 p-6">
-            <p class="text-xs uppercase tracking-[0.24em] text-sky-200/80">Fast setup</p>
-            <p class="mt-3 text-base leading-7">Secure authentication, guided forms, and instant feedback for every step.</p>
+            <p class="text-xs uppercase tracking-[0.24em] text-sky-200/80">Fast access</p>
+            <p class="mt-3 text-base leading-7">Sign in quickly with clear validation and instant feedback.</p>
           </div>
           <div class="rounded-3xl bg-slate-900/70 p-6">
-            <p class="text-xs uppercase tracking-[0.24em] text-sky-200/80">Beautiful mobile-first UI</p>
-            <p class="mt-3 text-base leading-7">A calm, friendly interface for planning trips from your phone or desktop.</p>
+            <p class="text-xs uppercase tracking-[0.24em] text-sky-200/80">Smart planning</p>
+            <p class="mt-3 text-base leading-7">Continue where you left off with organized itineraries and shared travel notes.</p>
           </div>
         </div>
-      </div>
+      </aside>
 
-      <div class="rounded-[2rem] bg-white p-8 shadow-2xl ring-1 ring-slate-900/10">
+      <section class="auth-card rounded-[2rem] bg-white p-8 shadow-2xl ring-1 ring-slate-900/10">
         <div class="mb-8 text-center">
-          <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-3xl bg-sky-600 text-white shadow-lg shadow-sky-500/20">
+          <div class="brand-badge mx-auto flex h-14 w-14 items-center justify-center rounded-3xl bg-sky-600 text-white shadow-lg shadow-sky-500/20">
             <span class="text-2xl font-semibold">R</span>
           </div>
           <h1 class="mt-6 text-3xl font-semibold text-slate-900">Welcome back</h1>
-          <p class="mt-2 text-sm text-slate-500">Sign in to your RollPlan account</p>
+          <p class="mt-2 text-sm text-slate-500">Sign in to your RollPlan account and continue planning your next trip.</p>
         </div>
 
-        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6" novalidate>
-          @if (serverError()) {
-            <div class="rounded-2xl bg-red-50 border border-red-200 p-4">
-              <p class="text-sm font-medium text-red-700">{{ serverError() }}</p>
-            </div>
-          }
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6 auth-card-inner" novalidate>
+          <div *ngIf="serverError()" class="form-alert error mb-4 rounded-2xl border border-red-200 p-4 text-sm text-red-700">
+            {{ serverError() }}
+          </div>
 
-          <div class="space-y-3">
+          <div class="form-field space-y-3">
             <label for="email" class="block text-sm font-semibold text-slate-700">Email</label>
             <input
               id="email"
               type="email"
               formControlName="email"
               autocomplete="email"
+              placeholder="you@example.com"
               class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 transition focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
               [class.border-red-500]="emailControl.invalid && emailControl.touched"
-              [class.border-slate-300]="!(emailControl.invalid && emailControl.touched)"
-              placeholder="you@example.com"
             />
-            @if (emailControl.invalid && emailControl.touched) {
-              @if (emailControl.errors?.['required']) {
-                <p class="text-xs text-red-600">Email is required.</p>
-              } @else if (emailControl.errors?.['email']) {
-                <p class="text-xs text-red-600">Please enter a valid email address.</p>
-              }
-            }
+            <p *ngIf="emailControl.invalid && emailControl.touched" class="text-xs text-red-600">
+              <span *ngIf="emailControl.errors?.['required']">Email is required.</span>
+              <span *ngIf="emailControl.errors?.['email']">Please enter a valid email address.</span>
+            </p>
           </div>
 
-          <div class="space-y-3">
+          <div class="form-field space-y-3">
             <label for="password" class="block text-sm font-semibold text-slate-700">Password</label>
             <input
               id="password"
               type="password"
               formControlName="password"
               autocomplete="current-password"
+              placeholder="Your password"
               class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 transition focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
               [class.border-red-500]="passwordControl.invalid && passwordControl.touched"
-              [class.border-slate-300]="!(passwordControl.invalid && passwordControl.touched)"
-              placeholder="Your password"
             />
-            @if (passwordControl.invalid && passwordControl.touched) {
-              @if (passwordControl.errors?.['required']) {
-                <p class="text-xs text-red-600">Password is required.</p>
-              }
-            }
+            <p *ngIf="passwordControl.invalid && passwordControl.touched" class="text-xs text-red-600">
+              <span *ngIf="passwordControl.errors?.['required']">Password is required.</span>
+            </p>
           </div>
 
           <button
             type="submit"
             [disabled]="isLoading()"
-            class="inline-flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+            class="btn-primary inline-flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            @if (isLoading()) {
-              Signing in...
-            } @else {
-              Sign in
-            }
+            <span *ngIf="isLoading(); else signInLabel">Signing in...</span>
+            <ng-template #signInLabel>Sign in</ng-template>
           </button>
         </form>
 
-        <p class="mt-6 text-center text-sm text-slate-500">
+        <p class="auth-footer mt-6 text-center text-sm text-slate-500">
           Don’t have an account? <a routerLink="/register" class="font-semibold text-sky-600 hover:text-sky-500">Create one</a>
         </p>
-      </div>
-    </div>
+      </section>
   </div>
 </div>

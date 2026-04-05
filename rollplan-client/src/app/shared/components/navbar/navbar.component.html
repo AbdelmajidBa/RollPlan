@@ -1,36 +1,19 @@
-@if (isAuthenticated()) {
-  <nav class="bg-slate-950/95 border-b border-slate-800 px-4 py-4 backdrop-blur-xl">
-    <div class="max-w-6xl mx-auto flex items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <div class="flex h-11 w-11 items-center justify-center rounded-3xl bg-sky-600 text-white font-semibold shadow-sky-500/20 shadow-lg">
-          R
-        </div>
-        <div>
-          <p class="text-sm font-semibold text-white">RollPlan</p>
-          <p class="text-xs text-slate-400">Family trip planning</p>
-        </div>
+<nav *ngIf="isAuthenticated()" class="app-navbar bg-slate-950/95 border-b border-slate-800 px-4 py-4 backdrop-blur-xl">
+  <div class="nav-inner max-w-6xl mx-auto flex items-center justify-between gap-4">
+    <div class="brand-group flex items-center gap-3">
+      <div class="brand-badge flex h-11 w-11 items-center justify-center rounded-3xl bg-sky-600 text-white font-semibold shadow-sky-500/20 shadow-lg">
+        R
       </div>
-
-      <div class="flex flex-wrap items-center gap-3 text-sm">
-        <a
-          routerLink="/trips"
-          class="rounded-2xl px-4 py-2 text-slate-200 transition hover:bg-slate-800 hover:text-white"
-        >
-          Trips
-        </a>
-        <a
-          routerLink="/profile"
-          class="rounded-2xl px-4 py-2 text-slate-200 transition hover:bg-slate-800 hover:text-white"
-        >
-          Profile
-        </a>
-        <button
-          (click)="logout()"
-          class="rounded-2xl bg-rose-500 px-4 py-2 text-white transition hover:bg-rose-600"
-        >
-          Log out
-        </button>
+      <div class="brand-title">
+        <p class="brand-name text-sm font-semibold text-white">RollPlan</p>
+        <p class="brand-tag text-xs text-slate-400">Family trip planning</p>
       </div>
     </div>
-  </nav>
-}
+
+    <div class="nav-links flex flex-wrap items-center gap-3 text-sm">
+      <a routerLink="/trips" class="nav-link rounded-2xl px-4 py-2 text-slate-200 transition hover:bg-slate-800 hover:text-white">Trips</a>
+      <a routerLink="/profile" class="nav-link rounded-2xl px-4 py-2 text-slate-200 transition hover:bg-slate-800 hover:text-white">Profile</a>
+      <button (click)="logout()" class="nav-button rounded-2xl bg-rose-500 px-4 py-2 text-white transition hover:bg-rose-600">Log out</button>
+    </div>
+  </div>
+</nav>

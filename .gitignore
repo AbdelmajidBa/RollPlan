@@ -3,6 +3,9 @@ rollplan-api/bin/
 rollplan-api/obj/
 rollplan-api/*.user
 rollplan-api/.vs/
+rollplan-api-tests/bin/
+rollplan-api-tests/obj/
+rollplan-api-tests/*.dll
 
 # CRITICAL: local secrets — never commit
 rollplan-api/appsettings.Development.json
