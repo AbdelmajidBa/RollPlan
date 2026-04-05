@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RollPlan UX Design Directions</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; background: #f5f5f5; color: #1e293b; }
+    .page { max-width: 1200px; margin: auto; padding: 24px; }
+    h1 { margin-bottom: 12px; color: #0f172a; }
+    .grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .card { background: white; border-radius: 18px; border: 1px solid #e2e8f0; padding: 20px; box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08); }
+    .direction-title { font-size: 1.1rem; margin-bottom: 8px; color: #0f172a; }
+    .badge { display: inline-block; margin-bottom: 12px; padding: 6px 12px; border-radius: 999px; background: #d1fae5; color: #065f46; font-size: 0.8rem; }
+    .direction-copy { line-height: 1.75; font-size: 0.95rem; color: #334155; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>RollPlan Design Direction Showcase</h1>
+    <p>Use these directions to compare layout, visual weight, and content hierarchy approaches for the core trip experience.</p>
+    <div class="grid">
+      <div class="card">
+        <div class="badge">Direction 1</div>
+        <div class="direction-title">Map-Forward Minimal</div>
+        <p class="direction-copy">Large map canvas with lightweight cards, minimal controls, and strong focus on travel route clarity.</p>
+      </div>
+      <div class="card">
+        <div class="badge">Direction 2</div>
+        <div class="direction-title">Card-Centric Itinerary</div>
+        <p class="direction-copy">Detail-rich stop cards with a secondary map panel, optimizing for editing and memory capture.</p>
+      </div>
+      <div class="card">
+        <div class="badge">Direction 3</div>
+        <div class="direction-title">Warm Travel Journal</div>
+        <p class="direction-copy">A story-driven layout with soft surfaces, photo previews, and a friendly visual tone supporting family memories.</p>
+      </div>
+      <div class="card">
+        <div class="badge">Direction 4</div>
+        <div class="direction-title">Dashboard Style</div>
+        <p class="direction-copy">Structured sections for trip summary, action cards, and map insights for users who want quick scanability.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

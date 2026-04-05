@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RollPlan UX Color Themes</title>
+  <style>
+    body { font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; padding: 24px; background: #f7fafc; color: #1f2937; }
+    .palette { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .swatch { border-radius: 18px; overflow: hidden; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08); }
+    .swatch-header { padding: 16px 18px; font-weight: 700; background: #ffffff; }
+    .swatch-colors { display: grid; grid-auto-rows: 100px; }
+    .color { display: flex; align-items: flex-end; justify-content: space-between; padding: 12px 14px; color: #ffffff; font-size: 0.92rem; font-weight: 600; }
+    .color small { opacity: 0.9; font-size: 0.8rem; }
+    .section-title { margin: 0 0 12px; font-size: 1.35rem; }
+    .section-description { margin: 0 0 24px; color: #475569; line-height: 1.7; }
+  </style>
+</head>
+<body>
+  <h1>RollPlan UX Color Themes</h1>
+  <p class="section-description">This visualizer shows the core color palette for RollPlan, supporting a warm, travel-inspired interface with accessible contrast and modern clarity.</p>
+
+  <div class="palette">
+    <div class="swatch">
+      <div class="swatch-header">Primary Brand</div>
+      <div class="swatch-colors">
+        <div class="color" style="background: #1d4ed8;"><span>Primary</span><small>#1d4ed8</small></div>
+        <div class="color" style="background: #60a5fa;"><span>Accent</span><small>#60a5fa</small></div>
+      </div>
+    </div>
+
+    <div class="swatch">
+      <div class="swatch-header">Warm Support</div>
+      <div class="swatch-colors">
+        <div class="color" style="background: #f97316;"><span>Highlight</span><small>#f97316</small></div>
+        <div class="color" style="background: #fde68a;"><span>Warm Accent</span><small>#fde68a</small></div>
+      </div>
+    </div>
+
+    <div class="swatch">
+      <div class="swatch-header">Neutral Foundations</div>
+      <div class="swatch-colors">
+        <div class="color" style="background: #111827;"><span>Text</span><small>#111827</small></div>
+        <div class="color" style="background: #f8fafc; color: #0f172a;"><span>Background</span><small>#f8fafc</small></div>
+      </div>
+    </div>
+
+    <div class="swatch">
+      <div class="swatch-header">Support Tokens</div>
+      <div class="swatch-colors">
+        <div class="color" style="background: #10b981;"><span>Success</span><small>#10b981</small></div>
+        <div class="color" style="background: #ef4444;"><span>Error</span><small>#ef4444</small></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

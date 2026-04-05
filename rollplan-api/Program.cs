@@ -9,6 +9,7 @@ using RollPlan.Api.Middleware;
 using RollPlan.Api.Models.Entities;
 using RollPlan.Api.Services;
 using RollPlan.Api.Storage;
+using Scalar.AspNetCore;
 using Serilog;
 using System.Text;
 
@@ -101,6 +102,7 @@ try
     if (app.Environment.IsDevelopment())
     {
         app.MapOpenApi(); // serves OpenAPI spec at /openapi/v1.json
+        app.MapScalarApiReference();
     }
 
     app.UseHttpsRedirection();

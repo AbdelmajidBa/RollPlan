@@ -1,0 +1,14 @@
+# generated: 2026-04-05
+# last_updated: 2026-04-05T23:12:10.1066140+02:00
+# project: RollPlan
+# tracking_system: file-system
+
+workflow_status:
+  create-ux-design:
+    file: _bmad-output/planning-artifacts/ux-design-specification.md
+    completed: true
+    completed_at: 2026-04-05T23:12:10.1066140+02:00
+
+# Notes:
+# - This file tracks high-level workflow completion status for the project.
+# - Update existing entries when the corresponding workflow artifact is finalized.

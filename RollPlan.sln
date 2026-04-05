@@ -1,0 +1,38 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rollplan-api", "rollplan-api", "{90346CB2-A402-B103-D8C2-73A59D248A63}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rollplan-api-tests", "rollplan-api-tests", "{D4004727-B749-FCE6-E965-B129B81C87A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RollPlan.Api", "rollplan-api\RollPlan.Api.csproj", "{DE2C419F-43DA-905B-FCD3-A4763BAC28E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RollPlan.Api.Tests", "rollplan-api-tests\RollPlan.Api.Tests.csproj", "{76E8C0F6-C18C-C1FA-2271-78632CE2CEAC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DE2C419F-43DA-905B-FCD3-A4763BAC28E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE2C419F-43DA-905B-FCD3-A4763BAC28E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE2C419F-43DA-905B-FCD3-A4763BAC28E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE2C419F-43DA-905B-FCD3-A4763BAC28E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76E8C0F6-C18C-C1FA-2271-78632CE2CEAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76E8C0F6-C18C-C1FA-2271-78632CE2CEAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76E8C0F6-C18C-C1FA-2271-78632CE2CEAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76E8C0F6-C18C-C1FA-2271-78632CE2CEAC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DE2C419F-43DA-905B-FCD3-A4763BAC28E6} = {90346CB2-A402-B103-D8C2-73A59D248A63}
+		{76E8C0F6-C18C-C1FA-2271-78632CE2CEAC} = {D4004727-B749-FCE6-E965-B129B81C87A9}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {29EF2E32-2155-4FA1-B315-BE0EC90EBEF5}
+	EndGlobalSection
+EndGlobal
