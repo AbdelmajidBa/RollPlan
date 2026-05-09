@@ -26,6 +26,8 @@ export class TripDetailComponent implements OnInit {
   isEditing = signal(false);
   isSubmitting = signal(false);
   isStatusChanging = signal(false);
+  isDeleting = signal(false);
+  showConfirm = signal(false);
   serverError = signal<string | null>(null);
   fileError = signal<string | null>(null);
 
@@ -108,6 +110,22 @@ export class TripDetailComponent implements OnInit {
     this.tripService.setTripStatus(this.tripId, status as TripStatus)
       .pipe(finalize(() => this.isStatusChanging.set(false)))
       .subscribe();
+  }
+
+  confirmDelete(): void {
+    this.showConfirm.set(true);
+  }
+
+  cancelDelete(): void {
+    this.showConfirm.set(false);
+  }
+
+  doDelete(): void {
+    if (this.isDeleting()) return;
+    this.isDeleting.set(true);
+    this.tripService.deleteTrip(this.tripId)
+      .pipe(finalize(() => this.isDeleting.set(false)))
+      .subscribe({ next: () => this.router.navigate(['/trips']) });
   }
 
   onSubmit(): void {

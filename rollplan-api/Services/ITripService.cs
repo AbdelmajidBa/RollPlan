@@ -10,4 +10,5 @@ public interface ITripService
     Task<TripResponse?> GetTripAsync(Guid userId, Guid tripId);
     Task<TripResponse?> UpdateTripAsync(Guid userId, Guid tripId, UpdateTripRequest request);
     Task<TripResponse?> SetTripStatusAsync(Guid userId, Guid tripId, TripStatus status);
+    Task<bool> DeleteTripAsync(Guid userId, Guid tripId);
 }

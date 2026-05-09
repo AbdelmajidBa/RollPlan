@@ -65,4 +65,12 @@ public class TripsController : ControllerBase
         var trip = await _tripService.SetTripStatusAsync(userId, id, request.Status);
         return trip is null ? NotFound() : Ok(trip);
     }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteTrip(Guid id)
+    {
+        var userId = GetCurrentUserId();
+        var deleted = await _tripService.DeleteTripAsync(userId, id);
+        return deleted ? NoContent() : NotFound();
+    }
 }

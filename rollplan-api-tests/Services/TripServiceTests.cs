@@ -256,4 +256,34 @@ public class TripServiceTests : IDisposable
 
         Assert.Null(result);
     }
+
+    [Fact]
+    public async Task DeleteTripAsync_DeletesTrip_WhenOwned()
+    {
+        var now = DateTime.UtcNow;
+        var tripId = Guid.NewGuid();
+        _dbContext.Trips.Add(new Trip { Id = tripId, Name = "My Trip", UserId = _userId, Status = TripStatus.Planning, CreatedAt = now, UpdatedAt = now });
+        await _dbContext.SaveChangesAsync();
+
+        var result = await _service.DeleteTripAsync(_userId, tripId);
+
+        Assert.True(result);
+        var deleted = await _dbContext.Trips.FindAsync(tripId);
+        Assert.Null(deleted);
+    }
+
+    [Fact]
+    public async Task DeleteTripAsync_ReturnsFalse_WhenNotOwned()
+    {
+        var now = DateTime.UtcNow;
+        var tripId = Guid.NewGuid();
+        _dbContext.Trips.Add(new Trip { Id = tripId, Name = "Other Trip", UserId = Guid.NewGuid(), Status = TripStatus.Planning, CreatedAt = now, UpdatedAt = now });
+        await _dbContext.SaveChangesAsync();
+
+        var result = await _service.DeleteTripAsync(_userId, tripId);
+
+        Assert.False(result);
+        var unchanged = await _dbContext.Trips.FindAsync(tripId);
+        Assert.NotNull(unchanged);
+    }
 }

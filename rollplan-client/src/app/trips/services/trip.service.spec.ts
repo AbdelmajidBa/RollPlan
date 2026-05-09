@@ -163,4 +163,29 @@ describe('TripService', () => {
     expect(service.currentTrip()).toEqual(updated);
     expect(service.trips()[0]).toEqual(updated);
   });
+
+  it('deleteTrip should DELETE /trips/:id', () => {
+    const id = mockTrip.id;
+    service.deleteTrip(id).subscribe();
+
+    const req = httpMock.expectOne(`${API_BASE_URL}/trips/${id}`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null, { status: 204, statusText: 'No Content' });
+  });
+
+  it('deleteTrip should remove trip from signals', () => {
+    const id = mockTrip.id;
+
+    service.getTrips().subscribe();
+    httpMock.expectOne(`${API_BASE_URL}/trips`).flush([mockTrip]);
+
+    service.getTrip(id).subscribe();
+    httpMock.expectOne(`${API_BASE_URL}/trips/${id}`).flush(mockTrip);
+
+    service.deleteTrip(id).subscribe();
+    httpMock.expectOne(`${API_BASE_URL}/trips/${id}`).flush(null, { status: 204, statusText: 'No Content' });
+
+    expect(service.trips().length).toBe(0);
+    expect(service.currentTrip()).toBeNull();
+  });
 });

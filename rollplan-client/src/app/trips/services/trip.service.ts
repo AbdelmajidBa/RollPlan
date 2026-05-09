@@ -92,4 +92,13 @@ export class TripService {
         this._trips.update(list => list.map(t => t.id === id ? trip : t));
       }));
   }
+
+  deleteTrip(id: string): Observable<void> {
+    return this.http
+      .delete<void>(`${API_BASE_URL}/trips/${id}`)
+      .pipe(tap(() => {
+        this._trips.update(list => list.filter(t => t.id !== id));
+        this._currentTrip.set(null);
+      }));
+  }
 }

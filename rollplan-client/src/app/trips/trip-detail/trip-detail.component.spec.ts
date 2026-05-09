@@ -33,6 +33,7 @@ describe('TripDetailComponent', () => {
       getTrip: getTripSpy,
       updateTrip: updateTripSpy,
       setTripStatus: setTripStatusSpy,
+      deleteTrip: vi.fn(),
       trips: signal<Trip[]>([]).asReadonly()
     };
 
@@ -106,5 +107,29 @@ describe('TripDetailComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const select = compiled.querySelector('select#statusSelect');
     expect(select).toBeTruthy();
+  });
+
+  it('should show confirm dialog when showConfirm is true', () => {
+    getTripSpy.mockReturnValue(of(mockTrip));
+    currentTripSignal.set(mockTrip);
+    const fixture = TestBed.createComponent(TripDetailComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.showConfirm.set(true);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('This will permanently delete the trip');
+  });
+
+  it('should hide confirm dialog when cancel clicked', () => {
+    getTripSpy.mockReturnValue(of(mockTrip));
+    currentTripSignal.set(mockTrip);
+    const fixture = TestBed.createComponent(TripDetailComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.showConfirm.set(true);
+    fixture.detectChanges();
+    fixture.componentInstance.cancelDelete();
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).not.toContain('This will permanently delete the trip');
   });
 });

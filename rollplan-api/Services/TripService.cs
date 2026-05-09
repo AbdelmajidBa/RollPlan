@@ -134,6 +134,23 @@ public class TripService : ITripService
         return MapToResponse(trip);
     }
 
+    public async Task<bool> DeleteTripAsync(Guid userId, Guid tripId)
+    {
+        var trip = await _dbContext.Trips
+            .FirstOrDefaultAsync(t => t.Id == tripId && t.UserId == userId);
+
+        if (trip is null) return false;
+
+        var coverImageUrl = trip.CoverImageUrl;
+        _dbContext.Trips.Remove(trip);
+        await _dbContext.SaveChangesAsync();
+
+        if (coverImageUrl != null)
+            await _storageService.DeleteFileAsync(coverImageUrl);
+
+        return true;
+    }
+
     private static TripResponse MapToResponse(Trip trip) => new()
     {
         Id = trip.Id,
