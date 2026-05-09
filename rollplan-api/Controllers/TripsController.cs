@@ -34,6 +34,14 @@ public class TripsController : ControllerBase
         return CreatedAtAction(nameof(GetTrip), new { id = response.Id }, response);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetTrips()
+    {
+        var userId = GetCurrentUserId();
+        var trips = await _tripService.GetTripsAsync(userId);
+        return Ok(trips);
+    }
+
     // Placeholder for future story — required for CreatedAtAction routing
     [HttpGet("{id:guid}")]
     public IActionResult GetTrip(Guid id)

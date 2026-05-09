@@ -102,4 +102,46 @@ public class TripServiceTests : IDisposable
         Assert.True(result.UpdatedAt >= before);
         Assert.Equal(result.CreatedAt, result.UpdatedAt);
     }
+
+    [Fact]
+    public async Task GetTripsAsync_ReturnsOnlyUserTrips()
+    {
+        var otherUserId = Guid.NewGuid();
+        var now = DateTime.UtcNow;
+
+        _dbContext.Trips.Add(new Trip { Id = Guid.NewGuid(), Name = "My Trip", UserId = _userId, Status = TripStatus.Planning, CreatedAt = now, UpdatedAt = now });
+        _dbContext.Trips.Add(new Trip { Id = Guid.NewGuid(), Name = "Other Trip", UserId = otherUserId, Status = TripStatus.Planning, CreatedAt = now, UpdatedAt = now });
+        await _dbContext.SaveChangesAsync();
+
+        var result = (await _service.GetTripsAsync(_userId)).ToList();
+
+        Assert.Single(result);
+        Assert.Equal("My Trip", result[0].Name);
+    }
+
+    [Fact]
+    public async Task GetTripsAsync_OrdersByUpdatedAtDescending()
+    {
+        var base_ = DateTime.UtcNow;
+
+        _dbContext.Trips.Add(new Trip { Id = Guid.NewGuid(), Name = "First", UserId = _userId, Status = TripStatus.Planning, CreatedAt = base_, UpdatedAt = base_.AddHours(-2) });
+        _dbContext.Trips.Add(new Trip { Id = Guid.NewGuid(), Name = "Second", UserId = _userId, Status = TripStatus.Planning, CreatedAt = base_, UpdatedAt = base_ });
+        _dbContext.Trips.Add(new Trip { Id = Guid.NewGuid(), Name = "Third", UserId = _userId, Status = TripStatus.Planning, CreatedAt = base_, UpdatedAt = base_.AddHours(-1) });
+        await _dbContext.SaveChangesAsync();
+
+        var result = (await _service.GetTripsAsync(_userId)).ToList();
+
+        Assert.Equal(3, result.Count);
+        Assert.Equal("Second", result[0].Name);
+        Assert.Equal("Third", result[1].Name);
+        Assert.Equal("First", result[2].Name);
+    }
+
+    [Fact]
+    public async Task GetTripsAsync_NoTrips_ReturnsEmpty()
+    {
+        var result = await _service.GetTripsAsync(_userId);
+
+        Assert.Empty(result);
+    }
 }
