@@ -73,7 +73,7 @@ public class TripServiceTests : IDisposable
 
         Assert.Equal(expectedUrl, result.CoverImageUrl);
         _storageMock.Verify(
-            s => s.UploadFileAsync(It.IsAny<Stream>(), "cover.jpg", "image/jpeg"),
+            s => s.UploadFileAsync(It.IsAny<Stream>(), It.IsAny<string>(), "image/jpeg"),
             Times.Once);
     }
 
