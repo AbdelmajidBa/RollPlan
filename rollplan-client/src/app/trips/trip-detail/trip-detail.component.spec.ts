@@ -19,17 +19,20 @@ const mockTrip: Trip = {
 describe('TripDetailComponent', () => {
   let getTripSpy: ReturnType<typeof vi.fn>;
   let updateTripSpy: ReturnType<typeof vi.fn>;
+  let setTripStatusSpy: ReturnType<typeof vi.fn>;
   let currentTripSignal: ReturnType<typeof signal<Trip | null>>;
 
   beforeEach(async () => {
     getTripSpy = vi.fn();
     updateTripSpy = vi.fn();
+    setTripStatusSpy = vi.fn();
     currentTripSignal = signal<Trip | null>(null);
 
     const tripServiceStub = {
       currentTrip: currentTripSignal.asReadonly(),
       getTrip: getTripSpy,
       updateTrip: updateTripSpy,
+      setTripStatus: setTripStatusSpy,
       trips: signal<Trip[]>([]).asReadonly()
     };
 
@@ -93,5 +96,15 @@ describe('TripDetailComponent', () => {
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain(mockTrip.name);
+  });
+
+  it('should show status select in view mode', () => {
+    getTripSpy.mockReturnValue(of(mockTrip));
+    currentTripSignal.set(mockTrip);
+    const fixture = TestBed.createComponent(TripDetailComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const select = compiled.querySelector('select#statusSelect');
+    expect(select).toBeTruthy();
   });
 });

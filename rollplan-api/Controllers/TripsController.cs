@@ -57,4 +57,12 @@ public class TripsController : ControllerBase
         var trip = await _tripService.UpdateTripAsync(userId, id, request);
         return trip is null ? NotFound() : Ok(trip);
     }
+
+    [HttpPatch("{id:guid}/status")]
+    public async Task<IActionResult> SetTripStatus(Guid id, [FromBody] SetTripStatusRequest request)
+    {
+        var userId = GetCurrentUserId();
+        var trip = await _tripService.SetTripStatusAsync(userId, id, request.Status);
+        return trip is null ? NotFound() : Ok(trip);
+    }
 }

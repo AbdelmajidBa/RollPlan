@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
-import { TripService } from '../services/trip.service';
+import { TripService, TripStatus } from '../services/trip.service';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png'];
@@ -21,9 +21,11 @@ export class TripDetailComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
 
   readonly trip = this.tripService.currentTrip;
+  readonly statuses: TripStatus[] = ['Planning', 'Active', 'Completed', 'Archived'];
   isLoading = signal(true);
   isEditing = signal(false);
   isSubmitting = signal(false);
+  isStatusChanging = signal(false);
   serverError = signal<string | null>(null);
   fileError = signal<string | null>(null);
 
@@ -98,6 +100,14 @@ export class TripDetailComponent implements OnInit {
     }
 
     this.selectedFile = file;
+  }
+
+  setStatus(status: string): void {
+    if (this.isStatusChanging()) return;
+    this.isStatusChanging.set(true);
+    this.tripService.setTripStatus(this.tripId, status as TripStatus)
+      .pipe(finalize(() => this.isStatusChanging.set(false)))
+      .subscribe();
   }
 
   onSubmit(): void {

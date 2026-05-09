@@ -125,6 +125,30 @@ describe('TripService', () => {
     req.flush(mockTrip);
   });
 
+  it('setTripStatus should PATCH /trips/:id/status with status body', () => {
+    const id = mockTrip.id;
+    service.setTripStatus(id, 'Active').subscribe();
+
+    const req = httpMock.expectOne(`${API_BASE_URL}/trips/${id}/status`);
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.body).toEqual({ status: 'Active' });
+    req.flush({ ...mockTrip, status: 'Active' });
+  });
+
+  it('setTripStatus should update currentTrip and trips list signals', () => {
+    const id = mockTrip.id;
+    const updated = { ...mockTrip, status: 'Active' as const };
+
+    service.getTrips().subscribe();
+    httpMock.expectOne(`${API_BASE_URL}/trips`).flush([mockTrip]);
+
+    service.setTripStatus(id, 'Active').subscribe();
+    httpMock.expectOne(`${API_BASE_URL}/trips/${id}/status`).flush(updated);
+
+    expect(service.currentTrip()).toEqual(updated);
+    expect(service.trips()[0].status).toBe('Active');
+  });
+
   it('updateTrip should update currentTrip and trips list signals', () => {
     const id = mockTrip.id;
     const updated = { ...mockTrip, name: 'Updated' };

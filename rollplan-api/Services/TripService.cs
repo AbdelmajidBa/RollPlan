@@ -120,6 +120,20 @@ public class TripService : ITripService
         return MapToResponse(trip);
     }
 
+    public async Task<TripResponse?> SetTripStatusAsync(Guid userId, Guid tripId, TripStatus status)
+    {
+        var trip = await _dbContext.Trips
+            .FirstOrDefaultAsync(t => t.Id == tripId && t.UserId == userId);
+
+        if (trip is null) return null;
+
+        trip.Status = status;
+        trip.UpdatedAt = DateTime.UtcNow;
+        await _dbContext.SaveChangesAsync();
+
+        return MapToResponse(trip);
+    }
+
     private static TripResponse MapToResponse(Trip trip) => new()
     {
         Id = trip.Id,

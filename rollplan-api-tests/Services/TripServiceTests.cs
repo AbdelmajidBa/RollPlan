@@ -227,4 +227,33 @@ public class TripServiceTests : IDisposable
         var unchanged = await _dbContext.Trips.FindAsync(tripId);
         Assert.Equal("Other Trip", unchanged!.Name);
     }
+
+    [Fact]
+    public async Task SetTripStatusAsync_UpdatesStatus_WhenOwned()
+    {
+        var now = DateTime.UtcNow;
+        var tripId = Guid.NewGuid();
+        _dbContext.Trips.Add(new Trip { Id = tripId, Name = "My Trip", UserId = _userId, Status = TripStatus.Planning, CreatedAt = now, UpdatedAt = now });
+        await _dbContext.SaveChangesAsync();
+
+        var result = await _service.SetTripStatusAsync(_userId, tripId, TripStatus.Active);
+
+        Assert.NotNull(result);
+        Assert.Equal(TripStatus.Active, result.Status);
+        var saved = await _dbContext.Trips.FindAsync(tripId);
+        Assert.Equal(TripStatus.Active, saved!.Status);
+    }
+
+    [Fact]
+    public async Task SetTripStatusAsync_ReturnsNull_WhenNotOwned()
+    {
+        var now = DateTime.UtcNow;
+        var tripId = Guid.NewGuid();
+        _dbContext.Trips.Add(new Trip { Id = tripId, Name = "Other Trip", UserId = Guid.NewGuid(), Status = TripStatus.Planning, CreatedAt = now, UpdatedAt = now });
+        await _dbContext.SaveChangesAsync();
+
+        var result = await _service.SetTripStatusAsync(_userId, tripId, TripStatus.Active);
+
+        Assert.Null(result);
+    }
 }

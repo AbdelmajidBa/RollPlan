@@ -68,6 +68,15 @@ export class TripService {
       .pipe(tap(trip => this._currentTrip.set(trip)));
   }
 
+  setTripStatus(id: string, status: TripStatus): Observable<Trip> {
+    return this.http
+      .patch<Trip>(`${API_BASE_URL}/trips/${id}/status`, { status })
+      .pipe(tap(trip => {
+        this._currentTrip.set(trip);
+        this._trips.update(list => list.map(t => t.id === id ? trip : t));
+      }));
+  }
+
   updateTrip(id: string, request: UpdateTripRequest): Observable<Trip> {
     const formData = new FormData();
     formData.append('name', request.name);
