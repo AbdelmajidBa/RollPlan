@@ -1,6 +1,6 @@
 # Story 2.2: View Trip List
 
-Status: review
+Status: done
 
 ## Story
 
