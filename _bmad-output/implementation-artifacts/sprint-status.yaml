@@ -54,7 +54,7 @@ development_status:
   # ─── Epic 2: Trip Management ───
   epic-2: in-progress
   2-1-create-trip: done
-  2-2-view-trip-list: review
+  2-2-view-trip-list: done
   2-3-edit-trip-details: backlog
   2-4-set-trip-status: backlog
   2-5-delete-trip: backlog
