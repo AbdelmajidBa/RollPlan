@@ -34,6 +34,9 @@
             <p *ngIf="nameControl.touched && nameControl.hasError('required')" class="mt-2 text-xs text-red-400">
               Trip name is required.
             </p>
+            <p *ngIf="nameControl.touched && nameControl.hasError('serverError')" class="mt-2 text-xs text-red-400">
+              {{ nameControl.getError('serverError') }}
+            </p>
           </div>
 
           <div class="form-field">

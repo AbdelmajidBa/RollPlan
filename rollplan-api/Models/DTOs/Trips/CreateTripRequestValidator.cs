@@ -10,7 +10,8 @@ public class CreateTripRequestValidator : AbstractValidator<CreateTripRequest>
     public CreateTripRequestValidator()
     {
         RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Trip name is required.");
+            .NotEmpty().WithMessage("Trip name is required.")
+            .MaximumLength(200).WithMessage("Trip name must not exceed 200 characters.");
 
         When(x => x.CoverImage != null, () =>
         {

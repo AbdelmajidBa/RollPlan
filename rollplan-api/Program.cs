@@ -23,7 +23,10 @@ try
 
     builder.Host.UseSerilog();
 
-    builder.Services.AddControllers();
+    builder.Services.AddControllers()
+        .AddJsonOptions(options =>
+            options.JsonSerializerOptions.Converters.Add(
+                new System.Text.Json.Serialization.JsonStringEnumConverter()));
     builder.Services.AddOpenApi(); // .NET 9 built-in OpenAPI (replaces Swashbuckle)
 
     // CORS — allow Angular dev origin

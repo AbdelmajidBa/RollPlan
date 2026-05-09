@@ -31,11 +31,12 @@ public class TripServiceTests : IDisposable
         string fileName, string contentType, long size)
     {
         var mock = new Mock<Microsoft.AspNetCore.Http.IFormFile>();
-        var stream = new MemoryStream(new byte[size]);
         mock.Setup(f => f.FileName).Returns(fileName);
         mock.Setup(f => f.ContentType).Returns(contentType);
         mock.Setup(f => f.Length).Returns(size);
-        mock.Setup(f => f.OpenReadStream()).Returns(stream);
+        // Factory delegate: each OpenReadStream() call returns a fresh stream;
+        // TripService disposes it via `await using`.
+        mock.Setup(f => f.OpenReadStream()).Returns(() => new MemoryStream(Array.Empty<byte>()));
         return mock;
     }
 

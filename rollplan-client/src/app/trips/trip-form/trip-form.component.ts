@@ -67,6 +67,7 @@ export class TripFormComponent {
       this.form.markAllAsTouched();
       return;
     }
+    if (this.fileError()) return;
     if (this.isSubmitting()) return;
 
     this.isSubmitting.set(true);
@@ -76,13 +77,29 @@ export class TripFormComponent {
 
     this.tripService.createTrip({
       name,
-      description: description || undefined,
+      description: description?.trim() || undefined,
       coverImage: this.selectedFile ?? undefined
     }).pipe(
       finalize(() => this.isSubmitting.set(false))
     ).subscribe({
       next: (trip) => this.router.navigate(['/trips', trip.id]),
-      error: (err) => this.serverError.set(err.error?.detail ?? 'Failed to create trip.')
+      error: (err) => {
+        // FluentValidation emits ValidationProblemDetails with an `errors` map keyed by field.
+        // Fall back to the top-level `detail` string for non-validation errors.
+        const fieldErrors = err.error?.errors;
+        if (fieldErrors) {
+          const nameErrors: string[] = fieldErrors['Name'] ?? fieldErrors['name'] ?? [];
+          if (nameErrors.length > 0) {
+            this.nameControl.setErrors({ serverError: nameErrors[0] });
+          }
+          const firstGeneral = Object.entries(fieldErrors as Record<string, string[]>)
+            .filter(([k]) => k.toLowerCase() !== 'name')
+            .flatMap(([, msgs]) => msgs)[0];
+          this.serverError.set(firstGeneral ?? null);
+        } else {
+          this.serverError.set(err.error?.detail ?? 'Failed to create trip.');
+        }
+      }
     });
   }
 }

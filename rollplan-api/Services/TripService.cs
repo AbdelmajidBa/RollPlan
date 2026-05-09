@@ -22,10 +22,12 @@ public class TripService : ITripService
 
         if (request.CoverImage != null)
         {
+            var ext = request.CoverImage.ContentType == "image/png" ? ".png" : ".jpg";
+            var safeFileName = $"{Guid.NewGuid()}{ext}";
             await using var stream = request.CoverImage.OpenReadStream();
             coverImageUrl = await _storageService.UploadFileAsync(
                 stream,
-                request.CoverImage.FileName,
+                safeFileName,
                 request.CoverImage.ContentType);
         }
 
@@ -43,7 +45,16 @@ public class TripService : ITripService
         };
 
         _dbContext.Trips.Add(trip);
-        await _dbContext.SaveChangesAsync();
+        try
+        {
+            await _dbContext.SaveChangesAsync();
+        }
+        catch
+        {
+            if (coverImageUrl != null)
+                await _storageService.DeleteFileAsync(coverImageUrl);
+            throw;
+        }
 
         return MapToResponse(trip);
     }

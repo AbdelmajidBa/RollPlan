@@ -31,6 +31,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
         {
             e.HasKey(t => t.Id);
             e.Property(t => t.Id).ValueGeneratedOnAdd();
+            e.Property(t => t.Name).HasMaxLength(200);
             e.Property(t => t.Status).HasConversion<string>();
             e.HasOne(t => t.User)
              .WithMany()
