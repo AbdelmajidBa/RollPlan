@@ -9,9 +9,6 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: rollplan-api
 
     steps:
       - uses: actions/checkout@v4
@@ -21,10 +18,10 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Restore
-        run: dotnet restore
+        run: dotnet restore RollPlan.sln
 
       - name: Build
-        run: dotnet build --no-restore
+        run: dotnet build RollPlan.sln --no-restore
 
       - name: Test
-        run: dotnet test --no-build --verbosity normal
+        run: dotnet test RollPlan.sln --no-build --verbosity normal
