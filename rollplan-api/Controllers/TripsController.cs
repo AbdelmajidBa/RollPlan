@@ -42,10 +42,35 @@ public class TripsController : ControllerBase
         return Ok(trips);
     }
 
-    // Placeholder for future story — required for CreatedAtAction routing
     [HttpGet("{id:guid}")]
-    public IActionResult GetTrip(Guid id)
+    public async Task<IActionResult> GetTrip(Guid id)
     {
-        return NotFound();
+        var userId = GetCurrentUserId();
+        var trip = await _tripService.GetTripAsync(userId, id);
+        return trip is null ? NotFound() : Ok(trip);
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdateTrip(Guid id, [FromForm] UpdateTripRequest request)
+    {
+        var userId = GetCurrentUserId();
+        var trip = await _tripService.UpdateTripAsync(userId, id, request);
+        return trip is null ? NotFound() : Ok(trip);
+    }
+
+    [HttpPatch("{id:guid}/status")]
+    public async Task<IActionResult> SetTripStatus(Guid id, [FromBody] SetTripStatusRequest request)
+    {
+        var userId = GetCurrentUserId();
+        var trip = await _tripService.SetTripStatusAsync(userId, id, request.Status);
+        return trip is null ? NotFound() : Ok(trip);
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteTrip(Guid id)
+    {
+        var userId = GetCurrentUserId();
+        var deleted = await _tripService.DeleteTripAsync(userId, id);
+        return deleted ? NoContent() : NotFound();
     }
 }

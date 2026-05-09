@@ -95,4 +95,97 @@ describe('TripService', () => {
 
     expect(service.trips()).toEqual(mockTrips);
   });
+
+  it('getTrip should make GET request to /trips/:id', () => {
+    const id = mockTrip.id;
+    service.getTrip(id).subscribe();
+
+    const req = httpMock.expectOne(`${API_BASE_URL}/trips/${id}`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockTrip);
+  });
+
+  it('getTrip should set currentTrip signal', () => {
+    const id = mockTrip.id;
+    service.getTrip(id).subscribe();
+
+    const req = httpMock.expectOne(`${API_BASE_URL}/trips/${id}`);
+    req.flush(mockTrip);
+
+    expect(service.currentTrip()).toEqual(mockTrip);
+  });
+
+  it('updateTrip should make PUT request to /trips/:id with FormData', () => {
+    const id = mockTrip.id;
+    service.updateTrip(id, { name: 'Updated' }).subscribe();
+
+    const req = httpMock.expectOne(`${API_BASE_URL}/trips/${id}`);
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.body instanceof FormData).toBe(true);
+    req.flush(mockTrip);
+  });
+
+  it('setTripStatus should PATCH /trips/:id/status with status body', () => {
+    const id = mockTrip.id;
+    service.setTripStatus(id, 'Active').subscribe();
+
+    const req = httpMock.expectOne(`${API_BASE_URL}/trips/${id}/status`);
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.body).toEqual({ status: 'Active' });
+    req.flush({ ...mockTrip, status: 'Active' });
+  });
+
+  it('setTripStatus should update currentTrip and trips list signals', () => {
+    const id = mockTrip.id;
+    const updated = { ...mockTrip, status: 'Active' as const };
+
+    service.getTrips().subscribe();
+    httpMock.expectOne(`${API_BASE_URL}/trips`).flush([mockTrip]);
+
+    service.setTripStatus(id, 'Active').subscribe();
+    httpMock.expectOne(`${API_BASE_URL}/trips/${id}/status`).flush(updated);
+
+    expect(service.currentTrip()).toEqual(updated);
+    expect(service.trips()[0].status).toBe('Active');
+  });
+
+  it('updateTrip should update currentTrip and trips list signals', () => {
+    const id = mockTrip.id;
+    const updated = { ...mockTrip, name: 'Updated' };
+
+    // Pre-populate list
+    service.getTrips().subscribe();
+    httpMock.expectOne(`${API_BASE_URL}/trips`).flush([mockTrip]);
+
+    service.updateTrip(id, { name: 'Updated' }).subscribe();
+    httpMock.expectOne(`${API_BASE_URL}/trips/${id}`).flush(updated);
+
+    expect(service.currentTrip()).toEqual(updated);
+    expect(service.trips()[0]).toEqual(updated);
+  });
+
+  it('deleteTrip should DELETE /trips/:id', () => {
+    const id = mockTrip.id;
+    service.deleteTrip(id).subscribe();
+
+    const req = httpMock.expectOne(`${API_BASE_URL}/trips/${id}`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null, { status: 204, statusText: 'No Content' });
+  });
+
+  it('deleteTrip should remove trip from signals', () => {
+    const id = mockTrip.id;
+
+    service.getTrips().subscribe();
+    httpMock.expectOne(`${API_BASE_URL}/trips`).flush([mockTrip]);
+
+    service.getTrip(id).subscribe();
+    httpMock.expectOne(`${API_BASE_URL}/trips/${id}`).flush(mockTrip);
+
+    service.deleteTrip(id).subscribe();
+    httpMock.expectOne(`${API_BASE_URL}/trips/${id}`).flush(null, { status: 204, statusText: 'No Content' });
+
+    expect(service.trips().length).toBe(0);
+    expect(service.currentTrip()).toBeNull();
+  });
 });

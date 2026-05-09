@@ -55,9 +55,9 @@ development_status:
   epic-2: in-progress
   2-1-create-trip: done
   2-2-view-trip-list: done
-  2-3-edit-trip-details: backlog
-  2-4-set-trip-status: backlog
-  2-5-delete-trip: backlog
+  2-3-edit-trip-details: review
+  2-4-set-trip-status: review
+  2-5-delete-trip: review
   epic-2-retrospective: optional
 
   # ─── Epic 3: Itinerary & Step Management ───

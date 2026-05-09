@@ -70,6 +70,87 @@ public class TripService : ITripService
         return trips.Select(MapToResponse);
     }
 
+    public async Task<TripResponse?> GetTripAsync(Guid userId, Guid tripId)
+    {
+        var trip = await _dbContext.Trips
+            .FirstOrDefaultAsync(t => t.Id == tripId && t.UserId == userId);
+
+        return trip is null ? null : MapToResponse(trip);
+    }
+
+    public async Task<TripResponse?> UpdateTripAsync(Guid userId, Guid tripId, UpdateTripRequest request)
+    {
+        var trip = await _dbContext.Trips
+            .FirstOrDefaultAsync(t => t.Id == tripId && t.UserId == userId);
+
+        if (trip is null) return null;
+
+        string? newCoverImageUrl = null;
+        if (request.CoverImage != null)
+        {
+            var ext = request.CoverImage.ContentType == "image/png" ? ".png" : ".jpg";
+            var safeFileName = $"{Guid.NewGuid()}{ext}";
+            await using var stream = request.CoverImage.OpenReadStream();
+            newCoverImageUrl = await _storageService.UploadFileAsync(stream, safeFileName, request.CoverImage.ContentType);
+        }
+
+        var oldCoverImageUrl = trip.CoverImageUrl;
+        trip.Name = request.Name;
+        trip.Description = request.Description;
+        trip.StartDate = request.StartDate;
+        trip.EndDate = request.EndDate;
+        if (newCoverImageUrl != null)
+            trip.CoverImageUrl = newCoverImageUrl;
+        trip.UpdatedAt = DateTime.UtcNow;
+
+        try
+        {
+            await _dbContext.SaveChangesAsync();
+        }
+        catch
+        {
+            if (newCoverImageUrl != null)
+                await _storageService.DeleteFileAsync(newCoverImageUrl);
+            throw;
+        }
+
+        if (newCoverImageUrl != null && oldCoverImageUrl != null)
+            await _storageService.DeleteFileAsync(oldCoverImageUrl);
+
+        return MapToResponse(trip);
+    }
+
+    public async Task<TripResponse?> SetTripStatusAsync(Guid userId, Guid tripId, TripStatus status)
+    {
+        var trip = await _dbContext.Trips
+            .FirstOrDefaultAsync(t => t.Id == tripId && t.UserId == userId);
+
+        if (trip is null) return null;
+
+        trip.Status = status;
+        trip.UpdatedAt = DateTime.UtcNow;
+        await _dbContext.SaveChangesAsync();
+
+        return MapToResponse(trip);
+    }
+
+    public async Task<bool> DeleteTripAsync(Guid userId, Guid tripId)
+    {
+        var trip = await _dbContext.Trips
+            .FirstOrDefaultAsync(t => t.Id == tripId && t.UserId == userId);
+
+        if (trip is null) return false;
+
+        var coverImageUrl = trip.CoverImageUrl;
+        _dbContext.Trips.Remove(trip);
+        await _dbContext.SaveChangesAsync();
+
+        if (coverImageUrl != null)
+            await _storageService.DeleteFileAsync(coverImageUrl);
+
+        return true;
+    }
+
     private static TripResponse MapToResponse(Trip trip) => new()
     {
         Id = trip.Id,
@@ -77,6 +158,8 @@ public class TripService : ITripService
         Description = trip.Description,
         Status = trip.Status,
         CoverImageUrl = trip.CoverImageUrl,
+        StartDate = trip.StartDate,
+        EndDate = trip.EndDate,
         CreatedAt = trip.CreatedAt,
         UpdatedAt = trip.UpdatedAt
     };
