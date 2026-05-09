@@ -1,6 +1,6 @@
 # Story 2.5: Delete Trip
 
-Status: in-progress
+Status: review
 
 ## Story
 
