@@ -69,6 +69,7 @@ try
     // Application Services
     builder.Services.AddScoped<IAuthService, AuthService>();
     builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped<ITripService, TripService>();
 
     // Data
     builder.Services.AddDbContext<AppDbContext>(options =>

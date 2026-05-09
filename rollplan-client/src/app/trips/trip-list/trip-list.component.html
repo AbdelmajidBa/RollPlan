@@ -1,0 +1,46 @@
+<div class="page-trips min-h-screen bg-slate-950 px-4 py-12 text-slate-100">
+  <div class="mx-auto max-w-4xl">
+    <div class="mb-8 flex items-center justify-between">
+      <div>
+        <p class="text-xs uppercase tracking-[0.24em] text-sky-200/70">RollPlan</p>
+        <h1 class="mt-2 text-3xl font-semibold text-white">Your Trips</h1>
+      </div>
+      <a
+        routerLink="/trips/create"
+        class="inline-flex items-center gap-2 rounded-2xl bg-sky-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-500/20 transition hover:bg-sky-700"
+      >
+        <span>+ New Trip</span>
+      </a>
+    </div>
+
+    <ng-container *ngIf="trips().length > 0; else emptyState">
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div
+          *ngFor="let trip of trips()"
+          class="rounded-[1.5rem] bg-slate-900/90 p-6 ring-1 ring-white/10 shadow-lg transition hover:ring-sky-500/40"
+        >
+          <div *ngIf="trip.coverImageUrl" class="mb-4 overflow-hidden rounded-2xl">
+            <img [src]="trip.coverImageUrl" [alt]="trip.name" class="h-32 w-full object-cover" />
+          </div>
+          <h2 class="text-lg font-semibold text-white">{{ trip.name }}</h2>
+          <p *ngIf="trip.description" class="mt-1 text-sm text-slate-400 line-clamp-2">{{ trip.description }}</p>
+          <span class="mt-3 inline-block rounded-full bg-sky-900/60 px-3 py-1 text-xs font-medium text-sky-300">
+            {{ trip.status }}
+          </span>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #emptyState>
+      <div class="rounded-[2rem] bg-slate-900/60 p-12 text-center ring-1 ring-white/10">
+        <p class="text-slate-400">You haven't created any trips yet.</p>
+        <a
+          routerLink="/trips/create"
+          class="mt-4 inline-flex items-center gap-2 rounded-2xl bg-sky-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-500/20 transition hover:bg-sky-700"
+        >
+          Create your first trip
+        </a>
+      </div>
+    </ng-template>
+  </div>
+</div>

@@ -1,0 +1,26 @@
+using FluentValidation;
+
+namespace RollPlan.Api.Models.DTOs.Trips;
+
+public class CreateTripRequestValidator : AbstractValidator<CreateTripRequest>
+{
+    private static readonly string[] AllowedTypes = ["image/jpeg", "image/png"];
+    private const long MaxBytes = 10 * 1024 * 1024; // 10 MB
+
+    public CreateTripRequestValidator()
+    {
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage("Trip name is required.");
+
+        When(x => x.CoverImage != null, () =>
+        {
+            RuleFor(x => x.CoverImage!.ContentType)
+                .Must(ct => AllowedTypes.Contains(ct))
+                .WithMessage("Cover image must be a JPG or PNG file.");
+
+            RuleFor(x => x.CoverImage!.Length)
+                .LessThanOrEqualTo(MaxBytes)
+                .WithMessage("Cover image must not exceed 10 MB.");
+        });
+    }
+}

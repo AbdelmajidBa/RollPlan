@@ -9,7 +9,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-    // Trip, Step, Photo DbSets added in Epics 2–5
+    public DbSet<Trip> Trips => Set<Trip>();
+
+    // Step, Photo DbSets added in Epics 3–5
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -24,5 +26,16 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
         builder.Entity<IdentityUserLogin<Guid>>().ToTable("asp_net_user_logins");
         builder.Entity<IdentityUserToken<Guid>>().ToTable("asp_net_user_tokens");
         builder.Entity<IdentityRoleClaim<Guid>>().ToTable("asp_net_role_claims");
+
+        builder.Entity<Trip>(e =>
+        {
+            e.HasKey(t => t.Id);
+            e.Property(t => t.Id).ValueGeneratedOnAdd();
+            e.Property(t => t.Status).HasConversion<string>();
+            e.HasOne(t => t.User)
+             .WithMany()
+             .HasForeignKey(t => t.UserId)
+             .OnDelete(DeleteBehavior.Cascade);
+        });
     }
 }
