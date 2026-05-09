@@ -1,5 +1,15 @@
 # Deferred Work
 
+## Deferred from: code review of 2-1-create-trip (2026-05-09)
+
+- **GetCurrentUserId throws UnauthorizedAccessException** — pre-existing pattern across all controllers; should map to 401 via middleware. Address in a cross-cutting security hardening pass.
+- **MIME-type spoofing on file uploads** — ContentType is client-supplied and not verified against magic bytes. Revisit with server-side magic-byte inspection before public launch.
+- **GetTrip placeholder returns 404** — Location header broken; will be resolved when Story 2.3 (view trip detail) is implemented.
+- **TripListComponent shows empty list on fresh page load** — session-only signal, no GET /trips. Full listing is Story 2.2 scope.
+- **TripDetailComponent is a placeholder** — Epic 3 scope.
+- **No CancellationToken propagated** — pre-existing pattern; address in performance/resilience pass.
+- **Timestamp equality test coupled to implementation** — low risk; refactor if timestamps are ever set independently.
+
 ## Deferred from: code review of 1-1-initialize-monorepo-and-project-scaffolding (2026-04-05)
 
 - `appsettings.json` retains .NET built-in `Logging` section — silently ignored by Serilog. Clean up when adding full Serilog config in Story 1.2.

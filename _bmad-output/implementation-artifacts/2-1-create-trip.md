@@ -1,6 +1,6 @@
 # Story 2.1: Create Trip
 
-Status: review
+Status: in-progress
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -85,6 +85,41 @@ So that I can start planning my itinerary.
   - [x] Create `rollplan-client/src/app/trips/services/trip.service.spec.ts` — test createTrip method
   - [x] Create `rollplan-client/src/app/trips/trip-form/trip-form.component.spec.ts` — test form validation and submission
   - [x] Create `rollplan-client/src/app/trips/trip-list/trip-list.component.spec.ts` — test create button
+
+### Senior Developer Review (AI)
+
+**Review Date:** 2026-05-09
+**Outcome:** Changes Requested
+**Action Items:** 8 patch, 7 defer, 2 dismissed
+
+#### Action Items
+
+- [ ] [Review][Patch][High] Orphaned blob when DB save fails after image upload [rollplan-api/Services/TripService.cs]
+- [ ] [Review][Patch][Med] TripStatus enum serializes as integer in API response — needs JsonStringEnumConverter [rollplan-api/Models/DTOs/Trips/TripResponse.cs]
+- [ ] [Review][Patch][Med] FluentValidation field errors not shown inline — client reads `err.error?.detail` but FluentValidation emits `err.error?.errors` map [rollplan-client/src/app/trips/trip-form/trip-form.component.ts]
+- [ ] [Review][Patch][Med] Name field has no max-length in validator or DB column — unbounded text [rollplan-api/Models/DTOs/Trips/CreateTripRequestValidator.cs]
+- [ ] [Review][Patch][Med] File extension from client-supplied filename passed unsanitised to IStorageService — path-traversal risk [rollplan-api/Services/TripService.cs]
+- [ ] [Review][Patch][Med] onSubmit proceeds when fileError is already visible — contradictory UI feedback [rollplan-client/src/app/trips/trip-form/trip-form.component.ts]
+- [ ] [Review][Patch][Low] MemoryStream in CreateFormFileMock test helper never disposed [rollplan-api-tests/Services/TripServiceTests.cs]
+- [ ] [Review][Patch][Low] Whitespace-only description stored as-is — `"   "` passes `description || undefined` check [rollplan-client/src/app/trips/trip-form/trip-form.component.ts]
+- [x] [Review][Defer] GetCurrentUserId throws UnauthorizedAccessException — pre-existing pattern copied from UsersController, not introduced by this story
+- [x] [Review][Defer] MIME-type spoofing: magic bytes not verified — security hardening deferred to separate story
+- [x] [Review][Defer] GetTrip placeholder returns 404 (Location header broken) — intentional stub, will be implemented in Story 2.3
+- [x] [Review][Defer] TripListComponent shows empty list on fresh page load — listing trips is scope of Story 2.2
+- [x] [Review][Defer] TripDetailComponent is a placeholder — explicitly scoped to Epic 3
+- [x] [Review][Defer] No CancellationToken propagated — pre-existing pattern across all controllers/services
+- [x] [Review][Defer] Timestamp equality assertion coupled to implementation detail — low risk test design note
+
+### Review Follow-ups (AI)
+
+- [ ] [AI-Review][High] Fix orphaned blob: delete uploaded image if SaveChangesAsync throws
+- [ ] [AI-Review][Med] Fix TripStatus JSON serialization: add JsonStringEnumConverter to TripResponse.Status or globally
+- [ ] [AI-Review][Med] Fix server validation error display: parse `err.error?.errors` for inline field errors
+- [ ] [AI-Review][Med] Add Name max-length: MaximumLength(200) in validator + HasMaxLength(200) in EF config
+- [ ] [AI-Review][Med] Sanitise file extension in TripService before passing to IStorageService
+- [ ] [AI-Review][Med] Block form submit when fileError is active
+- [ ] [AI-Review][Low] Dispose MemoryStream in CreateFormFileMock
+- [ ] [AI-Review][Low] Trim/validate description: reject whitespace-only values
 
 ## Dev Notes
 
