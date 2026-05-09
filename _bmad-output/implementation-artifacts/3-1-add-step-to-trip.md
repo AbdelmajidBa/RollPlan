@@ -1,6 +1,6 @@
 # Story 3.1: Add Step to Trip
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -20,67 +20,45 @@ So that I can build a complete itinerary.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Backend — Step entity + StepType enum + AppDbContext + Migration (AC: #1)
-  - [ ] Create `rollplan-api/Models/Entities/StepType.cs`: `public enum StepType { Travel, Accommodation, Activity, Meal, Rest }`
-  - [ ] Create `rollplan-api/Models/Entities/Step.cs`: `Id` (Guid), `Name` (string), `Type` (StepType), `Location` (string?), `Date` (DateOnly?), `StartTime` (string?), `SortOrder` (int), `Note` (string?), `CreatedAt` (DateTime), `UpdatedAt` (DateTime), `TripId` (Guid FK), `Trip` (nav prop)
-  - [ ] Add `public DbSet<Step> Steps => Set<Step>();` to `AppDbContext`; remove "Step, Photo DbSets added in Epics 3–5" comment
-  - [ ] Add Step entity config in `AppDbContext.OnModelCreating`: `Name.HasMaxLength(200)`, `Type.HasConversion<string>()`, FK to Trip with `OnDelete(DeleteBehavior.Cascade)`
-  - [ ] Create migration `rollplan-api/Migrations/20260509000003_AddStepsTable.cs` — see Dev Notes for column specs
-  - [ ] Create `rollplan-api/Migrations/20260509000003_AddStepsTable.Designer.cs` — full model snapshot including Step entity
-  - [ ] Update `rollplan-api/Migrations/AppDbContextModelSnapshot.cs` — add Step entity and relationship blocks
+- [x] Task 1: Backend — Step entity + StepType enum + AppDbContext + Migration (AC: #1)
+  - [x] Create `rollplan-api/Models/Entities/StepType.cs`: `public enum StepType { Travel, Accommodation, Activity, Meal, Rest }`
+  - [x] Create `rollplan-api/Models/Entities/Step.cs`: `Id` (Guid), `Name` (string), `Type` (StepType), `Location` (string?), `Date` (DateOnly?), `StartTime` (string?), `SortOrder` (int), `Note` (string?), `CreatedAt` (DateTime), `UpdatedAt` (DateTime), `TripId` (Guid FK), `Trip` (nav prop)
+  - [x] Add `public DbSet<Step> Steps => Set<Step>();` to `AppDbContext`; remove "Step, Photo DbSets added in Epics 3–5" comment
+  - [x] Add Step entity config in `AppDbContext.OnModelCreating`: `Name.HasMaxLength(200)`, `Type.HasConversion<string>()`, FK to Trip with `OnDelete(DeleteBehavior.Cascade)`
+  - [x] Create migration `rollplan-api/Migrations/20260509000003_AddStepsTable.cs` — see Dev Notes for column specs
+  - [x] Create `rollplan-api/Migrations/20260509000003_AddStepsTable.Designer.cs` — full model snapshot including Step entity
+  - [x] Update `rollplan-api/Migrations/AppDbContextModelSnapshot.cs` — add Step entity and relationship blocks
 
-- [ ] Task 2: Backend — DTOs + Validator (AC: #1)
-  - [ ] Create `rollplan-api/Models/DTOs/Steps/CreateStepRequest.cs`: `Name` (string), `Type` (StepType), `Location` (string?), `Date` (DateOnly?), `StartTime` (string?)
-  - [ ] Create `rollplan-api/Models/DTOs/Steps/CreateStepRequestValidator.cs`: Name required + max 200; Type must be valid enum value
-  - [ ] Create `rollplan-api/Models/DTOs/Steps/StepResponse.cs`: `Id`, `TripId`, `Name`, `Type`, `Location?`, `Date?`, `StartTime?`, `SortOrder`, `Note?`, `CreatedAt`, `UpdatedAt`
+- [x] Task 2: Backend — DTOs + Validator (AC: #1)
+  - [x] Create `rollplan-api/Models/DTOs/Steps/CreateStepRequest.cs`: `Name` (string), `Type` (StepType), `Location` (string?), `Date` (DateOnly?), `StartTime` (string?)
+  - [x] Create `rollplan-api/Models/DTOs/Steps/CreateStepRequestValidator.cs`: Name required + max 200; Type must be valid enum value
+  - [x] Create `rollplan-api/Models/DTOs/Steps/StepResponse.cs`: `Id`, `TripId`, `Name`, `Type`, `Location?`, `Date?`, `StartTime?`, `SortOrder`, `Note?`, `CreatedAt`, `UpdatedAt`
 
-- [ ] Task 3: Backend — IStepService + StepService + StepsController (AC: #1)
-  - [ ] Create `rollplan-api/Services/IStepService.cs`: `Task<IEnumerable<StepResponse>?> GetStepsAsync(Guid userId, Guid tripId)` and `Task<StepResponse?> AddStepAsync(Guid userId, Guid tripId, CreateStepRequest request)`
-  - [ ] Create `rollplan-api/Services/StepService.cs`: inject `AppDbContext`; `GetStepsAsync` — verify trip ownership (null if not found/wrong owner), return steps ordered by SortOrder; `AddStepAsync` — verify ownership, compute `maxOrder + 1`, create step, save, return mapped response
-  - [ ] Register `StepService` in DI: add `builder.Services.AddScoped<IStepService, StepService>();` in `Program.cs`
-  - [ ] Create `rollplan-api/Controllers/StepsController.cs`: route `[Route("api/v1/trips/{tripId:guid}/steps")]`, `[Authorize]`; `GetSteps(Guid tripId)` → `Ok(steps)` or `NotFound()`; `AddStep(Guid tripId, [FromBody] CreateStepRequest request)` → `StatusCode(201, step)` or `NotFound()`
+- [x] Task 3: Backend — IStepService + StepService + StepsController (AC: #1)
+  - [x] Create `rollplan-api/Services/IStepService.cs`: `Task<IEnumerable<StepResponse>?> GetStepsAsync(Guid userId, Guid tripId)` and `Task<StepResponse?> AddStepAsync(Guid userId, Guid tripId, CreateStepRequest request)`
+  - [x] Create `rollplan-api/Services/StepService.cs`: inject `AppDbContext`; `GetStepsAsync` — verify trip ownership (null if not found/wrong owner), return steps ordered by SortOrder; `AddStepAsync` — verify ownership, compute `maxOrder + 1`, create step, save, return mapped response
+  - [x] Register `StepService` in DI: add `builder.Services.AddScoped<IStepService, StepService>();` in `Program.cs`
+  - [x] Create `rollplan-api/Controllers/StepsController.cs`: route `[Route("api/v1/trips/{tripId:guid}/steps")]`, `[Authorize]`; `GetSteps(Guid tripId)` → `Ok(steps)` or `NotFound()`; `AddStep(Guid tripId, [FromBody] CreateStepRequest request)` → `StatusCode(201, step)` or `NotFound()`
 
-- [ ] Task 4: Backend — Unit tests (AC: #1)
-  - [ ] Create `rollplan-api-tests/Services/StepServiceTests.cs` following existing pattern (InMemoryDatabase, `IDisposable`)
-  - [ ] `GetStepsAsync_ReturnsSteps_WhenOwned` — seed trip + 2 steps, assert ordered by SortOrder
-  - [ ] `GetStepsAsync_ReturnsNull_WhenTripNotOwned` — other user's trip, assert null
-  - [ ] `AddStepAsync_CreatesStep_WhenOwned` — seed trip, add step, verify in DB + response fields
-  - [ ] `AddStepAsync_ReturnsNull_WhenTripNotOwned` — other user's trip, assert null + DB unchanged
-  - [ ] `AddStepAsync_SetsCorrectSortOrder` — seed trip with 2 existing steps, add third, assert SortOrder = 3
+- [x] Task 4: Backend — Unit tests (AC: #1)
+  - [x] Create `rollplan-api-tests/Services/StepServiceTests.cs` following existing pattern (InMemoryDatabase, `IDisposable`)
+  - [x] `GetStepsAsync_ReturnsSteps_WhenOwned` — seed trip + 2 steps, assert ordered by SortOrder
+  - [x] `GetStepsAsync_ReturnsNull_WhenTripNotOwned` — other user's trip, assert null
+  - [x] `AddStepAsync_CreatesStep_WhenOwned` — seed trip, add step, verify in DB + response fields
+  - [x] `AddStepAsync_ReturnsNull_WhenTripNotOwned` — other user's trip, assert null + DB unchanged
+  - [x] `AddStepAsync_SetsCorrectSortOrder` — seed trip with 2 existing steps, add third, assert SortOrder = 3
 
-- [ ] Task 5: Angular — StepService + interfaces (AC: #1)
-  - [ ] Create `rollplan-client/src/app/steps/services/step.service.ts`:
-    - Export `StepType = 'Travel' | 'Accommodation' | 'Activity' | 'Meal' | 'Rest'`
-    - Export `Step` interface: `id`, `tripId`, `name`, `type: StepType`, `location?`, `date?`, `startTime?`, `sortOrder`, `note?`, `createdAt`, `updatedAt`
-    - Export `CreateStepRequest` interface: `name`, `type: StepType`, `location?`, `date?`, `startTime?`
-    - `StepService` with `_steps = signal<Step[]>([])`, readonly `steps`, `getSteps(tripId)`, `addStep(tripId, request)`
-    - `getSteps`: `GET ${API_BASE_URL}/trips/${tripId}/steps`, `tap(steps => this._steps.set(steps))`
-    - `addStep`: `POST ${API_BASE_URL}/trips/${tripId}/steps` with JSON body, `tap(step => this._steps.update(list => [...list, step]))`
+- [x] Task 5: Angular — StepService + interfaces (AC: #1)
+  - [x] Create `rollplan-client/src/app/steps/services/step.service.ts` with StepType, Step, CreateStepRequest, StepService with getSteps + addStep
 
-- [ ] Task 6: Angular — StepListComponent + TripDetailComponent integration (AC: #1)
-  - [ ] Create `rollplan-client/src/app/steps/step-list/step-list.component.ts`:
-    - `@Input() tripId!: string`; inject `StepService`, `FormBuilder`
-    - Signals: `isLoading = signal(true)`, `showAddForm = signal(false)`, `isSubmitting = signal(false)`, `formError = signal<string | null>(null)`
-    - `readonly steps = this.stepService.steps`
-    - `readonly stepTypes: StepType[] = ['Travel', 'Accommodation', 'Activity', 'Meal', 'Rest']`
-    - Reactive form: `name` (required), `type` (required), `location`, `date`, `startTime`
-    - `ngOnInit`: call `getSteps(tripId).subscribe({ next: () => ..., error: () => ... })`, set `isLoading(false)` in both
-    - `onSubmit()`: validate, call `addStep`, reset form + `showAddForm(false)` on success; `finalize()` resets `isSubmitting`
-  - [ ] Create `rollplan-client/src/app/steps/step-list/step-list.component.html`: loading spinner, steps list (name, type badge, location/date/time if set), empty state ("No steps yet"), "Add Step" button toggling inline form, inline form with name/type/location/date/startTime fields, Save/Cancel
-  - [ ] In `TripDetailComponent`: remove `private` from `tripId` field; add `StepListComponent` to `imports[]`; add `<app-step-list [tripId]="tripId">` at bottom of trip view (outside edit form, inside the `*ngIf="!isLoading() && trip()"` block)
+- [x] Task 6: Angular — StepListComponent + TripDetailComponent integration (AC: #1)
+  - [x] Create `rollplan-client/src/app/steps/step-list/step-list.component.ts` with @Input tripId, signals, form, ngOnInit, onSubmit, cancelAdd, typeBadgeClass
+  - [x] Create `rollplan-client/src/app/steps/step-list/step-list.component.html` with loading spinner, steps list, empty state, add form
+  - [x] TripDetailComponent: removed `private` from `tripId`, added `StepListComponent` to imports, added `<app-step-list [tripId]="tripId">` in view mode
 
-- [ ] Task 7: Angular — Unit tests (AC: #1)
-  - [ ] Create `rollplan-client/src/app/steps/services/step.service.spec.ts`:
-    - `addStep should POST /trips/:tripId/steps with JSON body`
-    - `addStep should append step to _steps signal`
-    - `getSteps should GET /trips/:tripId/steps`
-    - `getSteps should populate _steps signal`
-  - [ ] Create `rollplan-client/src/app/steps/step-list/step-list.component.spec.ts`:
-    - Stub `StepService` with `vi.fn()` + `signal<Step[]>([])`
-    - `should create`
-    - `should call getSteps on init`
-    - `should show add form when showAddForm is true`
-    - `should hide add form when cancel clicked`
+- [x] Task 7: Angular — Unit tests (AC: #1)
+  - [x] `rollplan-client/src/app/steps/services/step.service.spec.ts`: 4 tests — GET, populate signal, POST, append signal
+  - [x] `rollplan-client/src/app/steps/step-list/step-list.component.spec.ts`: 4 tests — create, getSteps on init, show form, hide form
 
 ## Dev Notes
 
@@ -196,7 +174,7 @@ builder.Services.AddScoped<IStepService, StepService>();
 
 ### Agent Model Used
 
-(to be filled in by dev agent)
+claude-sonnet-4-6
 
 ### File List
 
@@ -223,3 +201,5 @@ builder.Services.AddScoped<IStepService, StepService>();
 - `rollplan-client/src/app/trips/trip-detail/trip-detail.component.html` (modified)
 
 ### Change Log
+
+- Implemented full Story 3.1: Step entity + migration, StepService/IStepService, StepsController, StepListComponent embedded in TripDetailComponent. All 91 Angular tests pass. (Date: 2026-05-09)

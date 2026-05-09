@@ -4,6 +4,7 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { TripService, TripStatus } from '../services/trip.service';
+import { StepListComponent } from '../../steps/step-list/step-list.component';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png'];
@@ -11,7 +12,7 @@ const ALLOWED_TYPES = ['image/jpeg', 'image/png'];
 @Component({
   selector: 'app-trip-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, StepListComponent],
   templateUrl: './trip-detail.component.html'
 })
 export class TripDetailComponent implements OnInit {
@@ -38,7 +39,7 @@ export class TripDetailComponent implements OnInit {
     endDate: ['']
   });
 
-  private tripId = '';
+  tripId = '';
   private selectedFile: File | null = null;
 
   get nameControl() { return this.form.get('name')!; }

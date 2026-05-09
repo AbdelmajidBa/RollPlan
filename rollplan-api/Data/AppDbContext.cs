@@ -10,8 +10,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<Trip> Trips => Set<Trip>();
-
-    // Step, Photo DbSets added in Epics 3–5
+    public DbSet<Step> Steps => Set<Step>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -36,6 +35,18 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
             e.HasOne(t => t.User)
              .WithMany()
              .HasForeignKey(t => t.UserId)
+             .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<Step>(e =>
+        {
+            e.HasKey(s => s.Id);
+            e.Property(s => s.Id).ValueGeneratedOnAdd();
+            e.Property(s => s.Name).HasMaxLength(200);
+            e.Property(s => s.Type).HasConversion<string>();
+            e.HasOne(s => s.Trip)
+             .WithMany()
+             .HasForeignKey(s => s.TripId)
              .OnDelete(DeleteBehavior.Cascade);
         });
     }
