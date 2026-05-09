@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TripService } from '../services/trip.service';
@@ -10,7 +10,6 @@ import { TripService } from '../services/trip.service';
   templateUrl: './trip-list.component.html'
 })
 export class TripListComponent {
+  private readonly tripService = inject(TripService);
   readonly trips = this.tripService.trips;
-
-  constructor(private tripService: TripService) {}
 }
