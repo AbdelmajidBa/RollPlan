@@ -11,6 +11,8 @@ export interface Trip {
   description?: string;
   status: TripStatus;
   coverImageUrl?: string;
+  startDate?: string;
+  endDate?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -21,10 +23,21 @@ export interface CreateTripRequest {
   coverImage?: File;
 }
 
+export interface UpdateTripRequest {
+  name: string;
+  description?: string;
+  coverImage?: File;
+  startDate?: string;
+  endDate?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class TripService {
   private readonly _trips = signal<Trip[]>([]);
   readonly trips = this._trips.asReadonly();
+
+  private readonly _currentTrip = signal<Trip | null>(null);
+  readonly currentTrip = this._currentTrip.asReadonly();
 
   constructor(private http: HttpClient) {}
 
@@ -47,5 +60,27 @@ export class TripService {
     return this.http
       .get<Trip[]>(`${API_BASE_URL}/trips`)
       .pipe(tap(trips => this._trips.set(trips)));
+  }
+
+  getTrip(id: string): Observable<Trip> {
+    return this.http
+      .get<Trip>(`${API_BASE_URL}/trips/${id}`)
+      .pipe(tap(trip => this._currentTrip.set(trip)));
+  }
+
+  updateTrip(id: string, request: UpdateTripRequest): Observable<Trip> {
+    const formData = new FormData();
+    formData.append('name', request.name);
+    if (request.description) formData.append('description', request.description);
+    if (request.coverImage) formData.append('coverImage', request.coverImage);
+    if (request.startDate) formData.append('startDate', request.startDate);
+    if (request.endDate) formData.append('endDate', request.endDate);
+
+    return this.http
+      .put<Trip>(`${API_BASE_URL}/trips/${id}`, formData)
+      .pipe(tap(trip => {
+        this._currentTrip.set(trip);
+        this._trips.update(list => list.map(t => t.id === id ? trip : t));
+      }));
   }
 }

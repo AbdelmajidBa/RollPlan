@@ -42,10 +42,19 @@ public class TripsController : ControllerBase
         return Ok(trips);
     }
 
-    // Placeholder for future story — required for CreatedAtAction routing
     [HttpGet("{id:guid}")]
-    public IActionResult GetTrip(Guid id)
+    public async Task<IActionResult> GetTrip(Guid id)
     {
-        return NotFound();
+        var userId = GetCurrentUserId();
+        var trip = await _tripService.GetTripAsync(userId, id);
+        return trip is null ? NotFound() : Ok(trip);
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdateTrip(Guid id, [FromForm] UpdateTripRequest request)
+    {
+        var userId = GetCurrentUserId();
+        var trip = await _tripService.UpdateTripAsync(userId, id, request);
+        return trip is null ? NotFound() : Ok(trip);
     }
 }

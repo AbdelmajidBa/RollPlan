@@ -95,4 +95,48 @@ describe('TripService', () => {
 
     expect(service.trips()).toEqual(mockTrips);
   });
+
+  it('getTrip should make GET request to /trips/:id', () => {
+    const id = mockTrip.id;
+    service.getTrip(id).subscribe();
+
+    const req = httpMock.expectOne(`${API_BASE_URL}/trips/${id}`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockTrip);
+  });
+
+  it('getTrip should set currentTrip signal', () => {
+    const id = mockTrip.id;
+    service.getTrip(id).subscribe();
+
+    const req = httpMock.expectOne(`${API_BASE_URL}/trips/${id}`);
+    req.flush(mockTrip);
+
+    expect(service.currentTrip()).toEqual(mockTrip);
+  });
+
+  it('updateTrip should make PUT request to /trips/:id with FormData', () => {
+    const id = mockTrip.id;
+    service.updateTrip(id, { name: 'Updated' }).subscribe();
+
+    const req = httpMock.expectOne(`${API_BASE_URL}/trips/${id}`);
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.body instanceof FormData).toBe(true);
+    req.flush(mockTrip);
+  });
+
+  it('updateTrip should update currentTrip and trips list signals', () => {
+    const id = mockTrip.id;
+    const updated = { ...mockTrip, name: 'Updated' };
+
+    // Pre-populate list
+    service.getTrips().subscribe();
+    httpMock.expectOne(`${API_BASE_URL}/trips`).flush([mockTrip]);
+
+    service.updateTrip(id, { name: 'Updated' }).subscribe();
+    httpMock.expectOne(`${API_BASE_URL}/trips/${id}`).flush(updated);
+
+    expect(service.currentTrip()).toEqual(updated);
+    expect(service.trips()[0]).toEqual(updated);
+  });
 });

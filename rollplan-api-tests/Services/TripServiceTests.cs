@@ -144,4 +144,87 @@ public class TripServiceTests : IDisposable
 
         Assert.Empty(result);
     }
+
+    [Fact]
+    public async Task GetTripAsync_ReturnsTrip_WhenOwned()
+    {
+        var now = DateTime.UtcNow;
+        var tripId = Guid.NewGuid();
+        _dbContext.Trips.Add(new Trip { Id = tripId, Name = "My Trip", UserId = _userId, Status = TripStatus.Planning, CreatedAt = now, UpdatedAt = now });
+        await _dbContext.SaveChangesAsync();
+
+        var result = await _service.GetTripAsync(_userId, tripId);
+
+        Assert.NotNull(result);
+        Assert.Equal(tripId, result.Id);
+        Assert.Equal("My Trip", result.Name);
+    }
+
+    [Fact]
+    public async Task GetTripAsync_ReturnsNull_WhenOwnedByOtherUser()
+    {
+        var now = DateTime.UtcNow;
+        var tripId = Guid.NewGuid();
+        _dbContext.Trips.Add(new Trip { Id = tripId, Name = "Other Trip", UserId = Guid.NewGuid(), Status = TripStatus.Planning, CreatedAt = now, UpdatedAt = now });
+        await _dbContext.SaveChangesAsync();
+
+        var result = await _service.GetTripAsync(_userId, tripId);
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task GetTripAsync_ReturnsNull_WhenNotFound()
+    {
+        var result = await _service.GetTripAsync(_userId, Guid.NewGuid());
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task UpdateTripAsync_UpdatesFieldsAndReturnsResponse()
+    {
+        var now = DateTime.UtcNow;
+        var tripId = Guid.NewGuid();
+        _dbContext.Trips.Add(new Trip { Id = tripId, Name = "Old Name", Description = "Old Desc", UserId = _userId, Status = TripStatus.Planning, CreatedAt = now, UpdatedAt = now });
+        await _dbContext.SaveChangesAsync();
+
+        var request = new UpdateTripRequest { Name = "New Name", Description = "New Desc" };
+        var result = await _service.UpdateTripAsync(_userId, tripId, request);
+
+        Assert.NotNull(result);
+        Assert.Equal("New Name", result.Name);
+        Assert.Equal("New Desc", result.Description);
+    }
+
+    [Fact]
+    public async Task UpdateTripAsync_UpdatesTimestamp()
+    {
+        var before = DateTime.UtcNow;
+        var tripId = Guid.NewGuid();
+        _dbContext.Trips.Add(new Trip { Id = tripId, Name = "Trip", UserId = _userId, Status = TripStatus.Planning, CreatedAt = before.AddHours(-1), UpdatedAt = before.AddHours(-1) });
+        await _dbContext.SaveChangesAsync();
+
+        var request = new UpdateTripRequest { Name = "Updated" };
+        var result = await _service.UpdateTripAsync(_userId, tripId, request);
+
+        Assert.NotNull(result);
+        Assert.True(result.UpdatedAt >= before);
+    }
+
+    [Fact]
+    public async Task UpdateTripAsync_ReturnsNull_WhenNotOwned()
+    {
+        var now = DateTime.UtcNow;
+        var tripId = Guid.NewGuid();
+        _dbContext.Trips.Add(new Trip { Id = tripId, Name = "Other Trip", UserId = Guid.NewGuid(), Status = TripStatus.Planning, CreatedAt = now, UpdatedAt = now });
+        await _dbContext.SaveChangesAsync();
+
+        var request = new UpdateTripRequest { Name = "Hacked" };
+        var result = await _service.UpdateTripAsync(_userId, tripId, request);
+
+        Assert.Null(result);
+        var unchanged = await _dbContext.Trips.FindAsync(tripId);
+        Assert.Equal("Other Trip", unchanged!.Name);
+    }
 }
