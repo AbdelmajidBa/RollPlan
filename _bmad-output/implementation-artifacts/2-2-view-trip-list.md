@@ -1,6 +1,6 @@
 # Story 2.2: View Trip List
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -19,39 +19,39 @@ So that I can quickly access and manage each one.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Backend — Add `GetTripsAsync` to `ITripService` + `TripService` (AC: #1)
-  - [ ] Add `Task<IEnumerable<TripResponse>> GetTripsAsync(Guid userId)` to `rollplan-api/Services/ITripService.cs`
-  - [ ] Implement in `rollplan-api/Services/TripService.cs`: query `_dbContext.Trips` where `UserId == userId`, order by `UpdatedAt DESC`, project to `TripResponse` via `MapToResponse`
+- [x] Task 1: Backend — Add `GetTripsAsync` to `ITripService` + `TripService` (AC: #1)
+  - [x] Add `Task<IEnumerable<TripResponse>> GetTripsAsync(Guid userId)` to `rollplan-api/Services/ITripService.cs`
+  - [x] Implement in `rollplan-api/Services/TripService.cs`: query `_dbContext.Trips` where `UserId == userId`, order by `UpdatedAt DESC`, project to `TripResponse` via `MapToResponse`
 
-- [ ] Task 2: Backend — Add `GET /api/v1/trips` endpoint (AC: #1)
-  - [ ] Add `[HttpGet]` `GetTrips()` action to `rollplan-api/Controllers/TripsController.cs`
-  - [ ] Call `GetTripsAsync(GetCurrentUserId())` and return `Ok(trips)`
+- [x] Task 2: Backend — Add `GET /api/v1/trips` endpoint (AC: #1)
+  - [x] Add `[HttpGet]` `GetTrips()` action to `rollplan-api/Controllers/TripsController.cs`
+  - [x] Call `GetTripsAsync(GetCurrentUserId())` and return `Ok(trips)`
 
-- [ ] Task 3: Backend — Unit tests for `GetTripsAsync` (AC: #1)
-  - [ ] Add to `rollplan-api-tests/Services/TripServiceTests.cs`:
+- [x] Task 3: Backend — Unit tests for `GetTripsAsync` (AC: #1)
+  - [x] Add to `rollplan-api-tests/Services/TripServiceTests.cs`:
     - `GetTripsAsync_ReturnsOnlyUserTrips` — seeds trips for two users, verifies only caller's trips returned
     - `GetTripsAsync_OrdersByUpdatedAtDescending` — seeds 3 trips with different UpdatedAt values, verifies order
     - `GetTripsAsync_NoTrips_ReturnsEmpty` — no trips seeded, verifies empty collection returned
 
-- [ ] Task 4: Angular — Add `getTrips()` to `TripService` (AC: #1)
-  - [ ] Add `getTrips(): Observable<Trip[]>` to `rollplan-client/src/app/trips/services/trip.service.ts`
-  - [ ] `GET ${API_BASE_URL}/trips` returning `Trip[]`, use `tap(trips => this._trips.set(trips))` to populate signal
-  - [ ] No changes to existing `createTrip()` — it already pushes new trip to front of `_trips` signal via `tap(trip => this._trips.update(list => [trip, ...list]))`
+- [x] Task 4: Angular — Add `getTrips()` to `TripService` (AC: #1)
+  - [x] Add `getTrips(): Observable<Trip[]>` to `rollplan-client/src/app/trips/services/trip.service.ts`
+  - [x] `GET ${API_BASE_URL}/trips` returning `Trip[]`, use `tap(trips => this._trips.set(trips))` to populate signal
+  - [x] No changes to existing `createTrip()` — it already pushes new trip to front of `_trips` signal via `tap(trip => this._trips.update(list => [trip, ...list]))`
 
-- [ ] Task 5: Angular — Update `TripListComponent` to load trips on init and link cards (AC: #1)
-  - [ ] Implement `OnInit` in `rollplan-client/src/app/trips/trip-list/trip-list.component.ts`:
+- [x] Task 5: Angular — Update `TripListComponent` to load trips on init and link cards (AC: #1)
+  - [x] Implement `OnInit` in `rollplan-client/src/app/trips/trip-list/trip-list.component.ts`:
     - Call `this.tripService.getTrips().subscribe()` in `ngOnInit()`
     - Add `isLoading` signal (`signal(true)`) — set to `false` on success or error in subscribe
-  - [ ] Update `rollplan-client/src/app/trips/trip-list/trip-list.component.html`:
+  - [x] Update `rollplan-client/src/app/trips/trip-list/trip-list.component.html`:
     - Wrap each trip card `<div>` in `<a [routerLink]="['/trips', trip.id]">` (or convert div to anchor) so each card navigates to `/trips/:id`
     - Add loading state: show spinner or skeleton while `isLoading()` is true
-  - [ ] Import `OnInit` from `@angular/core`
+  - [x] Import `OnInit` from `@angular/core`
 
-- [ ] Task 6: Angular — Update unit tests (AC: #1)
-  - [ ] Update `rollplan-client/src/app/trips/services/trip.service.spec.ts`:
+- [x] Task 6: Angular — Update unit tests (AC: #1)
+  - [x] Update `rollplan-client/src/app/trips/services/trip.service.spec.ts`:
     - `getTrips_makesGetRequest` — verify GET `/api/v1/trips` called
     - `getTrips_populatesSignal` — verify `_trips` signal is set with response data
-  - [ ] Update `rollplan-client/src/app/trips/trip-list/trip-list.component.spec.ts`:
+  - [x] Update `rollplan-client/src/app/trips/trip-list/trip-list.component.spec.ts`:
     - Add `ngOnInit` test — verify `getTrips()` is called on component creation (spy on service)
     - Add trip card link test — create fixture with mock trips, verify cards have `routerLink` pointing to `/trips/:id`
     - Add loading state test — verify loading is shown initially then hidden after HTTP response

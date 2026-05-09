@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using RollPlan.Api.Data;
 using RollPlan.Api.Models.DTOs.Trips;
 using RollPlan.Api.Models.Entities;
@@ -57,6 +58,16 @@ public class TripService : ITripService
         }
 
         return MapToResponse(trip);
+    }
+
+    public async Task<IEnumerable<TripResponse>> GetTripsAsync(Guid userId)
+    {
+        var trips = await _dbContext.Trips
+            .Where(t => t.UserId == userId)
+            .OrderByDescending(t => t.UpdatedAt)
+            .ToListAsync();
+
+        return trips.Select(MapToResponse);
     }
 
     private static TripResponse MapToResponse(Trip trip) => new()

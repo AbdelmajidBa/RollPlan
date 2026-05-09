@@ -77,4 +77,22 @@ describe('TripService', () => {
     expect(fd.get('description')).toBeNull();
     req.flush(mockTrip);
   });
+
+  it('getTrips should make GET request to /trips', () => {
+    service.getTrips().subscribe();
+
+    const req = httpMock.expectOne(`${API_BASE_URL}/trips`);
+    expect(req.request.method).toBe('GET');
+    req.flush([]);
+  });
+
+  it('getTrips should populate trips signal with response data', () => {
+    const mockTrips = [mockTrip];
+    service.getTrips().subscribe();
+
+    const req = httpMock.expectOne(`${API_BASE_URL}/trips`);
+    req.flush(mockTrips);
+
+    expect(service.trips()).toEqual(mockTrips);
+  });
 });

@@ -42,4 +42,10 @@ export class TripService {
       .post<Trip>(`${API_BASE_URL}/trips`, formData)
       .pipe(tap(trip => this._trips.update(list => [trip, ...list])));
   }
+
+  getTrips(): Observable<Trip[]> {
+    return this.http
+      .get<Trip[]>(`${API_BASE_URL}/trips`)
+      .pipe(tap(trips => this._trips.set(trips)));
+  }
 }
