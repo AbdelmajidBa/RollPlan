@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { CdkDragDrop, CdkDropList, CdkDrag, CdkDragPlaceholder, moveItemInArray } from '@angular/cdk/drag-drop';
 import { StepService, StepType, Step } from '../services/step.service';
 import { PlacesAutocompleteDirective } from '../../shared/directives/places-autocomplete.directive';
 import { PlaceSelectedEvent } from '../../core/services/places.service';
@@ -10,7 +11,7 @@ import { PlaceSelectedEvent } from '../../core/services/places.service';
 @Component({
   selector: 'app-step-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PlacesAutocompleteDirective],
+  imports: [CommonModule, ReactiveFormsModule, PlacesAutocompleteDirective, CdkDropList, CdkDrag, CdkDragPlaceholder],
   templateUrl: './step-list.component.html'
 })
 export class StepListComponent implements OnInit, OnDestroy {
@@ -34,6 +35,8 @@ export class StepListComponent implements OnInit, OnDestroy {
   deletingStepId = signal<string | null>(null);
   isDeletingStep = signal(false);
   deleteError = signal<string | null>(null);
+
+  reorderError = signal<string | null>(null);
 
   private readonly locationSub: Subscription;
   private readonly editLocationSub: Subscription;
@@ -248,6 +251,19 @@ export class StepListComponent implements OnInit, OnDestroy {
           this.formError.set(err.error?.detail ?? 'Failed to add step.');
         }
       }
+    });
+  }
+
+  onDrop(event: CdkDragDrop<Step[]>): void {
+    if (event.previousIndex === event.currentIndex) return;
+
+    const reordered = [...this.steps()];
+    moveItemInArray(reordered, event.previousIndex, event.currentIndex);
+    const stepIds = reordered.map(s => s.id);
+
+    this.reorderError.set(null);
+    this.stepService.reorderSteps(this.tripId, stepIds).subscribe({
+      error: () => this.reorderError.set('Failed to reorder steps. Order has been restored.')
     });
   }
 

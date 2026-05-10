@@ -42,6 +42,14 @@ public class StepsController : ControllerBase
         return step is null ? NotFound() : StatusCode(201, step);
     }
 
+    [HttpPut("reorder")]
+    public async Task<IActionResult> ReorderSteps(Guid tripId, [FromBody] ReorderStepsRequest request)
+    {
+        var userId = GetCurrentUserId();
+        var steps = await _stepService.ReorderStepsAsync(userId, tripId, request);
+        return steps is null ? NotFound() : Ok(steps);
+    }
+
     [HttpPut("{stepId:guid}")]
     public async Task<IActionResult> UpdateStep(Guid tripId, Guid stepId, [FromBody] UpdateStepRequest request)
     {

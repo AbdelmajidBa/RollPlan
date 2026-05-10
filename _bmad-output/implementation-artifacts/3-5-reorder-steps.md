@@ -1,6 +1,6 @@
 # Story 3.5: Reorder Steps
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -31,44 +31,44 @@ So that my itinerary reflects the correct sequence of events.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Install Angular CDK (required dependency)
-  - [ ] Run `npm install @angular/cdk@^21.2.0` in `rollplan-client/`
-  - [ ] Verify `@angular/cdk` appears in `package.json` dependencies
+- [x] Task 1: Install Angular CDK (required dependency)
+  - [x] Run `npm install @angular/cdk@^21.2.0` in `rollplan-client/`
+  - [x] Verify `@angular/cdk` appears in `package.json` dependencies
 
-- [ ] Task 2: Backend — Add ReorderStepsRequest DTO and interface method (AC: #1, #4)
-  - [ ] Create `rollplan-api/Models/DTOs/Steps/ReorderStepsRequest.cs` with a single property `public List<Guid> StepIds { get; set; } = new();`
-  - [ ] In `rollplan-api/Services/IStepService.cs`: add `Task<IEnumerable<StepResponse>?> ReorderStepsAsync(Guid userId, Guid tripId, ReorderStepsRequest request);`
+- [x] Task 2: Backend — Add ReorderStepsRequest DTO and interface method (AC: #1, #4)
+  - [x] Create `rollplan-api/Models/DTOs/Steps/ReorderStepsRequest.cs` with a single property `public List<Guid> StepIds { get; set; } = new();`
+  - [x] In `rollplan-api/Services/IStepService.cs`: add `Task<IEnumerable<StepResponse>?> ReorderStepsAsync(Guid userId, Guid tripId, ReorderStepsRequest request);`
 
-- [ ] Task 3: Backend — Implement ReorderStepsAsync and controller endpoint (AC: #1, #4)
-  - [ ] In `rollplan-api/Services/StepService.cs`: implement `ReorderStepsAsync` — find trip by `tripId && userId`, return null if not owned; load all steps for the trip; assign `SortOrder = index + 1` to each step in `request.StepIds` order; call `SaveChangesAsync`; return steps ordered by SortOrder via `MapToResponse`
-  - [ ] In `rollplan-api/Controllers/StepsController.cs`: add `[HttpPut("reorder")]` action `ReorderSteps(Guid tripId, [FromBody] ReorderStepsRequest request)` — call `ReorderStepsAsync`; return `Ok(steps)` or `NotFound()`
+- [x] Task 3: Backend — Implement ReorderStepsAsync and controller endpoint (AC: #1, #4)
+  - [x] In `rollplan-api/Services/StepService.cs`: implement `ReorderStepsAsync` — find trip by `tripId && userId`, return null if not owned; load all steps for the trip; assign `SortOrder = index + 1` to each step in `request.StepIds` order; call `SaveChangesAsync`; return steps ordered by SortOrder via `MapToResponse`
+  - [x] In `rollplan-api/Controllers/StepsController.cs`: add `[HttpPut("reorder")]` action `ReorderSteps(Guid tripId, [FromBody] ReorderStepsRequest request)` — call `ReorderStepsAsync`; return `Ok(steps)` or `NotFound()`
 
-- [ ] Task 4: Backend — Unit tests (AC: #1, #4)
-  - [ ] In `rollplan-api-tests/Services/StepServiceTests.cs`: add `ReorderStepsAsync_ReordersSteps_WhenOwned` — seed trip + 3 steps, call with reversed ID order, assert SortOrder values are correctly reassigned (first ID gets SortOrder 1, etc.)
-  - [ ] Add `ReorderStepsAsync_ReturnsNull_WhenTripNotOwned` — seed trip with different owner, assert null returned and sort orders unchanged
+- [x] Task 4: Backend — Unit tests (AC: #1, #4)
+  - [x] In `rollplan-api-tests/Services/StepServiceTests.cs`: add `ReorderStepsAsync_ReordersSteps_WhenOwned` — seed trip + 3 steps, call with reversed ID order, assert SortOrder values are correctly reassigned (first ID gets SortOrder 1, etc.)
+  - [x] Add `ReorderStepsAsync_ReturnsNull_WhenTripNotOwned` — seed trip with different owner, assert null returned and sort orders unchanged
 
-- [ ] Task 5: Angular — Add reorderSteps to StepService (AC: #1, #3)
-  - [ ] In `rollplan-client/src/app/steps/services/step.service.ts`: add `reorderSteps(tripId: string, stepIds: string[]): Observable<Step[]>` — capture `snapshot = this._steps()` before the call; optimistically update `this._steps.set(stepIds.map((id, i) => ({...snapshot.find(s => s.id === id)!, sortOrder: i + 1})))`; send `PUT ${API_BASE_URL}/trips/${tripId}/steps/reorder` with `{ stepIds }`; use `tap(updated => this._steps.set(updated))` on success; use `catchError(err => { this._steps.set(snapshot); return throwError(() => err); })` on failure
-  - [ ] Add required imports: `catchError` from `'rxjs/operators'`, `throwError` from `'rxjs'`
+- [x] Task 5: Angular — Add reorderSteps to StepService (AC: #1, #3)
+  - [x] In `rollplan-client/src/app/steps/services/step.service.ts`: add `reorderSteps(tripId: string, stepIds: string[]): Observable<Step[]>` — capture `snapshot = this._steps()` before the call; optimistically update `this._steps.set(stepIds.map((id, i) => ({...snapshot.find(s => s.id === id)!, sortOrder: i + 1})))`; send `PUT ${API_BASE_URL}/trips/${tripId}/steps/reorder` with `{ stepIds }`; use `tap(updated => this._steps.set(updated))` on success; use `catchError(err => { this._steps.set(snapshot); return throwError(() => err); })` on failure
+  - [x] Add required imports: `catchError` from `'rxjs/operators'`, `throwError` from `'rxjs'`
 
-- [ ] Task 6: Angular — Add drag-and-drop UI to StepListComponent (AC: #1, #2, #3)
-  - [ ] In `rollplan-client/src/app/steps/step-list/step-list.component.ts`:
-    - [ ] Add imports: `CdkDragDrop`, `CdkDropList`, `CdkDrag`, `CdkDragPlaceholder`, `moveItemInArray` from `'@angular/cdk/drag-drop'`
-    - [ ] Add `CdkDropList`, `CdkDrag`, `CdkDragPlaceholder` to the component `imports` array
-    - [ ] Add `reorderError = signal<string | null>(null)` signal
-    - [ ] Add `onDrop(event: CdkDragDrop<Step[]>): void` — if `event.previousIndex === event.currentIndex`, return immediately; build `stepIds` by cloning `steps()` into a temp array, calling `moveItemInArray(temp, prev, curr)`, then mapping to IDs; call `this.stepService.reorderSteps(this.tripId, stepIds)` with error handler setting `reorderError`
-  - [ ] In `rollplan-client/src/app/steps/step-list/step-list.component.html`:
-    - [ ] Wrap the `*ngFor` step list `<div>` container with `cdkDropList [cdkDropListData]="steps()" (cdkDropListDropped)="onDrop($event)"`
-    - [ ] Add `cdkDrag` directive to the per-step card `<div *ngFor="let step of steps()">`
-    - [ ] Add a `<div *cdkDragPlaceholder>` inside the step card as the drag placeholder (dashed border style)
-    - [ ] Add a drag handle `<div cdkDragHandle>` with a grip icon (`⠿` or `≡`) inside VIEW MODE to avoid interfering with Edit/Delete buttons
-    - [ ] Show `reorderError()` above the step list when non-null
+- [x] Task 6: Angular — Add drag-and-drop UI to StepListComponent (AC: #1, #2, #3)
+  - [x] In `rollplan-client/src/app/steps/step-list/step-list.component.ts`:
+    - [x] Add imports: `CdkDragDrop`, `CdkDropList`, `CdkDrag`, `CdkDragPlaceholder`, `moveItemInArray` from `'@angular/cdk/drag-drop'`
+    - [x] Add `CdkDropList`, `CdkDrag`, `CdkDragPlaceholder` to the component `imports` array
+    - [x] Add `reorderError = signal<string | null>(null)` signal
+    - [x] Add `onDrop(event: CdkDragDrop<Step[]>): void` — if `event.previousIndex === event.currentIndex`, return immediately; build `stepIds` by cloning `steps()` into a temp array, calling `moveItemInArray(temp, prev, curr)`, then mapping to IDs; call `this.stepService.reorderSteps(this.tripId, stepIds)` with error handler setting `reorderError`
+  - [x] In `rollplan-client/src/app/steps/step-list/step-list.component.html`:
+    - [x] Wrap the `*ngFor` step list `<div>` container with `cdkDropList [cdkDropListData]="steps()" (cdkDropListDropped)="onDrop($event)"`
+    - [x] Add `cdkDrag` directive to the per-step card `<div *ngFor="let step of steps()">`
+    - [x] Add a `<div *cdkDragPlaceholder>` inside the step card as the drag placeholder (dashed border style)
+    - [x] Add a drag handle `<div cdkDragHandle>` with a grip icon (`⠿` or `≡`) inside VIEW MODE to avoid interfering with Edit/Delete buttons
+    - [x] Show `reorderError()` above the step list when non-null
 
-- [ ] Task 7: Angular — Unit tests (AC: #1, #2)
-  - [ ] In `rollplan-client/src/app/steps/step-list/step-list.component.spec.ts`:
-    - [ ] Add `reorderStepsSpy` to the mock `StepService` stub
-    - [ ] Add test: `should call reorderSteps when step is dropped at new position` — call `onDrop` with a mock `CdkDragDrop` event (`previousIndex: 0, currentIndex: 1`, `container.data: [mockStep, mockStep2]`), assert `reorderStepsSpy` called with correct tripId and reordered IDs
-    - [ ] Add test: `should not call reorderSteps when dropped at same position` — call `onDrop` with `previousIndex: 0, currentIndex: 0`, assert `reorderStepsSpy` not called
+- [x] Task 7: Angular — Unit tests (AC: #1, #2)
+  - [x] In `rollplan-client/src/app/steps/step-list/step-list.component.spec.ts`:
+    - [x] Add `reorderStepsSpy` to the mock `StepService` stub
+    - [x] Add test: `should call reorderSteps when step is dropped at new position` — call `onDrop` with a mock `CdkDragDrop` event (`previousIndex: 0, currentIndex: 1`, `container.data: [mockStep, mockStep2]`), assert `reorderStepsSpy` called with correct tripId and reordered IDs
+    - [x] Add test: `should not call reorderSteps when dropped at same position` — call `onDrop` with `previousIndex: 0, currentIndex: 0`, assert `reorderStepsSpy` not called
 
 ## Dev Notes
 
@@ -318,7 +318,7 @@ New endpoint: `PUT /api/v1/trips/{tripId}/steps/reorder` — JWT required, body 
 
 ### Agent Model Used
 
-(to be filled)
+claude-sonnet-4-6
 
 ### File List
 
@@ -328,6 +328,7 @@ New endpoint: `PUT /api/v1/trips/{tripId}/steps/reorder` — JWT required, body 
 - `rollplan-api/Controllers/StepsController.cs` (modified)
 - `rollplan-api-tests/Services/StepServiceTests.cs` (modified)
 - `rollplan-client/package.json` (modified — @angular/cdk added)
+- `rollplan-client/package-lock.json` (modified)
 - `rollplan-client/src/app/steps/services/step.service.ts` (modified)
 - `rollplan-client/src/app/steps/step-list/step-list.component.ts` (modified)
 - `rollplan-client/src/app/steps/step-list/step-list.component.html` (modified)
@@ -335,4 +336,4 @@ New endpoint: `PUT /api/v1/trips/{tripId}/steps/reorder` — JWT required, body 
 
 ### Change Log
 
-(to be filled)
+- 2026-05-10: Implemented story 3-5-reorder-steps — installed @angular/cdk, added ReorderStepsRequest DTO, ReorderStepsAsync service method and PUT reorder endpoint, 2 backend unit tests, reorderSteps Angular service method with optimistic update + catchError rollback, CdkDropList/CdkDrag/cdkDragHandle UI in StepListComponent, 2 Angular unit tests. 108/108 tests pass.

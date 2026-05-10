@@ -107,6 +107,29 @@ public class StepService : IStepService
         return true;
     }
 
+    public async Task<IEnumerable<StepResponse>?> ReorderStepsAsync(Guid userId, Guid tripId, ReorderStepsRequest request)
+    {
+        var trip = await _dbContext.Trips
+            .FirstOrDefaultAsync(t => t.Id == tripId && t.UserId == userId);
+
+        if (trip is null) return null;
+
+        var steps = await _dbContext.Steps
+            .Where(s => s.TripId == tripId)
+            .ToListAsync();
+
+        for (int i = 0; i < request.StepIds.Count; i++)
+        {
+            var step = steps.FirstOrDefault(s => s.Id == request.StepIds[i]);
+            if (step is not null)
+                step.SortOrder = i + 1;
+        }
+
+        await _dbContext.SaveChangesAsync();
+
+        return steps.OrderBy(s => s.SortOrder).Select(MapToResponse);
+    }
+
     private static StepResponse MapToResponse(Step step) => new()
     {
         Id = step.Id,

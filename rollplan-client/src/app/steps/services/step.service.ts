@@ -1,6 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { API_BASE_URL } from '../../core/config/api.config';
 
 export type StepType = 'Travel' | 'Accommodation' | 'Activity' | 'Meal' | 'Rest';
@@ -71,5 +72,24 @@ export class StepService {
     return this.http
       .delete<void>(`${API_BASE_URL}/trips/${tripId}/steps/${stepId}`)
       .pipe(tap(() => this._steps.update(list => list.filter(s => s.id !== stepId))));
+  }
+
+  reorderSteps(tripId: string, stepIds: string[]): Observable<Step[]> {
+    const snapshot = this._steps();
+    const optimistic = stepIds.map((id, i) => ({
+      ...snapshot.find(s => s.id === id)!,
+      sortOrder: i + 1
+    }));
+    this._steps.set(optimistic);
+
+    return this.http
+      .put<Step[]>(`${API_BASE_URL}/trips/${tripId}/steps/reorder`, { stepIds })
+      .pipe(
+        tap(updated => this._steps.set(updated)),
+        catchError(err => {
+          this._steps.set(snapshot);
+          return throwError(() => err);
+        })
+      );
   }
 }

@@ -280,4 +280,44 @@ public class StepServiceTests : IDisposable
 
         Assert.False(result);
     }
+
+    [Fact]
+    public async Task ReorderStepsAsync_ReordersSteps_WhenOwned()
+    {
+        var trip = SeedTrip();
+        var step1 = SeedStep(trip.Id, 1);
+        var step2 = SeedStep(trip.Id, 2);
+        var step3 = SeedStep(trip.Id, 3);
+
+        var reversedIds = new List<Guid> { step3.Id, step2.Id, step1.Id };
+        var request = new ReorderStepsRequest { StepIds = reversedIds };
+
+        var result = (await _service.ReorderStepsAsync(_userId, trip.Id, request))!.ToList();
+
+        Assert.NotNull(result);
+        Assert.Equal(step3.Id, result[0].Id);
+        Assert.Equal(1, result[0].SortOrder);
+        Assert.Equal(step2.Id, result[1].Id);
+        Assert.Equal(2, result[1].SortOrder);
+        Assert.Equal(step1.Id, result[2].Id);
+        Assert.Equal(3, result[2].SortOrder);
+    }
+
+    [Fact]
+    public async Task ReorderStepsAsync_ReturnsNull_WhenTripNotOwned()
+    {
+        var trip = SeedTrip(Guid.NewGuid());
+        var step1 = SeedStep(trip.Id, 1);
+        var step2 = SeedStep(trip.Id, 2);
+
+        var request = new ReorderStepsRequest { StepIds = new List<Guid> { step2.Id, step1.Id } };
+
+        var result = await _service.ReorderStepsAsync(_userId, trip.Id, request);
+
+        Assert.Null(result);
+        var unchanged1 = await _dbContext.Steps.FindAsync(step1.Id);
+        var unchanged2 = await _dbContext.Steps.FindAsync(step2.Id);
+        Assert.Equal(1, unchanged1!.SortOrder);
+        Assert.Equal(2, unchanged2!.SortOrder);
+    }
 }

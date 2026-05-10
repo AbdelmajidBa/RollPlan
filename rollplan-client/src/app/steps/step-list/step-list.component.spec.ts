@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { StepListComponent } from './step-list.component';
 import { StepService, Step } from '../services/step.service';
 
@@ -15,11 +16,22 @@ const mockStep: Step = {
   updatedAt: '2026-05-09T10:00:00Z'
 };
 
+const mockStep2: Step = {
+  id: '33333333-3333-3333-3333-333333333333',
+  tripId: '11111111-1111-1111-1111-111111111111',
+  name: 'Hotel Check-in',
+  type: 'Accommodation',
+  sortOrder: 2,
+  createdAt: '2026-05-09T10:00:00Z',
+  updatedAt: '2026-05-09T10:00:00Z'
+};
+
 describe('StepListComponent', () => {
   let getStepsSpy: ReturnType<typeof vi.fn>;
   let addStepSpy: ReturnType<typeof vi.fn>;
   let updateStepSpy: ReturnType<typeof vi.fn>;
   let deleteStepSpy: ReturnType<typeof vi.fn>;
+  let reorderStepsSpy: ReturnType<typeof vi.fn>;
   let stepsSignal: ReturnType<typeof signal<Step[]>>;
 
   beforeEach(async () => {
@@ -27,6 +39,7 @@ describe('StepListComponent', () => {
     addStepSpy = vi.fn();
     updateStepSpy = vi.fn();
     deleteStepSpy = vi.fn();
+    reorderStepsSpy = vi.fn();
     stepsSignal = signal<Step[]>([]);
 
     const stepServiceStub = {
@@ -34,7 +47,8 @@ describe('StepListComponent', () => {
       getSteps: getStepsSpy,
       addStep: addStepSpy,
       updateStep: updateStepSpy,
-      deleteStep: deleteStepSpy
+      deleteStep: deleteStepSpy,
+      reorderSteps: reorderStepsSpy
     };
 
     await TestBed.configureTestingModule({
@@ -213,5 +227,53 @@ describe('StepListComponent', () => {
     fixture.componentInstance.doDelete();
     expect(fixture.componentInstance.deleteError()).toBe('Failed to delete step.');
     expect(fixture.componentInstance.isDeletingStep()).toBe(false);
+  });
+
+  it('should call reorderSteps when step is dropped at new position', () => {
+    getStepsSpy.mockReturnValue(of([mockStep, mockStep2]));
+    reorderStepsSpy.mockReturnValue(of([mockStep2, mockStep]));
+    stepsSignal.set([mockStep, mockStep2]);
+    const fixture = TestBed.createComponent(StepListComponent);
+    fixture.componentInstance.tripId = '11111111-1111-1111-1111-111111111111';
+    fixture.detectChanges();
+
+    const dropEvent = {
+      previousIndex: 0,
+      currentIndex: 1,
+      item: {} as any,
+      container: { data: [mockStep, mockStep2] } as any,
+      previousContainer: { data: [mockStep, mockStep2] } as any,
+      isPointerOverContainer: true,
+      distance: { x: 0, y: 0 },
+      dropPoint: { x: 0, y: 0 }
+    } as CdkDragDrop<Step[]>;
+
+    fixture.componentInstance.onDrop(dropEvent);
+    expect(reorderStepsSpy).toHaveBeenCalledWith(
+      '11111111-1111-1111-1111-111111111111',
+      [mockStep2.id, mockStep.id]
+    );
+  });
+
+  it('should not call reorderSteps when dropped at same position', () => {
+    getStepsSpy.mockReturnValue(of([mockStep]));
+    stepsSignal.set([mockStep]);
+    const fixture = TestBed.createComponent(StepListComponent);
+    fixture.componentInstance.tripId = '11111111-1111-1111-1111-111111111111';
+    fixture.detectChanges();
+
+    const dropEvent = {
+      previousIndex: 0,
+      currentIndex: 0,
+      item: {} as any,
+      container: { data: [mockStep] } as any,
+      previousContainer: { data: [mockStep] } as any,
+      isPointerOverContainer: true,
+      distance: { x: 0, y: 0 },
+      dropPoint: { x: 0, y: 0 }
+    } as CdkDragDrop<Step[]>;
+
+    fixture.componentInstance.onDrop(dropEvent);
+    expect(reorderStepsSpy).not.toHaveBeenCalled();
   });
 });
