@@ -1,5 +1,15 @@
 # Deferred Work
 
+## Deferred from: code review of 3-4-delete-step (2026-05-10)
+
+- **Confirm dialog has no focus trap or Escape key handling** [`step-list.component.html`] — UX polish; address in an accessibility pass.
+- **In-flight `finalize` writes to destroyed component signals** [`step-list.component.ts`] — pre-existing pattern across all add/update/delete flows; no `takeUntilDestroyed` used anywhere. Address in an Angular lifecycle hygiene pass.
+- **`DeleteStepAsync` two DB round-trips not in a transaction** [`StepService.cs`] — stale ownership check possible between the two awaits; same pattern as AddStepAsync/UpdateStepAsync. Address with serializable transactions in a resilience pass.
+- **`cancelDelete` does not reset `isDeletingStep`** [`step-list.component.ts`] — `finalize` resets it when the in-flight request completes; no stuck state in practice. Revisit if UX feedback shows confusion.
+- **`tripId` not null-guarded in `doDelete`** [`step-list.component.ts`] — `@Input()` is always set before render; defensive guard deferred to a general input-validation pass.
+- **Concurrent DELETE → `DbUpdateConcurrencyException` → 500** [`StepService.cs`] — global exception handler concern; same as prior stories' SaveChangesAsync deferral.
+- **`DeleteStepAsync_WhenTripNotOwned` doesn't test concurrent-deletion window** [`StepServiceTests.cs`] — two-query race; same structural limitation as all service test methods.
+
 ## Deferred from: code review of 3-3-edit-step-details (2026-05-10)
 
 - **FluentValidation `.WithMessage` chaining after `.Must()`** [`UpdateStepRequestValidator.cs:19`] — same pattern as CreateStepRequestValidator reviewed in story 3.2; test coverage verifies correct behaviour. Audit if FluentValidation major version is upgraded.

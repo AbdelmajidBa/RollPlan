@@ -304,3 +304,18 @@ claude-sonnet-4-6
 ### Change Log
 
 - Implemented Story 3.4: added DELETE /api/v1/trips/{tripId}/steps/{stepId} endpoint, DeleteStepAsync in StepService (ownership check → Remove → SaveChangesAsync → bool), deleteStep in Angular StepService (filter from _steps signal), inline per-step delete confirmation in StepListComponent (deletingStepId signal, confirmDelete/cancelDelete/doDelete methods, red inline confirm block in VIEW MODE). 105 Angular tests pass (17 files). (Date: 2026-05-10)
+
+### Review Findings
+
+- [ ] [Review][Patch] `confirmDelete` switches delete target while `isDeletingStep` is true — confirm button silently does nothing for the new target [step-list.component.ts:124]
+- [ ] [Review][Patch] Missing test for `doDelete` error path — `deleteError` signal and `isDeletingStep` reset on failure are untested [step-list.component.spec.ts]
+- [ ] [Review][Patch] `startEdit` does not clear `deletingStepId` — delete confirm reappears after edit is saved for the same step [step-list.component.ts:103]
+
+- [x] [Review][Defer] Controller conflates trip-not-owned and step-not-found as same 404 [StepsController.cs] — deferred, pre-existing (same as story 3.3 W2)
+- [x] [Review][Defer] Confirm dialog has no focus trap / Escape key handling [step-list.component.html] — deferred, UX polish not a bug
+- [x] [Review][Defer] In-flight `finalize` writes to destroyed component signals [step-list.component.ts] — deferred, pre-existing pattern across all service calls (no `takeUntilDestroyed` anywhere)
+- [x] [Review][Defer] `DeleteStepAsync` two DB round-trips not in a transaction — stale ownership possible [StepService.cs] — deferred, pre-existing across all service methods
+- [x] [Review][Defer] `cancelDelete` does not reset `isDeletingStep` [step-list.component.ts] — deferred, `finalize` resets it when in-flight request completes; not a stuck state
+- [x] [Review][Defer] `tripId` passed without null/empty guard in `doDelete` [step-list.component.ts] — deferred, pre-existing pattern; tripId always set from `@Input()` before component renders
+- [x] [Review][Defer] Concurrent DELETE → `DbUpdateConcurrencyException` → unhandled 500 [StepService.cs] — deferred, global exception handler concern
+- [x] [Review][Defer] `DeleteStepAsync_WhenTripNotOwned` test doesn't cover concurrent-deletion race [StepServiceTests.cs] — deferred, pre-existing two-query pattern
