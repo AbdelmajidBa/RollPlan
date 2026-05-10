@@ -1,6 +1,6 @@
 # Story 2.5: Delete Trip
 
-Status: review
+Status: done
 
 ## Story
 
@@ -41,6 +41,11 @@ So that I can remove trips I no longer need.
 - [x] Task 5: Angular — Unit tests (AC: #1)
   - [x] `trip.service.spec.ts`: `deleteTrip should DELETE /trips/:id`, `deleteTrip should remove trip from signals`
   - [x] `trip-detail.component.spec.ts`: `should show confirm dialog when showConfirm is true`, `should hide confirm dialog when cancel clicked`
+
+### Review Findings
+
+- [x] [Review][Patch] `DeleteTripAsync` — storage deletion runs after `SaveChangesAsync` with no error handling; a storage error after DB commit returns HTTP 500 even though the trip is already deleted from the database [rollplan-api/Services/TripService.cs]
+- [x] [Review][Patch] `doDelete()` in `TripDetailComponent` has no `error` callback — network/server errors fail silently with no user feedback [rollplan-client/src/app/trips/trip-detail/trip-detail.component.ts]
 
 ## Dev Notes
 

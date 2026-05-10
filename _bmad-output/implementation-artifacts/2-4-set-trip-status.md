@@ -1,6 +1,6 @@
 # Story 2.4: Set Trip Status
 
-Status: review
+Status: done
 
 ## Story
 
@@ -44,6 +44,11 @@ So that I can track where the trip is in its lifecycle.
 - [x] Task 6: Angular — Unit tests (AC: #1)
   - [x] `trip.service.spec.ts`: `setTripStatus should PATCH /trips/:id/status`, `setTripStatus should update signals`
   - [x] `trip-detail.component.spec.ts`: `should show status select in view mode`
+
+### Review Findings
+
+- [x] [Review][Patch] Missing `SetTripStatusRequestValidator` — `Status` field has no validator; an empty JSON body silently sets status to `Planning` (enum default 0) with no 400 response [rollplan-api/Models/DTOs/Trips/SetTripStatusRequest.cs]
+- [x] [Review][Patch] `setStatus()` in `TripDetailComponent` has no `error` callback — network/server errors fail silently with no user feedback [rollplan-client/src/app/trips/trip-detail/trip-detail.component.ts]
 
 ## Dev Notes
 

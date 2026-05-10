@@ -1,6 +1,6 @@
 # Story 2.3: Edit Trip Details
 
-Status: review
+Status: done
 
 ## Story
 
@@ -93,6 +93,15 @@ So that my trip information stays accurate.
     - `should show loading initially then hide after response` — verify `isLoading` signal transitions
     - `should show edit form when isEditing is true` — set `isEditing.set(true)`, detectChanges, verify form rendered
     - `should show trip details when not editing` — pre-populate currentTrip signal, verify name shown in template
+
+### Review Findings
+
+- [x] [Review][Patch] Angular `updateTrip()` drops cleared description — truthy guard `if (request.description)` skips appending an empty string, so users cannot clear an existing description [rollplan-client/src/app/trips/services/trip.service.ts]
+- [x] [Review][Patch] `UpdateTripRequestValidator` missing cross-field date rule — `endDate` before `startDate` is accepted without validation error [rollplan-api/Models/DTOs/Trips/UpdateTripRequestValidator.cs]
+- [x] [Review][Patch] `UpdateTripRequest.StartDate`/`EndDate` typed as `DateTime?` (stored as `timestamp with time zone`) instead of `DateOnly?` — type mismatch with HTML date input strings; inconsistent with `Step.Date` which correctly uses `DateOnly?` [rollplan-api/Models/DTOs/Trips/UpdateTripRequest.cs]
+- [x] [Review][Patch] `trip-detail.component.spec.ts` missing test: `onSubmit()` should call `updateTrip` (named spec test absent) [rollplan-client/src/app/trips/trip-detail/trip-detail.component.spec.ts]
+- [x] [Review][Defer] MIME type validation trusts client-provided `Content-Type` header, not file magic bytes [rollplan-api/Models/DTOs/Trips/UpdateTripRequestValidator.cs] — deferred, pre-existing
+- [x] [Review][Defer] `UpdateTripAsync` old cover image orphaned when `DeleteFileAsync` throws after successful DB save [rollplan-api/Services/TripService.cs] — deferred, pre-existing
 
 ## Dev Notes
 
@@ -256,4 +265,20 @@ claude-sonnet-4-6
 
 ### File List
 
+- `rollplan-api/Models/Entities/Trip.cs` (modified)
+- `rollplan-api/Models/DTOs/Trips/TripResponse.cs` (modified)
+- `rollplan-api/Models/DTOs/Trips/UpdateTripRequest.cs` (modified)
+- `rollplan-api/Models/DTOs/Trips/UpdateTripRequestValidator.cs` (modified)
+- `rollplan-api/Models/DTOs/Trips/SetTripStatusRequestValidator.cs` (new)
+- `rollplan-api/Services/TripService.cs` (modified)
+- `rollplan-api/Migrations/AppDbContextModelSnapshot.cs` (modified)
+- `rollplan-api/Migrations/20260509000004_ChangeTripDatesToDate.cs` (new)
+- `rollplan-api/Migrations/20260509000004_ChangeTripDatesToDate.Designer.cs` (new)
+- `rollplan-api/Middleware/ErrorHandlingMiddleware.cs` (modified)
+- `rollplan-client/src/app/trips/services/trip.service.ts` (modified)
+- `rollplan-client/src/app/trips/trip-detail/trip-detail.component.ts` (modified)
+- `rollplan-client/src/app/trips/trip-detail/trip-detail.component.spec.ts` (modified)
+
 ### Change Log
+
+- Applied all review patches: fixed description truthy guard, added cross-field date validation, added missing updateTrip test, added SetTripStatusRequestValidator, fixed DeleteTripAsync storage error handling, added error callbacks to setStatus/doDelete, fixed UnauthorizedAccessException→401, changed Trip StartDate/EndDate from DateTime? to DateOnly? with matching migration 20260509000004. 93 Angular tests pass. (Date: 2026-05-10)

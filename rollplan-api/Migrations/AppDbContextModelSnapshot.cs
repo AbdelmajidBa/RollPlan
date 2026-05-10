@@ -270,6 +270,73 @@ namespace RollPlan.Api.Migrations
                     b.ToTable("asp_net_users", (string)null);
                 });
 
+            modelBuilder.Entity("RollPlan.Api.Models.Entities.Step", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateOnly?>("Date")
+                        .HasColumnType("date")
+                        .HasColumnName("date");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("double precision")
+                        .HasColumnName("latitude");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("text")
+                        .HasColumnName("location");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("double precision")
+                        .HasColumnName("longitude");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text")
+                        .HasColumnName("note");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.Property<string>("StartTime")
+                        .HasColumnType("text")
+                        .HasColumnName("start_time");
+
+                    b.Property<Guid>("TripId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("trip_id");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("type");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_steps");
+
+                    b.HasIndex("TripId")
+                        .HasDatabaseName("ix_steps_trip_id");
+
+                    b.ToTable("steps", (string)null);
+                });
+
             modelBuilder.Entity("RollPlan.Api.Models.Entities.Trip", b =>
                 {
                     b.Property<Guid>("Id")
@@ -289,8 +356,8 @@ namespace RollPlan.Api.Migrations
                         .HasColumnType("text")
                         .HasColumnName("description");
 
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("timestamp with time zone")
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date")
                         .HasColumnName("end_date");
 
                     b.Property<string>("Name")
@@ -299,8 +366,8 @@ namespace RollPlan.Api.Migrations
                         .HasColumnType("character varying(200)")
                         .HasColumnName("name");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("timestamp with time zone")
+                    b.Property<DateOnly?>("StartDate")
+                        .HasColumnType("date")
                         .HasColumnName("start_date");
 
                     b.Property<string>("Status")
@@ -380,6 +447,18 @@ namespace RollPlan.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_asp_net_user_tokens_asp_net_users_user_id");
+                });
+
+            modelBuilder.Entity("RollPlan.Api.Models.Entities.Step", b =>
+                {
+                    b.HasOne("RollPlan.Api.Models.Entities.Trip", "Trip")
+                        .WithMany()
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_steps_trips_trip_id");
+
+                    b.Navigation("Trip");
                 });
 
             modelBuilder.Entity("RollPlan.Api.Models.Entities.Trip", b =>

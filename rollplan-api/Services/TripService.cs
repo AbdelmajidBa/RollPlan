@@ -146,7 +146,10 @@ public class TripService : ITripService
         await _dbContext.SaveChangesAsync();
 
         if (coverImageUrl != null)
-            await _storageService.DeleteFileAsync(coverImageUrl);
+        {
+            try { await _storageService.DeleteFileAsync(coverImageUrl); }
+            catch { /* trip already deleted from DB; log and continue */ }
+        }
 
         return true;
     }

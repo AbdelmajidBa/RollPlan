@@ -19,6 +19,19 @@ public class ErrorHandlingMiddleware
         {
             await _next(context);
         }
+        catch (UnauthorizedAccessException)
+        {
+            context.Response.ContentType = "application/problem+json";
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            var unauthorizedProblem = new ProblemDetails
+            {
+                Type = "https://tools.ietf.org/html/rfc7807",
+                Title = "Unauthorized.",
+                Status = StatusCodes.Status401Unauthorized,
+                Detail = "Authentication is required."
+            };
+            await context.Response.WriteAsJsonAsync(unauthorizedProblem);
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled exception on {Method} {Path}",

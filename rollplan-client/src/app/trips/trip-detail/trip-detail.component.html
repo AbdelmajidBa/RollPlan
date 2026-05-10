@@ -19,7 +19,7 @@
 
     <ng-container *ngIf="!isLoading() && trip()">
 
-      <ng-container *ngIf="!isEditing()">
+      <ng-container *ngIf="!isEditing()" data-testid="view-mode">
         <div class="rounded-[2rem] bg-slate-900/90 p-8 ring-1 ring-white/10 shadow-lg">
           <div *ngIf="trip()!.coverImageUrl" class="mb-6 overflow-hidden rounded-2xl">
             <img [src]="trip()!.coverImageUrl" [alt]="trip()!.name" class="h-48 w-full object-cover" />
@@ -87,6 +87,8 @@
             </div>
           </div>
         </div>
+
+        <app-step-list [tripId]="tripId"></app-step-list>
       </ng-container>
 
       <ng-container *ngIf="isEditing()">
