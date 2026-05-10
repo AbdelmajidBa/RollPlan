@@ -66,7 +66,7 @@ development_status:
   3-2-search-step-location-via-autocomplete: done
   3-3-edit-step-details: done
   3-4-delete-step: done
-  3-5-reorder-steps: review
+  3-5-reorder-steps: done
   epic-3-retrospective: optional
 
   # ─── Epic 4: Map Visualization ───

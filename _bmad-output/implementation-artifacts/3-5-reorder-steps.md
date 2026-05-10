@@ -1,6 +1,6 @@
 # Story 3.5: Reorder Steps
 
-Status: review
+Status: done
 
 ## Story
 
@@ -72,9 +72,9 @@ So that my itinerary reflects the correct sequence of events.
 
 ### Review Findings
 
-- [ ] [Review][Patch] Non-null assertion on `snapshot.find()` can spread `undefined` into optimistic state [rollplan-client/src/app/steps/services/step.service.ts]
-- [ ] [Review][Patch] Missing FluentValidation validator for `ReorderStepsRequest` — empty `StepIds` passes silently to service [rollplan-api/Models/DTOs/Steps/ReorderStepsRequest.cs]
-- [ ] [Review][Patch] No Angular unit test covering `onDrop` error path (`reorderError` signal not tested) — AC #3 [rollplan-client/src/app/steps/step-list/step-list.component.spec.ts]
+- [x] [Review][Patch] Non-null assertion on `snapshot.find()` can spread `undefined` into optimistic state [rollplan-client/src/app/steps/services/step.service.ts]
+- [x] [Review][Patch] Missing FluentValidation validator for `ReorderStepsRequest` — empty `StepIds` passes silently to service [rollplan-api/Models/DTOs/Steps/ReorderStepsRequest.cs]
+- [x] [Review][Patch] No Angular unit test covering `onDrop` error path (`reorderError` signal not tested) — AC #3 [rollplan-client/src/app/steps/step-list/step-list.component.spec.ts]
 - [x] [Review][Defer] Steps missing from `StepIds` retain stale SortOrder (v1 intentional per Dev Notes) [rollplan-api/Services/StepService.cs] — deferred, v1 by design
 - [x] [Review][Defer] Response sorted from in-memory list, not re-queried DB state (consequence of above) [rollplan-api/Services/StepService.cs] — deferred, v1 by design
 - [x] [Review][Defer] Race condition on concurrent reorder requests (no row locking or optimistic concurrency) — deferred, architectural, out of scope v1
@@ -347,6 +347,7 @@ claude-sonnet-4-6
 - `rollplan-client/src/app/steps/step-list/step-list.component.ts` (modified)
 - `rollplan-client/src/app/steps/step-list/step-list.component.html` (modified)
 - `rollplan-client/src/app/steps/step-list/step-list.component.spec.ts` (modified)
+- `rollplan-api/Models/DTOs/Steps/ReorderStepsRequestValidator.cs` (new)
 
 ### Change Log
 

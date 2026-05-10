@@ -76,10 +76,9 @@ export class StepService {
 
   reorderSteps(tripId: string, stepIds: string[]): Observable<Step[]> {
     const snapshot = this._steps();
-    const optimistic = stepIds.map((id, i) => ({
-      ...snapshot.find(s => s.id === id)!,
-      sortOrder: i + 1
-    }));
+    const optimistic = stepIds
+      .map((id, i) => { const s = snapshot.find(st => st.id === id); return s ? { ...s, sortOrder: i + 1 } : null; })
+      .filter((s): s is Step => s !== null);
     this._steps.set(optimistic);
 
     return this.http

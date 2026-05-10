@@ -276,4 +276,27 @@ describe('StepListComponent', () => {
     fixture.componentInstance.onDrop(dropEvent);
     expect(reorderStepsSpy).not.toHaveBeenCalled();
   });
+
+  it('should set reorderError when reorderSteps returns an error', () => {
+    getStepsSpy.mockReturnValue(of([mockStep, mockStep2]));
+    reorderStepsSpy.mockReturnValue(throwError(() => new Error('server error')));
+    stepsSignal.set([mockStep, mockStep2]);
+    const fixture = TestBed.createComponent(StepListComponent);
+    fixture.componentInstance.tripId = '11111111-1111-1111-1111-111111111111';
+    fixture.detectChanges();
+
+    const dropEvent = {
+      previousIndex: 0,
+      currentIndex: 1,
+      item: {} as any,
+      container: { data: [mockStep, mockStep2] } as any,
+      previousContainer: { data: [mockStep, mockStep2] } as any,
+      isPointerOverContainer: true,
+      distance: { x: 0, y: 0 },
+      dropPoint: { x: 0, y: 0 }
+    } as CdkDragDrop<Step[]>;
+
+    fixture.componentInstance.onDrop(dropEvent);
+    expect(fixture.componentInstance.reorderError()).toBe('Failed to reorder steps. Order has been restored.');
+  });
 });
