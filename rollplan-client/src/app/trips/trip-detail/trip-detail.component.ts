@@ -110,7 +110,9 @@ export class TripDetailComponent implements OnInit {
     this.isStatusChanging.set(true);
     this.tripService.setTripStatus(this.tripId, status as TripStatus)
       .pipe(finalize(() => this.isStatusChanging.set(false)))
-      .subscribe();
+      .subscribe({
+        error: () => this.serverError.set('Failed to update trip status.')
+      });
   }
 
   confirmDelete(): void {
@@ -126,7 +128,10 @@ export class TripDetailComponent implements OnInit {
     this.isDeleting.set(true);
     this.tripService.deleteTrip(this.tripId)
       .pipe(finalize(() => this.isDeleting.set(false)))
-      .subscribe({ next: () => this.router.navigate(['/trips']) });
+      .subscribe({
+        next: () => this.router.navigate(['/trips']),
+        error: () => this.serverError.set('Failed to delete trip. Please try again.')
+      });
   }
 
   onSubmit(): void {
@@ -144,7 +149,7 @@ export class TripDetailComponent implements OnInit {
 
     this.tripService.updateTrip(this.tripId, {
       name,
-      description: description?.trim() || undefined,
+      description: description?.trim() ?? undefined,
       coverImage: this.selectedFile ?? undefined,
       startDate: startDate || undefined,
       endDate: endDate || undefined

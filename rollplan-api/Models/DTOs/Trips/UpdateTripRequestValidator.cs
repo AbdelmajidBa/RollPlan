@@ -13,6 +13,13 @@ public class UpdateTripRequestValidator : AbstractValidator<UpdateTripRequest>
             .NotEmpty().WithMessage("Trip name is required.")
             .MaximumLength(200).WithMessage("Trip name must not exceed 200 characters.");
 
+        When(x => x.StartDate.HasValue && x.EndDate.HasValue, () =>
+        {
+            RuleFor(x => x.EndDate)
+                .GreaterThanOrEqualTo(x => x.StartDate!.Value)
+                .WithMessage("End date must be on or after the start date.");
+        });
+
         When(x => x.CoverImage != null, () =>
         {
             RuleFor(x => x.CoverImage!.ContentType)

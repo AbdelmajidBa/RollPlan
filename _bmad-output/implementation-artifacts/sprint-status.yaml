@@ -1,5 +1,5 @@
 # generated: 2026-04-04
-# last_updated: 2026-05-09
+# last_updated: 2026-05-10
 # project: RollPlan
 # project_key: NOKEY
 # tracking_system: file-system
@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-04-04
-last_updated: 2026-05-09
+last_updated: 2026-05-10
 project: RollPlan
 project_key: NOKEY
 tracking_system: file-system
@@ -55,14 +55,14 @@ development_status:
   epic-2: in-progress
   2-1-create-trip: done
   2-2-view-trip-list: done
-  2-3-edit-trip-details: review
-  2-4-set-trip-status: review
-  2-5-delete-trip: review
+  2-3-edit-trip-details: in-progress
+  2-4-set-trip-status: done
+  2-5-delete-trip: done
   epic-2-retrospective: optional
 
   # ─── Epic 3: Itinerary & Step Management ───
   epic-3: in-progress
-  3-1-add-step-to-trip: review
+  3-1-add-step-to-trip: done
   3-2-search-step-location-via-autocomplete: backlog
   3-3-edit-step-details: backlog
   3-4-delete-step: backlog

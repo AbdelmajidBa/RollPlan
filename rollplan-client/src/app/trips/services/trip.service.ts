@@ -80,7 +80,7 @@ export class TripService {
   updateTrip(id: string, request: UpdateTripRequest): Observable<Trip> {
     const formData = new FormData();
     formData.append('name', request.name);
-    if (request.description) formData.append('description', request.description);
+    if (request.description !== undefined) formData.append('description', request.description ?? '');
     if (request.coverImage) formData.append('coverImage', request.coverImage);
     if (request.startDate) formData.append('startDate', request.startDate);
     if (request.endDate) formData.append('endDate', request.endDate);

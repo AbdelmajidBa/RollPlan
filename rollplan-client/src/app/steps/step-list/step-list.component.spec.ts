@@ -77,4 +77,19 @@ describe('StepListComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('form')).toBeFalsy();
   });
+
+  it('should call addStep on submit with valid form', () => {
+    getStepsSpy.mockReturnValue(of([]));
+    addStepSpy.mockReturnValue(of(mockStep));
+    const fixture = TestBed.createComponent(StepListComponent);
+    fixture.componentInstance.tripId = '11111111-1111-1111-1111-111111111111';
+    fixture.detectChanges();
+    fixture.componentInstance.showAddForm.set(true);
+    fixture.componentInstance.form.patchValue({ name: 'Ferry Crossing', type: 'Travel' });
+    fixture.componentInstance.onSubmit();
+    expect(addStepSpy).toHaveBeenCalledWith(
+      '11111111-1111-1111-1111-111111111111',
+      expect.objectContaining({ name: 'Ferry Crossing', type: 'Travel' })
+    );
+  });
 });

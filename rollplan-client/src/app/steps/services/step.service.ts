@@ -35,6 +35,7 @@ export class StepService {
   constructor(private http: HttpClient) {}
 
   getSteps(tripId: string): Observable<Step[]> {
+    this._steps.set([]);
     return this.http
       .get<Step[]>(`${API_BASE_URL}/trips/${tripId}/steps`)
       .pipe(tap(steps => this._steps.set(steps)));

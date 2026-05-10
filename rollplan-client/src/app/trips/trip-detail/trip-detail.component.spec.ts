@@ -132,4 +132,16 @@ describe('TripDetailComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).not.toContain('This will permanently delete the trip');
   });
+
+  it('should call updateTrip on onSubmit with valid form', () => {
+    getTripSpy.mockReturnValue(of(mockTrip));
+    updateTripSpy.mockReturnValue(of(mockTrip));
+    currentTripSignal.set(mockTrip);
+    const fixture = TestBed.createComponent(TripDetailComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.startEditing();
+    fixture.componentInstance.form.patchValue({ name: 'Updated Name' });
+    fixture.componentInstance.onSubmit();
+    expect(updateTripSpy).toHaveBeenCalledWith(mockTrip.id, expect.objectContaining({ name: 'Updated Name' }));
+  });
 });

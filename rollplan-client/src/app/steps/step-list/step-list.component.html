@@ -72,6 +72,9 @@
           <p *ngIf="nameControl.touched && nameControl.hasError('required')" class="mt-1.5 text-xs text-red-400">
             Step name is required.
           </p>
+          <p *ngIf="nameControl.hasError('serverError')" class="mt-1.5 text-xs text-red-400">
+            {{ nameControl.getError('serverError') }}
+          </p>
         </div>
 
         <div>

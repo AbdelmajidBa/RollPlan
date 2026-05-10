@@ -82,8 +82,19 @@ export class StepListComponent implements OnInit {
         this.showAddForm.set(false);
       },
       error: (err) => {
-        const detail = err.error?.detail ?? 'Failed to add step.';
-        this.formError.set(detail);
+        const errors = err.error?.errors as Record<string, string[]> | undefined;
+        if (errors) {
+          const nameErrors: string[] = errors['Name'] ?? errors['name'] ?? [];
+          if (nameErrors.length > 0) {
+            this.nameControl.setErrors({ serverError: nameErrors[0] });
+          }
+          const other = Object.entries(errors)
+            .filter(([k]) => k.toLowerCase() !== 'name')
+            .flatMap(([, msgs]) => msgs)[0];
+          this.formError.set(other ?? null);
+        } else {
+          this.formError.set(err.error?.detail ?? 'Failed to add step.');
+        }
       }
     });
   }
