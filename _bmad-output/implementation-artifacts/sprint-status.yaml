@@ -70,8 +70,8 @@ development_status:
   epic-3-retrospective: optional
 
   # ─── Epic 4: Map Visualization ───
-  epic-4: backlog
-  4-1-view-steps-as-map-pins: backlog
+  epic-4: in-progress
+  4-1-view-steps-as-map-pins: ready-for-dev
   4-2-view-route-line-connecting-steps: backlog
   4-3-tap-pin-to-open-step-details: backlog
   4-4-toggle-between-map-and-list-view: backlog
