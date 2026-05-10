@@ -1,6 +1,7 @@
-import { Component, Input, OnInit, inject, signal } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { StepService, StepType } from '../services/step.service';
 import { PlacesAutocompleteDirective } from '../../shared/directives/places-autocomplete.directive';
@@ -12,7 +13,7 @@ import { PlaceSelectedEvent } from '../../core/services/places.service';
   imports: [CommonModule, ReactiveFormsModule, PlacesAutocompleteDirective],
   templateUrl: './step-list.component.html'
 })
-export class StepListComponent implements OnInit {
+export class StepListComponent implements OnInit, OnDestroy {
   @Input() tripId!: string;
 
   private readonly stepService = inject(StepService);
@@ -26,6 +27,8 @@ export class StepListComponent implements OnInit {
   isSubmitting = signal(false);
   formError = signal<string | null>(null);
 
+  private readonly locationSub: Subscription;
+
   readonly form: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.maxLength(200)]],
     type: ['', Validators.required],
@@ -35,6 +38,14 @@ export class StepListComponent implements OnInit {
     date: [''],
     startTime: ['']
   });
+
+  constructor() {
+    this.locationSub = this.form.get('location')!.valueChanges.subscribe((val: string | null) => {
+      if (!val) {
+        this.form.patchValue({ latitude: null, longitude: null }, { emitEvent: false });
+      }
+    });
+  }
 
   get nameControl() { return this.form.get('name')!; }
   get typeControl() { return this.form.get('type')!; }
@@ -58,6 +69,10 @@ export class StepListComponent implements OnInit {
     this.showAddForm.set(false);
     this.form.reset();
     this.formError.set(null);
+  }
+
+  ngOnDestroy(): void {
+    this.locationSub.unsubscribe();
   }
 
   onPlaceSelected(event: PlaceSelectedEvent): void {

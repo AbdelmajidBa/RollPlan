@@ -178,5 +178,10 @@ public class StepServiceTests : IDisposable
         Assert.NotNull(result);
         Assert.Null(result.Latitude);
         Assert.Null(result.Longitude);
+
+        var saved = await _dbContext.Steps.FirstOrDefaultAsync(s => s.Id == result.Id);
+        Assert.NotNull(saved);
+        Assert.Null(saved.Latitude);
+        Assert.Null(saved.Longitude);
     }
 }

@@ -10,9 +10,10 @@ export interface PlaceSelectedEvent {
 @Injectable({ providedIn: 'root' })
 export class PlacesService {
   private scriptLoaded = false;
+  private scriptError = false;
 
   load(): Promise<void> {
-    if (!environment.mapsApiKey) return Promise.resolve();
+    if (!environment.mapsApiKey || this.scriptError) return Promise.resolve();
     if (this.scriptLoaded || this.isAvailable()) {
       this.scriptLoaded = true;
       return Promise.resolve();
@@ -23,7 +24,7 @@ export class PlacesService {
       script.async = true;
       script.defer = true;
       script.onload = () => { this.scriptLoaded = true; resolve(); };
-      script.onerror = () => resolve();
+      script.onerror = () => { this.scriptError = true; resolve(); };
       document.head.appendChild(script);
     });
   }

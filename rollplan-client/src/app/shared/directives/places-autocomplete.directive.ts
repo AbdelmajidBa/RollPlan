@@ -9,10 +9,11 @@ export class PlacesAutocompleteDirective implements OnInit, OnDestroy {
   private readonly placesService = inject(PlacesService);
   private autocomplete: any = null;
   private listener: any = null;
+  private destroyed = false;
 
   ngOnInit(): void {
     this.placesService.load().then(() => {
-      if (!this.placesService.isAvailable()) return;
+      if (this.destroyed || !this.placesService.isAvailable()) return;
       const g = (window as any)['google'];
       this.autocomplete = new g.maps.places.Autocomplete(
         this.el.nativeElement as HTMLInputElement,
@@ -32,6 +33,7 @@ export class PlacesAutocompleteDirective implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroyed = true;
     if (this.listener) {
       const g = (window as any)['google'];
       g?.maps?.event?.removeListener(this.listener);

@@ -1,6 +1,6 @@
 # Story 3.2: Search Step Location via Autocomplete
 
-Status: review
+Status: done
 
 ## Story
 
@@ -450,11 +450,11 @@ claude-sonnet-4-6
 
 ### Review Findings
 
-- [ ] [Review][Patch] Backend: add partial-coordinate validation — reject requests where only one of lat/lng is provided [`rollplan-api/Models/DTOs/Steps/CreateStepRequest.cs`]
-- [ ] [Review][Patch] Backend: add lat/lng range validation — Latitude must be [-90, 90], Longitude [-180, 180] [`rollplan-api/Models/DTOs/Steps/CreateStepRequest.cs`]
-- [ ] [Review][Patch] PlacesService: scriptLoaded not set on script error — onerror callback resolves but leaves scriptLoaded=false, causing duplicate `<script>` append on retry [`rollplan-client/src/app/core/services/places.service.ts:25`]
-- [ ] [Review][Patch] PlacesAutocompleteDirective: destroy race condition — async load().then() can run after ngOnDestroy, attaching a listener to a destroyed host that is never cleaned up [`rollplan-client/src/app/shared/directives/places-autocomplete.directive.ts:13`]
-- [ ] [Review][Patch] StepListComponent: stale coordinates after manual text clear — if user selects a place then clears the location field, lat/lng remain set and are submitted [`rollplan-client/src/app/steps/step-list/step-list.component.ts:63`]
-- [ ] [Review][Patch] StepServiceTests: null-coordinate test missing DB-entity assertion — test asserts response but not the saved entity in the DB [`rollplan-api-tests/Services/StepServiceTests.cs`]
+- [x] [Review][Patch] Backend: add partial-coordinate validation — reject requests where only one of lat/lng is provided [`rollplan-api/Models/DTOs/Steps/CreateStepRequest.cs`]
+- [x] [Review][Patch] Backend: add lat/lng range validation — Latitude must be [-90, 90], Longitude [-180, 180] [`rollplan-api/Models/DTOs/Steps/CreateStepRequest.cs`]
+- [x] [Review][Patch] PlacesService: scriptLoaded not set on script error — onerror callback resolves but leaves scriptLoaded=false, causing duplicate `<script>` append on retry [`rollplan-client/src/app/core/services/places.service.ts:25`]
+- [x] [Review][Patch] PlacesAutocompleteDirective: destroy race condition — async load().then() can run after ngOnDestroy, attaching a listener to a destroyed host that is never cleaned up [`rollplan-client/src/app/shared/directives/places-autocomplete.directive.ts:13`]
+- [x] [Review][Patch] StepListComponent: stale coordinates after manual text clear — if user selects a place then clears the location field, lat/lng remain set and are submitted [`rollplan-client/src/app/steps/step-list/step-list.component.ts:63`]
+- [x] [Review][Patch] StepServiceTests: null-coordinate test missing DB-entity assertion — test asserts response but not the saved entity in the DB [`rollplan-api-tests/Services/StepServiceTests.cs`]
 - [x] [Review][Defer] Empty location name if both formatted_address and name are undefined — `place.formatted_address ?? place.name ?? ''` can yield empty string for unusual place types [`rollplan-client/src/app/shared/directives/places-autocomplete.directive.ts:24`] — deferred, pre-existing Google API edge case unlikely with requested fields
 - [x] [Review][Defer] Directive selector allows non-input elements — `[appPlacesAutocomplete]` can be placed on any element, but Google Maps Autocomplete requires HTMLInputElement [`rollplan-client/src/app/shared/directives/places-autocomplete.directive.ts:4`] — deferred, enforce by convention
