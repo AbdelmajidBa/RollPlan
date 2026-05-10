@@ -1,5 +1,14 @@
 # Deferred Work
 
+## Deferred from: code review of stories 2-3, 2-4, 2-5, 3-1 (2026-05-10)
+
+- **MIME-type validation trusts client `Content-Type` header** (2-3) — `IFormFile.ContentType` is caller-supplied and not verified against file magic bytes. Server-side magic-byte inspection needed before public launch.
+- **`UpdateTripAsync` old cover image orphaned on storage delete failure** (2-3) — if `DeleteFileAsync` throws after `SaveChangesAsync`, the old image URL is permanently orphaned. Address with background cleanup job or eventual-consistency pattern.
+- **SortOrder race condition in `AddStepAsync`** (3-1) — two concurrent POST requests for the same trip both read the same `maxOrder` and produce duplicate `SortOrder` values. Fix with a DB-level unique index on `(trip_id, sort_order)` or serializable transaction.
+- **`POST /trips/{tripId}/steps` returns 201 without `Location` header** (3-1) — no single-step GET endpoint exists; `CreatedAtAction` cannot be used until a `GetStep` route is added.
+- **`StartTime` accepts arbitrary string formats** (3-1) — only HTML `<input type="time">` enforces HH:mm on the client. Add server-side regex validation in `CreateStepRequestValidator`.
+- **`StepType` enum default (0=Travel) accepted when field is absent** (3-1) — `IsInEnum()` cannot distinguish an absent field from an intentional `Travel`. Change DTO to `StepType?` to make absence detectable.
+
 ## Deferred from: code review of 2-1-create-trip (2026-05-09)
 
 - **GetCurrentUserId throws UnauthorizedAccessException** — pre-existing pattern across all controllers; should map to 401 via middleware. Address in a cross-cutting security hardening pass.

@@ -45,6 +45,11 @@ So that I can track where the trip is in its lifecycle.
   - [x] `trip.service.spec.ts`: `setTripStatus should PATCH /trips/:id/status`, `setTripStatus should update signals`
   - [x] `trip-detail.component.spec.ts`: `should show status select in view mode`
 
+### Review Findings
+
+- [ ] [Review][Patch] Missing `SetTripStatusRequestValidator` — `Status` field has no validator; an empty JSON body silently sets status to `Planning` (enum default 0) with no 400 response [rollplan-api/Models/DTOs/Trips/SetTripStatusRequest.cs]
+- [ ] [Review][Patch] `setStatus()` in `TripDetailComponent` has no `error` callback — network/server errors fail silently with no user feedback [rollplan-client/src/app/trips/trip-detail/trip-detail.component.ts]
+
 ## Dev Notes
 
 ### What Already Exists

@@ -60,6 +60,17 @@ So that I can build a complete itinerary.
   - [x] `rollplan-client/src/app/steps/services/step.service.spec.ts`: 4 tests — GET, populate signal, POST, append signal
   - [x] `rollplan-client/src/app/steps/step-list/step-list.component.spec.ts`: 4 tests — create, getSteps on init, show form, hide form
 
+### Review Findings
+
+- [ ] [Review][Patch] `StepService._steps` signal not reset before `getSteps()` — stale steps from a previously visited trip flash briefly when navigating to a new trip [rollplan-client/src/app/steps/services/step.service.ts]
+- [ ] [Review][Patch] `StepListComponent.onSubmit()` error handler reads only `err.error?.detail` — server FluentValidation field-level errors (`err.error?.errors`) are ignored and never shown inline on individual fields [rollplan-client/src/app/steps/step-list/step-list.component.ts]
+- [ ] [Review][Patch] `step-list.component.spec.ts` missing test: form submit should call `addStep` [rollplan-client/src/app/steps/step-list/step-list.component.spec.ts]
+- [ ] [Review][Patch] `UnauthorizedAccessException` thrown by `GetCurrentUserId()` is mapped to HTTP 500 by `ErrorHandlingMiddleware` — should return 401 [rollplan-api/Controllers/StepsController.cs]
+- [x] [Review][Defer] SortOrder race condition — two concurrent `AddStep` calls for the same trip both read the same `maxOrder` and produce duplicate `SortOrder` values [rollplan-api/Services/StepService.cs] — deferred, architectural
+- [x] [Review][Defer] `POST /trips/{tripId}/steps` returns `StatusCode(201)` without `Location` header — no single-step GET endpoint exists yet [rollplan-api/Controllers/StepsController.cs] — deferred, pre-existing
+- [x] [Review][Defer] `StartTime` accepts arbitrary string formats — no server-side HH:mm pattern validation [rollplan-api/Models/DTOs/Steps/CreateStepRequestValidator.cs] — deferred, pre-existing
+- [x] [Review][Defer] `StepType` enum default (0=Travel) accepted when `type` field is absent from POST body — `IsInEnum()` cannot distinguish an intentionally omitted field [rollplan-api/Models/DTOs/Steps/CreateStepRequestValidator.cs] — deferred, pre-existing
+
 ## Dev Notes
 
 ### What Already Exists — Reuse These Patterns
