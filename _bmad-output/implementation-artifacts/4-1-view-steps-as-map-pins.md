@@ -1,6 +1,6 @@
 # Story 4.1: View Steps as Map Pins
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -35,25 +35,25 @@ So that I can visualize the geography of my trip.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Install Leaflet and configure styles
-  - [ ] Run `npm install leaflet @types/leaflet` in `rollplan-client/`
-  - [ ] Add `"node_modules/leaflet/dist/leaflet.css"` to the `styles` array in `rollplan-client/angular.json`
-  - [ ] Verify `leaflet` and `@types/leaflet` appear in `package.json` dependencies/devDependencies
+- [x] Task 1: Install Leaflet and configure styles
+  - [x] Run `npm install leaflet @types/leaflet` in `rollplan-client/`
+  - [x] Add `"node_modules/leaflet/dist/leaflet.css"` to the `styles` array in `rollplan-client/angular.json`
+  - [x] Verify `leaflet` and `@types/leaflet` appear in `package.json` dependencies/devDependencies
 
-- [ ] Task 2: Create TripMapComponent (AC: #1, #2, #3, #4, #5)
-  - [ ] Create `rollplan-client/src/app/map/trip-map/trip-map.component.ts` — standalone, imports `CommonModule`; injects `StepService`; `@ViewChild('mapContainer')` ElementRef; `mapEmpty = signal(true)`; `effect()` in constructor to call `updateMarkers(steps)` when signal changes (guard with `if (this.map)`); `ngAfterViewInit` initialises Leaflet in try/catch and calls `updateMarkers` for initial render; `updateMarkers` clears `markersLayer`, filters steps to those with non-null lat/lng, sets `mapEmpty`, adds `L.circleMarker` per located step with sky-500 fill and tooltip `"N. name"`, calls `map.fitBounds()` when >0 pins; `ngOnDestroy` calls `map?.remove()`
-  - [ ] Create `rollplan-client/src/app/map/trip-map/trip-map.component.html` — outer wrapper with section heading "Map"; `*ngIf="mapEmpty()"` empty-state div with dashed border message; `#mapContainer` div with `[class.hidden]="mapEmpty()"` and `style="height:400px"` and ring styling
+- [x] Task 2: Create TripMapComponent (AC: #1, #2, #3, #4, #5)
+  - [x] Create `rollplan-client/src/app/map/trip-map/trip-map.component.ts` — standalone, imports `CommonModule`; injects `StepService`; `@ViewChild('mapContainer')` ElementRef; `mapEmpty = signal(true)`; `effect()` in constructor to call `updateMarkers(steps)` when signal changes (guard with `if (this.map)`); `ngAfterViewInit` initialises Leaflet in try/catch and calls `updateMarkers` for initial render; `updateMarkers` clears `markersLayer`, filters steps to those with non-null lat/lng, sets `mapEmpty`, adds `L.circleMarker` per located step with sky-500 fill and tooltip `"N. name"`, calls `map.fitBounds()` when >0 pins; `ngOnDestroy` calls `map?.remove()`
+  - [x] Create `rollplan-client/src/app/map/trip-map/trip-map.component.html` — outer wrapper with section heading "Map"; `*ngIf="mapEmpty()"` empty-state div with dashed border message; `#mapContainer` div with `[class.hidden]="mapEmpty()"` and `style="height:400px"` and ring styling
 
-- [ ] Task 3: Integrate TripMapComponent into TripDetailComponent (AC: #1)
-  - [ ] In `rollplan-client/src/app/trips/trip-detail/trip-detail.component.ts`: import `TripMapComponent`, add to `imports` array
-  - [ ] In `rollplan-client/src/app/trips/trip-detail/trip-detail.component.html`: add `<app-trip-map></app-trip-map>` after `<app-step-list [tripId]="trip()!.id">`
+- [x] Task 3: Integrate TripMapComponent into TripDetailComponent (AC: #1)
+  - [x] In `rollplan-client/src/app/trips/trip-detail/trip-detail.component.ts`: import `TripMapComponent`, add to `imports` array
+  - [x] In `rollplan-client/src/app/trips/trip-detail/trip-detail.component.html`: add `<app-trip-map></app-trip-map>` after `<app-step-list [tripId]="trip()!.id">`
 
-- [ ] Task 4: Angular unit tests for TripMapComponent (AC: #1, #2, #3)
-  - [ ] Create `rollplan-client/src/app/map/trip-map/trip-map.component.spec.ts`
-  - [ ] Mock `leaflet` entirely with `vi.mock('leaflet', ...)` (jsdom has no canvas; see Dev Notes for mock shape)
-  - [ ] Test: `should set mapEmpty to true when no steps have coordinates` — provide `steps` signal with steps missing lat/lng, call `ngAfterViewInit`, assert `mapEmpty()` is `true`
-  - [ ] Test: `should set mapEmpty to false when at least one step has coordinates` — provide step with lat/lng, assert `mapEmpty()` is `false`
-  - [ ] Test: `should create component` — basic smoke test
+- [x] Task 4: Angular unit tests for TripMapComponent (AC: #1, #2, #3)
+  - [x] Create `rollplan-client/src/app/map/trip-map/trip-map.component.spec.ts`
+  - [x] Mock `leaflet` entirely with `vi.mock('leaflet', ...)` (jsdom has no canvas; see Dev Notes for mock shape)
+  - [x] Test: `should set mapEmpty to true when no steps have coordinates` — provide `steps` signal with steps missing lat/lng, call `ngAfterViewInit`, assert `mapEmpty()` is `true`
+  - [x] Test: `should set mapEmpty to false when at least one step has coordinates` — provide step with lat/lng, assert `mapEmpty()` is `false`
+  - [x] Test: `should create component` — basic smoke test
 
 ## Dev Notes
 
@@ -310,7 +310,7 @@ No new endpoints. All data comes from the existing `GET /api/v1/trips/{tripId}/s
 
 ### Agent Model Used
 
-(to be filled)
+claude-sonnet-4-6
 
 ### File List
 
@@ -325,4 +325,10 @@ No new endpoints. All data comes from the existing `GET /api/v1/trips/{tripId}/s
 
 ### Change Log
 
-(to be filled)
+- Installed `leaflet@^1.9.x` and `@types/leaflet` via npm
+- Added `node_modules/leaflet/dist/leaflet.css` to `angular.json` styles array (build + test)
+- Created `TripMapComponent` using direct Leaflet (not ngx-leaflet — incompatible with Angular 21 standalone); uses `@ViewChild` ElementRef, `effect()` in constructor with `if (this.map)` guard, `L.circleMarker` for SVG pins (avoids PNG icon path issues), `mapEmpty` signal, try/catch in `ngAfterViewInit` for graceful fallback
+- Created component template with empty-state message and hidden map container
+- Integrated `<app-trip-map>` into `TripDetailComponent` after `<app-step-list>`
+- Created spec file with `vi.mock('leaflet', ...)` hoisted mock; 4 tests all passing
+- All 113 Angular tests pass with no regressions

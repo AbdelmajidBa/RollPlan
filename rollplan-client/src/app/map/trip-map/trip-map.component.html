@@ -1,0 +1,14 @@
+<div class="mt-8">
+  <h2 class="text-lg font-semibold text-white mb-4">Map</h2>
+
+  <div *ngIf="mapEmpty()" class="rounded-2xl border border-dashed border-slate-700 p-8 text-center">
+    <p class="text-sm text-slate-500">No steps with locations yet. Add a location to a step to see it on the map.</p>
+  </div>
+
+  <div
+    #mapContainer
+    [class.hidden]="mapEmpty()"
+    class="rounded-2xl overflow-hidden ring-1 ring-white/10"
+    style="height: 400px;"
+  ></div>
+</div>

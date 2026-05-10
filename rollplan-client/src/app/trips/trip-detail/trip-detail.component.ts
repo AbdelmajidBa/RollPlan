@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { finalize } from 'rxjs/operators';
 import { TripService, TripStatus } from '../services/trip.service';
 import { StepListComponent } from '../../steps/step-list/step-list.component';
+import { TripMapComponent } from '../../map/trip-map/trip-map.component';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png'];
@@ -12,7 +13,7 @@ const ALLOWED_TYPES = ['image/jpeg', 'image/png'];
 @Component({
   selector: 'app-trip-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, StepListComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, StepListComponent, TripMapComponent],
   templateUrl: './trip-detail.component.html'
 })
 export class TripDetailComponent implements OnInit {
