@@ -64,7 +64,7 @@ development_status:
   epic-3: in-progress
   3-1-add-step-to-trip: done
   3-2-search-step-location-via-autocomplete: done
-  3-3-edit-step-details: ready-for-dev
+  3-3-edit-step-details: review
   3-4-delete-step: backlog
   3-5-reorder-steps: backlog
   epic-3-retrospective: optional

@@ -184,4 +184,64 @@ public class StepServiceTests : IDisposable
         Assert.Null(saved.Latitude);
         Assert.Null(saved.Longitude);
     }
+
+    [Fact]
+    public async Task UpdateStepAsync_UpdatesStep_WhenOwned()
+    {
+        var trip = SeedTrip();
+        var step = SeedStep(trip.Id, 1);
+        var request = new UpdateStepRequest
+        {
+            Name = "Updated Ferry",
+            Type = StepType.Travel,
+            Location = "Dover",
+            Latitude = 51.1295,
+            Longitude = 1.3089,
+            Date = new DateOnly(2026, 8, 1),
+            StartTime = "09:00"
+        };
+
+        var result = await _service.UpdateStepAsync(_userId, trip.Id, step.Id, request);
+
+        Assert.NotNull(result);
+        Assert.Equal("Updated Ferry", result.Name);
+        Assert.Equal(StepType.Travel, result.Type);
+        Assert.Equal("Dover", result.Location);
+        Assert.Equal(51.1295, result.Latitude);
+        Assert.Equal(1.3089, result.Longitude);
+        Assert.Equal(new DateOnly(2026, 8, 1), result.Date);
+        Assert.Equal("09:00", result.StartTime);
+        Assert.Equal(step.SortOrder, result.SortOrder);
+
+        var saved = await _dbContext.Steps.FindAsync(step.Id);
+        Assert.NotNull(saved);
+        Assert.Equal("Updated Ferry", saved.Name);
+        Assert.Equal("Dover", saved.Location);
+    }
+
+    [Fact]
+    public async Task UpdateStepAsync_ReturnsNull_WhenTripNotOwned()
+    {
+        var trip = SeedTrip(Guid.NewGuid());
+        var step = SeedStep(trip.Id, 1);
+        var request = new UpdateStepRequest { Name = "Hacked", Type = StepType.Activity };
+
+        var result = await _service.UpdateStepAsync(_userId, trip.Id, step.Id, request);
+
+        Assert.Null(result);
+        var unchanged = await _dbContext.Steps.FindAsync(step.Id);
+        Assert.NotNull(unchanged);
+        Assert.Equal(step.Name, unchanged.Name);
+    }
+
+    [Fact]
+    public async Task UpdateStepAsync_ReturnsNull_WhenStepNotFound()
+    {
+        var trip = SeedTrip();
+        var request = new UpdateStepRequest { Name = "Ghost", Type = StepType.Activity };
+
+        var result = await _service.UpdateStepAsync(_userId, trip.Id, Guid.NewGuid(), request);
+
+        Assert.Null(result);
+    }
 }

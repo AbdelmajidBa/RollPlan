@@ -41,4 +41,12 @@ public class StepsController : ControllerBase
         var step = await _stepService.AddStepAsync(userId, tripId, request);
         return step is null ? NotFound() : StatusCode(201, step);
     }
+
+    [HttpPut("{stepId:guid}")]
+    public async Task<IActionResult> UpdateStep(Guid tripId, Guid stepId, [FromBody] UpdateStepRequest request)
+    {
+        var userId = GetCurrentUserId();
+        var step = await _stepService.UpdateStepAsync(userId, tripId, stepId, request);
+        return step is null ? NotFound() : Ok(step);
+    }
 }

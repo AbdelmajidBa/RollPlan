@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { StepService, StepType } from '../services/step.service';
+import { StepService, StepType, Step } from '../services/step.service';
 import { PlacesAutocompleteDirective } from '../../shared/directives/places-autocomplete.directive';
 import { PlaceSelectedEvent } from '../../core/services/places.service';
 
@@ -27,9 +27,24 @@ export class StepListComponent implements OnInit, OnDestroy {
   isSubmitting = signal(false);
   formError = signal<string | null>(null);
 
+  editingStepId = signal<string | null>(null);
+  isEditSubmitting = signal(false);
+  editFormError = signal<string | null>(null);
+
   private readonly locationSub: Subscription;
+  private readonly editLocationSub: Subscription;
 
   readonly form: FormGroup = this.fb.group({
+    name: ['', [Validators.required, Validators.maxLength(200)]],
+    type: ['', Validators.required],
+    location: [''],
+    latitude: [null as number | null],
+    longitude: [null as number | null],
+    date: [''],
+    startTime: ['']
+  });
+
+  readonly editForm: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.maxLength(200)]],
     type: ['', Validators.required],
     location: [''],
@@ -43,6 +58,11 @@ export class StepListComponent implements OnInit, OnDestroy {
     this.locationSub = this.form.get('location')!.valueChanges.subscribe((val: string | null) => {
       if (!val) {
         this.form.patchValue({ latitude: null, longitude: null }, { emitEvent: false });
+      }
+    });
+    this.editLocationSub = this.editForm.get('location')!.valueChanges.subscribe((val: string | null) => {
+      if (!val) {
+        this.editForm.patchValue({ latitude: null, longitude: null }, { emitEvent: false });
       }
     });
   }
@@ -73,10 +93,81 @@ export class StepListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.locationSub.unsubscribe();
+    this.editLocationSub.unsubscribe();
   }
 
   onPlaceSelected(event: PlaceSelectedEvent): void {
     this.form.patchValue({ location: event.name, latitude: event.lat, longitude: event.lng });
+  }
+
+  startEdit(step: Step): void {
+    this.editingStepId.set(step.id);
+    this.editForm.patchValue({
+      name: step.name,
+      type: step.type,
+      location: step.location ?? '',
+      latitude: step.latitude ?? null,
+      longitude: step.longitude ?? null,
+      date: step.date ?? '',
+      startTime: step.startTime ?? ''
+    });
+    this.editFormError.set(null);
+  }
+
+  cancelEdit(): void {
+    this.editingStepId.set(null);
+    this.editForm.reset();
+    this.editFormError.set(null);
+  }
+
+  onEditPlaceSelected(event: PlaceSelectedEvent): void {
+    this.editForm.patchValue({ location: event.name, latitude: event.lat, longitude: event.lng });
+  }
+
+  onEditSubmit(): void {
+    if (this.editForm.invalid) {
+      this.editForm.markAllAsTouched();
+      return;
+    }
+    if (this.isEditSubmitting()) return;
+
+    this.isEditSubmitting.set(true);
+    this.editFormError.set(null);
+
+    const stepId = this.editingStepId()!;
+    const { name, type, location, date, startTime, latitude, longitude } = this.editForm.value;
+
+    this.stepService.updateStep(this.tripId, stepId, {
+      name,
+      type,
+      location: location?.trim() || undefined,
+      latitude: latitude ?? undefined,
+      longitude: longitude ?? undefined,
+      date: date || undefined,
+      startTime: startTime || undefined
+    }).pipe(
+      finalize(() => this.isEditSubmitting.set(false))
+    ).subscribe({
+      next: () => {
+        this.editingStepId.set(null);
+        this.editForm.reset();
+      },
+      error: (err) => {
+        const errors = err.error?.errors as Record<string, string[]> | undefined;
+        if (errors) {
+          const nameErrors: string[] = errors['Name'] ?? errors['name'] ?? [];
+          if (nameErrors.length > 0) {
+            this.editForm.get('name')!.setErrors({ serverError: nameErrors[0] });
+          }
+          const other = Object.entries(errors)
+            .filter(([k]) => k.toLowerCase() !== 'name')
+            .flatMap(([, msgs]) => msgs)[0];
+          this.editFormError.set(other ?? null);
+        } else {
+          this.editFormError.set(err.error?.detail ?? 'Failed to update step.');
+        }
+      }
+    });
   }
 
   onSubmit(): void {

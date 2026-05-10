@@ -18,17 +18,20 @@ const mockStep: Step = {
 describe('StepListComponent', () => {
   let getStepsSpy: ReturnType<typeof vi.fn>;
   let addStepSpy: ReturnType<typeof vi.fn>;
+  let updateStepSpy: ReturnType<typeof vi.fn>;
   let stepsSignal: ReturnType<typeof signal<Step[]>>;
 
   beforeEach(async () => {
     getStepsSpy = vi.fn();
     addStepSpy = vi.fn();
+    updateStepSpy = vi.fn();
     stepsSignal = signal<Step[]>([]);
 
     const stepServiceStub = {
       steps: stepsSignal.asReadonly(),
       getSteps: getStepsSpy,
-      addStep: addStepSpy
+      addStep: addStepSpy,
+      updateStep: updateStepSpy
     };
 
     await TestBed.configureTestingModule({
@@ -106,5 +109,56 @@ describe('StepListComponent', () => {
     expect(fixture.componentInstance.form.value.location).toBe('Eiffel Tower, Paris');
     expect(fixture.componentInstance.form.value.latitude).toBe(48.8584);
     expect(fixture.componentInstance.form.value.longitude).toBe(2.2945);
+  });
+
+  it('should show edit form when startEdit is called', () => {
+    getStepsSpy.mockReturnValue(of([mockStep]));
+    const fixture = TestBed.createComponent(StepListComponent);
+    fixture.componentInstance.tripId = '11111111-1111-1111-1111-111111111111';
+    stepsSignal.set([mockStep]);
+    fixture.detectChanges();
+
+    fixture.componentInstance.startEdit(mockStep);
+    expect(fixture.componentInstance.editingStepId()).toBe(mockStep.id);
+  });
+
+  it('should prepopulate edit form with step values', () => {
+    getStepsSpy.mockReturnValue(of([mockStep]));
+    const fixture = TestBed.createComponent(StepListComponent);
+    fixture.componentInstance.tripId = '11111111-1111-1111-1111-111111111111';
+    fixture.detectChanges();
+
+    fixture.componentInstance.startEdit(mockStep);
+    expect(fixture.componentInstance.editForm.value.name).toBe('Ferry Crossing');
+    expect(fixture.componentInstance.editForm.value.type).toBe('Travel');
+  });
+
+  it('should call updateStep on edit submit with valid form', () => {
+    getStepsSpy.mockReturnValue(of([mockStep]));
+    updateStepSpy.mockReturnValue(of({ ...mockStep, name: 'Updated Step' }));
+    const fixture = TestBed.createComponent(StepListComponent);
+    fixture.componentInstance.tripId = '11111111-1111-1111-1111-111111111111';
+    fixture.detectChanges();
+
+    fixture.componentInstance.startEdit(mockStep);
+    fixture.componentInstance.editForm.patchValue({ name: 'Updated Step', type: 'Travel' });
+    fixture.componentInstance.onEditSubmit();
+
+    expect(updateStepSpy).toHaveBeenCalledWith(
+      '11111111-1111-1111-1111-111111111111',
+      mockStep.id,
+      expect.objectContaining({ name: 'Updated Step', type: 'Travel' })
+    );
+  });
+
+  it('should hide edit form on cancelEdit', () => {
+    getStepsSpy.mockReturnValue(of([mockStep]));
+    const fixture = TestBed.createComponent(StepListComponent);
+    fixture.componentInstance.tripId = '11111111-1111-1111-1111-111111111111';
+    fixture.detectChanges();
+
+    fixture.componentInstance.startEdit(mockStep);
+    fixture.componentInstance.cancelEdit();
+    expect(fixture.componentInstance.editingStepId()).toBeNull();
   });
 });

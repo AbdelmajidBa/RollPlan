@@ -29,22 +29,128 @@
         *ngFor="let step of steps()"
         class="rounded-2xl bg-slate-900/60 p-4 ring-1 ring-white/10"
       >
-        <div class="flex items-start justify-between gap-3">
-          <div class="min-w-0 flex-1">
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="text-sm font-semibold text-white">{{ step.name }}</span>
-              <span [class]="'shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ' + typeBadgeClass(step.type)">
-                {{ step.type }}
-              </span>
+        <!-- VIEW MODE -->
+        <ng-container *ngIf="editingStepId() !== step.id">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-sm font-semibold text-white">{{ step.name }}</span>
+                <span [class]="'shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ' + typeBadgeClass(step.type)">
+                  {{ step.type }}
+                </span>
+              </div>
+              <div *ngIf="step.location || step.date || step.startTime" class="mt-1.5 flex flex-wrap gap-3 text-xs text-slate-400">
+                <span *ngIf="step.location">📍 {{ step.location }}</span>
+                <span *ngIf="step.date">📅 {{ step.date }}</span>
+                <span *ngIf="step.startTime">🕐 {{ step.startTime }}</span>
+              </div>
             </div>
-            <div *ngIf="step.location || step.date || step.startTime" class="mt-1.5 flex flex-wrap gap-3 text-xs text-slate-400">
-              <span *ngIf="step.location">📍 {{ step.location }}</span>
-              <span *ngIf="step.date">📅 {{ step.date }}</span>
-              <span *ngIf="step.startTime">🕐 {{ step.startTime }}</span>
+            <div class="flex items-center gap-3 shrink-0">
+              <button
+                type="button"
+                (click)="startEdit(step)"
+                class="text-xs text-slate-400 hover:text-sky-400 transition"
+              >Edit</button>
+              <span class="text-xs text-slate-600">#{{ step.sortOrder }}</span>
             </div>
           </div>
-          <span class="shrink-0 text-xs text-slate-600">#{{ step.sortOrder }}</span>
-        </div>
+        </ng-container>
+
+        <!-- EDIT MODE -->
+        <ng-container *ngIf="editingStepId() === step.id">
+          <h3 class="mb-4 text-sm font-semibold text-white">Edit Step</h3>
+
+          <div *ngIf="editFormError()" class="mb-4 rounded-2xl bg-red-50/90 border border-red-200 p-3 text-sm text-red-700">
+            {{ editFormError() }}
+          </div>
+
+          <form [formGroup]="editForm" (ngSubmit)="onEditSubmit()" class="space-y-4" novalidate>
+
+            <div>
+              <label class="block text-sm font-semibold text-slate-200 mb-1.5">
+                Name <span class="text-red-400">*</span>
+              </label>
+              <input
+                type="text"
+                formControlName="name"
+                class="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm text-slate-100 transition focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/25"
+                [class.border-red-500]="editForm.get('name')!.invalid && editForm.get('name')!.touched"
+              />
+              <p *ngIf="editForm.get('name')!.touched && editForm.get('name')!.hasError('required')" class="mt-1.5 text-xs text-red-400">
+                Step name is required.
+              </p>
+              <p *ngIf="editForm.get('name')!.hasError('serverError')" class="mt-1.5 text-xs text-red-400">
+                {{ editForm.get('name')!.getError('serverError') }}
+              </p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-slate-200 mb-1.5">
+                Type <span class="text-red-400">*</span>
+              </label>
+              <select
+                formControlName="type"
+                class="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm text-slate-100 transition focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/25"
+                [class.border-red-500]="editForm.get('type')!.invalid && editForm.get('type')!.touched"
+              >
+                <option value="" disabled>Select a type</option>
+                <option *ngFor="let t of stepTypes" [value]="t">{{ t }}</option>
+              </select>
+              <p *ngIf="editForm.get('type')!.touched && editForm.get('type')!.hasError('required')" class="mt-1.5 text-xs text-red-400">
+                Step type is required.
+              </p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-slate-200 mb-1.5">Location</label>
+              <input
+                type="text"
+                formControlName="location"
+                appPlacesAutocomplete
+                (placeSelected)="onEditPlaceSelected($event)"
+                class="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm text-slate-100 transition focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/25"
+              />
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-semibold text-slate-200 mb-1.5">Date</label>
+                <input
+                  type="date"
+                  formControlName="date"
+                  class="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm text-slate-100 transition focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/25"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-slate-200 mb-1.5">Time</label>
+                <input
+                  type="time"
+                  formControlName="startTime"
+                  class="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm text-slate-100 transition focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/25"
+                />
+              </div>
+            </div>
+
+            <div class="flex gap-3 pt-1">
+              <button
+                type="submit"
+                [disabled]="isEditSubmitting()"
+                class="inline-flex items-center justify-center rounded-2xl bg-sky-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-500/20 transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <span *ngIf="isEditSubmitting(); else saveLabel">Saving…</span>
+                <ng-template #saveLabel>Save</ng-template>
+              </button>
+              <button
+                type="button"
+                (click)="cancelEdit()"
+                class="inline-flex items-center justify-center rounded-2xl border border-slate-700 px-5 py-2.5 text-sm font-semibold text-slate-300 transition hover:bg-slate-800"
+              >
+                Cancel
+              </button>
+            </div>
+
+          </form>
+        </ng-container>
       </div>
     </div>
 

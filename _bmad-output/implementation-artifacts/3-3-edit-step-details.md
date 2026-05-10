@@ -1,6 +1,6 @@
 # Story 3.3: Edit Step Details
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -31,47 +31,47 @@ So that I can keep the itinerary up to date.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Backend — Add UpdateStepRequest DTO + validator (AC: #2, #4)
-  - [ ] Create `rollplan-api/Models/DTOs/Steps/UpdateStepRequest.cs` — same fields as `CreateStepRequest` (Name, Type, Location, Latitude?, Longitude?, Date?, StartTime?); Name is required
-  - [ ] Create `rollplan-api/Models/DTOs/Steps/UpdateStepRequestValidator.cs` — copy the same rules from `CreateStepRequestValidator`: Name NotEmpty + MaxLength(200), Type IsInEnum, Latitude/Longitude range + pair validation (both or neither)
+- [x] Task 1: Backend — Add UpdateStepRequest DTO + validator (AC: #2, #4)
+  - [x] Create `rollplan-api/Models/DTOs/Steps/UpdateStepRequest.cs` — same fields as `CreateStepRequest` (Name, Type, Location, Latitude?, Longitude?, Date?, StartTime?); Name is required
+  - [x] Create `rollplan-api/Models/DTOs/Steps/UpdateStepRequestValidator.cs` — copy the same rules from `CreateStepRequestValidator`: Name NotEmpty + MaxLength(200), Type IsInEnum, Latitude/Longitude range + pair validation (both or neither)
 
-- [ ] Task 2: Backend — Add UpdateStepAsync to service + controller (AC: #2)
-  - [ ] In `rollplan-api/Services/IStepService.cs`: add `Task<StepResponse?> UpdateStepAsync(Guid userId, Guid tripId, Guid stepId, UpdateStepRequest request);`
-  - [ ] In `rollplan-api/Services/StepService.cs`: implement `UpdateStepAsync` — find trip by `tripId && userId`, return null if not owned; find step by `stepId && TripId == tripId`, return null if not found; update all fields (Name, Type, Location, Latitude, Longitude, Date, StartTime, UpdatedAt = DateTime.UtcNow); call `SaveChangesAsync`; return `MapToResponse(step)`
-  - [ ] In `rollplan-api/Controllers/StepsController.cs`: add `[HttpPut("{stepId:guid}")]` `UpdateStep(Guid tripId, Guid stepId, [FromBody] UpdateStepRequest request)` — call `_stepService.UpdateStepAsync(userId, tripId, stepId, request)`; return `Ok(step)` or `NotFound()`
+- [x] Task 2: Backend — Add UpdateStepAsync to service + controller (AC: #2)
+  - [x] In `rollplan-api/Services/IStepService.cs`: add `Task<StepResponse?> UpdateStepAsync(Guid userId, Guid tripId, Guid stepId, UpdateStepRequest request);`
+  - [x] In `rollplan-api/Services/StepService.cs`: implement `UpdateStepAsync` — find trip by `tripId && userId`, return null if not owned; find step by `stepId && TripId == tripId`, return null if not found; update all fields (Name, Type, Location, Latitude, Longitude, Date, StartTime, UpdatedAt = DateTime.UtcNow); call `SaveChangesAsync`; return `MapToResponse(step)`
+  - [x] In `rollplan-api/Controllers/StepsController.cs`: add `[HttpPut("{stepId:guid}")]` `UpdateStep(Guid tripId, Guid stepId, [FromBody] UpdateStepRequest request)` — call `_stepService.UpdateStepAsync(userId, tripId, stepId, request)`; return `Ok(step)` or `NotFound()`
 
-- [ ] Task 3: Backend — Unit tests (AC: #2, #4)
-  - [ ] In `rollplan-api-tests/Services/StepServiceTests.cs`: add `UpdateStepAsync_UpdatesStep_WhenOwned` — seed trip + step, call UpdateStepAsync with changed values, assert response fields updated and DB entity updated
-  - [ ] Add `UpdateStepAsync_ReturnsNull_WhenTripNotOwned` — seed trip owned by different user, assert null returned, step unchanged
-  - [ ] Add `UpdateStepAsync_ReturnsNull_WhenStepNotFound` — seed trip owned by user, pass non-existent stepId, assert null returned
+- [x] Task 3: Backend — Unit tests (AC: #2, #4)
+  - [x] In `rollplan-api-tests/Services/StepServiceTests.cs`: add `UpdateStepAsync_UpdatesStep_WhenOwned` — seed trip + step, call UpdateStepAsync with changed values, assert response fields updated and DB entity updated
+  - [x] Add `UpdateStepAsync_ReturnsNull_WhenTripNotOwned` — seed trip owned by different user, assert null returned, step unchanged
+  - [x] Add `UpdateStepAsync_ReturnsNull_WhenStepNotFound` — seed trip owned by user, pass non-existent stepId, assert null returned
 
-- [ ] Task 4: Angular — Add UpdateStepRequest interface and updateStep method to StepService (AC: #2)
-  - [ ] In `rollplan-client/src/app/steps/services/step.service.ts`: add `UpdateStepRequest` interface (same fields as `CreateStepRequest`: name, type, location?, latitude?, longitude?, date?, startTime?)
-  - [ ] Add `updateStep(tripId: string, stepId: string, request: UpdateStepRequest): Observable<Step>` method — `PUT ${API_BASE_URL}/trips/${tripId}/steps/${stepId}` with `tap` that updates the matching step in `_steps` signal: `this._steps.update(list => list.map(s => s.id === stepId ? updated : s))`
+- [x] Task 4: Angular — Add UpdateStepRequest interface and updateStep method to StepService (AC: #2)
+  - [x] In `rollplan-client/src/app/steps/services/step.service.ts`: add `UpdateStepRequest` interface (same fields as `CreateStepRequest`: name, type, location?, latitude?, longitude?, date?, startTime?)
+  - [x] Add `updateStep(tripId: string, stepId: string, request: UpdateStepRequest): Observable<Step>` method — `PUT ${API_BASE_URL}/trips/${tripId}/steps/${stepId}` with `tap` that updates the matching step in `_steps` signal: `this._steps.update(list => list.map(s => s.id === stepId ? updated : s))`
 
-- [ ] Task 5: Angular — Add inline edit mode to StepListComponent (AC: #1, #2, #3, #4)
-  - [ ] In `rollplan-client/src/app/steps/step-list/step-list.component.ts`:
-    - [ ] Add `editingStepId = signal<string | null>(null)` signal
-    - [ ] Add `isEditSubmitting = signal(false)` and `editFormError = signal<string | null>(null)` signals
-    - [ ] Add `readonly editForm: FormGroup` with the same fields as `form` (name, type, location, latitude, longitude, date, startTime) — same validators
-    - [ ] Add `editLocationSub: Subscription` for location-clear-coordinates side effect (same pattern as `locationSub`)
-    - [ ] Wire `editLocationSub` in constructor; unsubscribe in `ngOnDestroy` (alongside `locationSub.unsubscribe()`)
-    - [ ] Add `startEdit(step: Step): void` — sets `editingStepId(step.id)`, patches `editForm` with step values (`name`, `type`, `location ?? ''`, `latitude ?? null`, `longitude ?? null`, `date ?? ''`, `startTime ?? ''`), resets `editFormError`
-    - [ ] Add `cancelEdit(): void` — sets `editingStepId(null)`, resets `editForm`, clears `editFormError`
-    - [ ] Add `onEditPlaceSelected(event: PlaceSelectedEvent): void` — patches `editForm` with location/lat/lng (same as `onPlaceSelected`)
-    - [ ] Add `onEditSubmit(): void` — validates `editForm`, calls `stepService.updateStep`, handles errors same as `onSubmit`; on success: `editingStepId.set(null)`, reset `editForm`
-  - [ ] In `rollplan-client/src/app/steps/step-list/step-list.component.html`:
-    - [ ] Add an "Edit" button to each step card (alongside the existing `#{{ step.sortOrder }}` text)
-    - [ ] Conditionally replace the step card content with the edit form when `editingStepId() === step.id`
-    - [ ] The edit form mirrors the add form structure: name (required), type (required), location (with `appPlacesAutocomplete`), date, startTime — but submit button reads "Save" and cancel reads "Cancel"
+- [x] Task 5: Angular — Add inline edit mode to StepListComponent (AC: #1, #2, #3, #4)
+  - [x] In `rollplan-client/src/app/steps/step-list/step-list.component.ts`:
+    - [x] Add `editingStepId = signal<string | null>(null)` signal
+    - [x] Add `isEditSubmitting = signal(false)` and `editFormError = signal<string | null>(null)` signals
+    - [x] Add `readonly editForm: FormGroup` with the same fields as `form` (name, type, location, latitude, longitude, date, startTime) — same validators
+    - [x] Add `editLocationSub: Subscription` for location-clear-coordinates side effect (same pattern as `locationSub`)
+    - [x] Wire `editLocationSub` in constructor; unsubscribe in `ngOnDestroy` (alongside `locationSub.unsubscribe()`)
+    - [x] Add `startEdit(step: Step): void` — sets `editingStepId(step.id)`, patches `editForm` with step values (`name`, `type`, `location ?? ''`, `latitude ?? null`, `longitude ?? null`, `date ?? ''`, `startTime ?? ''`), resets `editFormError`
+    - [x] Add `cancelEdit(): void` — sets `editingStepId(null)`, resets `editForm`, clears `editFormError`
+    - [x] Add `onEditPlaceSelected(event: PlaceSelectedEvent): void` — patches `editForm` with location/lat/lng (same as `onPlaceSelected`)
+    - [x] Add `onEditSubmit(): void` — validates `editForm`, calls `stepService.updateStep`, handles errors same as `onSubmit`; on success: `editingStepId.set(null)`, reset `editForm`
+  - [x] In `rollplan-client/src/app/steps/step-list/step-list.component.html`:
+    - [x] Add an "Edit" button to each step card (alongside the existing `#{{ step.sortOrder }}` text)
+    - [x] Conditionally replace the step card content with the edit form when `editingStepId() === step.id`
+    - [x] The edit form mirrors the add form structure: name (required), type (required), location (with `appPlacesAutocomplete`), date, startTime — but submit button reads "Save" and cancel reads "Cancel"
 
-- [ ] Task 6: Angular — Unit tests (AC: #1, #2, #3, #4)
-  - [ ] In `rollplan-client/src/app/steps/step-list/step-list.component.spec.ts`:
-    - [ ] Add `updateStepSpy` to the mock `StepService` stub
-    - [ ] Add test: `should show edit form when startEdit is called` — calls `startEdit(mockStep)`, checks `editingStepId()` equals mockStep.id
-    - [ ] Add test: `should prepopulate edit form with step values` — calls `startEdit(mockStep)`, asserts `editForm.value.name === mockStep.name` and `editForm.value.type === mockStep.type`
-    - [ ] Add test: `should call updateStep on edit submit with valid form` — calls `startEdit`, sets valid editForm values, calls `onEditSubmit()`, asserts `updateStepSpy` called with correct args
-    - [ ] Add test: `should hide edit form on cancelEdit` — calls `startEdit`, then `cancelEdit()`, asserts `editingStepId()` is null
+- [x] Task 6: Angular — Unit tests (AC: #1, #2, #3, #4)
+  - [x] In `rollplan-client/src/app/steps/step-list/step-list.component.spec.ts`:
+    - [x] Add `updateStepSpy` to the mock `StepService` stub
+    - [x] Add test: `should show edit form when startEdit is called` — calls `startEdit(mockStep)`, checks `editingStepId()` equals mockStep.id
+    - [x] Add test: `should prepopulate edit form with step values` — calls `startEdit(mockStep)`, asserts `editForm.value.name === mockStep.name` and `editForm.value.type === mockStep.type`
+    - [x] Add test: `should call updateStep on edit submit with valid form` — calls `startEdit`, sets valid editForm values, calls `onEditSubmit()`, asserts `updateStepSpy` called with correct args
+    - [x] Add test: `should hide edit form on cancelEdit` — calls `startEdit`, then `cancelEdit()`, asserts `editingStepId()` is null
 
 ## Dev Notes
 
@@ -552,12 +552,21 @@ New endpoint:
 
 ### Agent Model Used
 
-(to be filled by dev agent)
+claude-sonnet-4-6
 
 ### File List
 
-(to be filled by dev agent)
+- `rollplan-api/Models/DTOs/Steps/UpdateStepRequest.cs` (new)
+- `rollplan-api/Models/DTOs/Steps/UpdateStepRequestValidator.cs` (new)
+- `rollplan-api/Services/IStepService.cs` (modified)
+- `rollplan-api/Services/StepService.cs` (modified)
+- `rollplan-api/Controllers/StepsController.cs` (modified)
+- `rollplan-api-tests/Services/StepServiceTests.cs` (modified)
+- `rollplan-client/src/app/steps/services/step.service.ts` (modified)
+- `rollplan-client/src/app/steps/step-list/step-list.component.ts` (modified)
+- `rollplan-client/src/app/steps/step-list/step-list.component.html` (modified)
+- `rollplan-client/src/app/steps/step-list/step-list.component.spec.ts` (modified)
 
 ### Change Log
 
-(to be filled by dev agent)
+- Implemented Story 3.3: added PUT /api/v1/trips/{tripId}/steps/{stepId} endpoint with UpdateStepRequest DTO + validator (same field rules as Create), UpdateStepAsync in StepService, updateStep in Angular StepService, and inline edit mode in StepListComponent (editingStepId signal, editForm, startEdit/cancelEdit/onEditSubmit methods, Edit button per step card, Places autocomplete on edit location field). 102 Angular tests pass (17 files). (Date: 2026-05-10)

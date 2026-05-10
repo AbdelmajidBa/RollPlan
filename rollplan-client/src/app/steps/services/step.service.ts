@@ -31,6 +31,16 @@ export interface CreateStepRequest {
   startTime?: string;
 }
 
+export interface UpdateStepRequest {
+  name: string;
+  type: StepType;
+  location?: string;
+  latitude?: number;
+  longitude?: number;
+  date?: string;
+  startTime?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class StepService {
   private readonly _steps = signal<Step[]>([]);
@@ -49,5 +59,11 @@ export class StepService {
     return this.http
       .post<Step>(`${API_BASE_URL}/trips/${tripId}/steps`, request)
       .pipe(tap(step => this._steps.update(list => [...list, step])));
+  }
+
+  updateStep(tripId: string, stepId: string, request: UpdateStepRequest): Observable<Step> {
+    return this.http
+      .put<Step>(`${API_BASE_URL}/trips/${tripId}/steps/${stepId}`, request)
+      .pipe(tap(updated => this._steps.update(list => list.map(s => s.id === stepId ? updated : s))));
   }
 }

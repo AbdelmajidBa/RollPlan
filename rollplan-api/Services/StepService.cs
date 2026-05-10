@@ -63,6 +63,32 @@ public class StepService : IStepService
         return MapToResponse(step);
     }
 
+    public async Task<StepResponse?> UpdateStepAsync(Guid userId, Guid tripId, Guid stepId, UpdateStepRequest request)
+    {
+        var trip = await _dbContext.Trips
+            .FirstOrDefaultAsync(t => t.Id == tripId && t.UserId == userId);
+
+        if (trip is null) return null;
+
+        var step = await _dbContext.Steps
+            .FirstOrDefaultAsync(s => s.Id == stepId && s.TripId == tripId);
+
+        if (step is null) return null;
+
+        step.Name = request.Name;
+        step.Type = request.Type;
+        step.Location = request.Location;
+        step.Latitude = request.Latitude;
+        step.Longitude = request.Longitude;
+        step.Date = request.Date;
+        step.StartTime = request.StartTime;
+        step.UpdatedAt = DateTime.UtcNow;
+
+        await _dbContext.SaveChangesAsync();
+
+        return MapToResponse(step);
+    }
+
     private static StepResponse MapToResponse(Step step) => new()
     {
         Id = step.Id,
