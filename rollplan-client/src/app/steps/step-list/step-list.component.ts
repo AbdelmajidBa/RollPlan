@@ -31,6 +31,10 @@ export class StepListComponent implements OnInit, OnDestroy {
   isEditSubmitting = signal(false);
   editFormError = signal<string | null>(null);
 
+  deletingStepId = signal<string | null>(null);
+  isDeletingStep = signal(false);
+  deleteError = signal<string | null>(null);
+
   private readonly locationSub: Subscription;
   private readonly editLocationSub: Subscription;
 
@@ -118,6 +122,31 @@ export class StepListComponent implements OnInit, OnDestroy {
     this.editingStepId.set(null);
     this.editForm.reset();
     this.editFormError.set(null);
+  }
+
+  confirmDelete(step: Step): void {
+    this.deletingStepId.set(step.id);
+    this.deleteError.set(null);
+  }
+
+  cancelDelete(): void {
+    this.deletingStepId.set(null);
+    this.deleteError.set(null);
+  }
+
+  doDelete(): void {
+    const stepId = this.deletingStepId();
+    if (!stepId || this.isDeletingStep()) return;
+
+    this.isDeletingStep.set(true);
+    this.deleteError.set(null);
+
+    this.stepService.deleteStep(this.tripId, stepId)
+      .pipe(finalize(() => this.isDeletingStep.set(false)))
+      .subscribe({
+        next: () => this.deletingStepId.set(null),
+        error: () => this.deleteError.set('Failed to delete step.')
+      });
   }
 
   onEditPlaceSelected(event: PlaceSelectedEvent): void {

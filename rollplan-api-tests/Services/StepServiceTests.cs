@@ -244,4 +244,40 @@ public class StepServiceTests : IDisposable
 
         Assert.Null(result);
     }
+
+    [Fact]
+    public async Task DeleteStepAsync_DeletesStep_WhenOwned()
+    {
+        var trip = SeedTrip();
+        var step = SeedStep(trip.Id, 1);
+
+        var result = await _service.DeleteStepAsync(_userId, trip.Id, step.Id);
+
+        Assert.True(result);
+        var deleted = await _dbContext.Steps.FindAsync(step.Id);
+        Assert.Null(deleted);
+    }
+
+    [Fact]
+    public async Task DeleteStepAsync_ReturnsFalse_WhenTripNotOwned()
+    {
+        var trip = SeedTrip(Guid.NewGuid());
+        var step = SeedStep(trip.Id, 1);
+
+        var result = await _service.DeleteStepAsync(_userId, trip.Id, step.Id);
+
+        Assert.False(result);
+        var unchanged = await _dbContext.Steps.FindAsync(step.Id);
+        Assert.NotNull(unchanged);
+    }
+
+    [Fact]
+    public async Task DeleteStepAsync_ReturnsFalse_WhenStepNotFound()
+    {
+        var trip = SeedTrip();
+
+        var result = await _service.DeleteStepAsync(_userId, trip.Id, Guid.NewGuid());
+
+        Assert.False(result);
+    }
 }

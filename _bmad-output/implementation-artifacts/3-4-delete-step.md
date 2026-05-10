@@ -1,6 +1,6 @@
 # Story 3.4: Delete Step
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -31,40 +31,40 @@ So that I can remove unwanted items from my itinerary.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Backend — Add DeleteStepAsync to service and interface (AC: #2, #4)
-  - [ ] In `rollplan-api/Services/IStepService.cs`: add `Task<bool> DeleteStepAsync(Guid userId, Guid tripId, Guid stepId);`
-  - [ ] In `rollplan-api/Services/StepService.cs`: implement `DeleteStepAsync` — find trip by `tripId && userId`, return `false` if not owned; find step by `stepId && TripId == tripId`, return `false` if not found; call `_dbContext.Steps.Remove(step)` then `SaveChangesAsync()`; return `true`
+- [x] Task 1: Backend — Add DeleteStepAsync to service and interface (AC: #2, #4)
+  - [x] In `rollplan-api/Services/IStepService.cs`: add `Task<bool> DeleteStepAsync(Guid userId, Guid tripId, Guid stepId);`
+  - [x] In `rollplan-api/Services/StepService.cs`: implement `DeleteStepAsync` — find trip by `tripId && userId`, return `false` if not owned; find step by `stepId && TripId == tripId`, return `false` if not found; call `_dbContext.Steps.Remove(step)` then `SaveChangesAsync()`; return `true`
 
-- [ ] Task 2: Backend — Add DELETE endpoint to StepsController (AC: #2, #4)
-  - [ ] In `rollplan-api/Controllers/StepsController.cs`: add `[HttpDelete("{stepId:guid}")]` action `DeleteStep(Guid tripId, Guid stepId)` — call `DeleteStepAsync(userId, tripId, stepId)`; return `NoContent()` if true, `NotFound()` if false
+- [x] Task 2: Backend — Add DELETE endpoint to StepsController (AC: #2, #4)
+  - [x] In `rollplan-api/Controllers/StepsController.cs`: add `[HttpDelete("{stepId:guid}")]` action `DeleteStep(Guid tripId, Guid stepId)` — call `DeleteStepAsync(userId, tripId, stepId)`; return `NoContent()` if true, `NotFound()` if false
 
-- [ ] Task 3: Backend — Unit tests (AC: #2, #4)
-  - [ ] In `rollplan-api-tests/Services/StepServiceTests.cs`: add `DeleteStepAsync_DeletesStep_WhenOwned` — seed trip + step, call DeleteStepAsync, assert `true` returned and step no longer in DB
-  - [ ] Add `DeleteStepAsync_ReturnsFalse_WhenTripNotOwned` — seed trip with different owner userId, assert `false` returned and step still in DB unchanged
-  - [ ] Add `DeleteStepAsync_ReturnsFalse_WhenStepNotFound` — seed trip owned by user, pass non-existent stepId, assert `false` returned
+- [x] Task 3: Backend — Unit tests (AC: #2, #4)
+  - [x] In `rollplan-api-tests/Services/StepServiceTests.cs`: add `DeleteStepAsync_DeletesStep_WhenOwned` — seed trip + step, call DeleteStepAsync, assert `true` returned and step no longer in DB
+  - [x] Add `DeleteStepAsync_ReturnsFalse_WhenTripNotOwned` — seed trip with different owner userId, assert `false` returned and step still in DB unchanged
+  - [x] Add `DeleteStepAsync_ReturnsFalse_WhenStepNotFound` — seed trip owned by user, pass non-existent stepId, assert `false` returned
 
-- [ ] Task 4: Angular — Add deleteStep method to StepService (AC: #2)
-  - [ ] In `rollplan-client/src/app/steps/services/step.service.ts`: add `deleteStep(tripId: string, stepId: string): Observable<void>` — `DELETE ${API_BASE_URL}/trips/${tripId}/steps/${stepId}` with `tap(() => this._steps.update(list => list.filter(s => s.id !== stepId)))`
+- [x] Task 4: Angular — Add deleteStep method to StepService (AC: #2)
+  - [x] In `rollplan-client/src/app/steps/services/step.service.ts`: add `deleteStep(tripId: string, stepId: string): Observable<void>` — `DELETE ${API_BASE_URL}/trips/${tripId}/steps/${stepId}` with `tap(() => this._steps.update(list => list.filter(s => s.id !== stepId)))`
 
-- [ ] Task 5: Angular — Add inline delete confirmation to StepListComponent (AC: #1, #2, #3)
-  - [ ] In `rollplan-client/src/app/steps/step-list/step-list.component.ts`:
-    - [ ] Add `deletingStepId = signal<string | null>(null)` signal — tracks which step is awaiting delete confirmation
-    - [ ] Add `isDeletingStep = signal(false)` signal — true while DELETE request is in-flight
-    - [ ] Add `confirmDelete(step: Step): void` — sets `deletingStepId.set(step.id)`
-    - [ ] Add `cancelDelete(): void` — sets `deletingStepId.set(null)`
-    - [ ] Add `doDelete(): void` — guards `isDeletingStep()` double-submit; sets `isDeletingStep(true)`; calls `stepService.deleteStep(this.tripId, this.deletingStepId()!)`; on success: `deletingStepId.set(null)`; on error: sets a `deleteError` signal with `'Failed to delete step.'`; always calls `finalize(() => isDeletingStep.set(false))`
-    - [ ] Add `deleteError = signal<string | null>(null)` for delete error display
-  - [ ] In `rollplan-client/src/app/steps/step-list/step-list.component.html` — within the existing VIEW MODE `<ng-container>` for each step:
-    - [ ] Add a "Delete" button alongside the existing "Edit" button in the actions row
-    - [ ] Below the step info row, add an inline confirm block `*ngIf="deletingStepId() === step.id"` containing: confirmation message (`"Remove this step? This cannot be undone."`), a red "Delete" button with `[disabled]="isDeletingStep()"` and `(click)="doDelete()"`, and a "Cancel" button with `(click)="cancelDelete()"`
-    - [ ] Optionally show `deleteError()` within the confirm block
+- [x] Task 5: Angular — Add inline delete confirmation to StepListComponent (AC: #1, #2, #3)
+  - [x] In `rollplan-client/src/app/steps/step-list/step-list.component.ts`:
+    - [x] Add `deletingStepId = signal<string | null>(null)` signal — tracks which step is awaiting delete confirmation
+    - [x] Add `isDeletingStep = signal(false)` signal — true while DELETE request is in-flight
+    - [x] Add `confirmDelete(step: Step): void` — sets `deletingStepId.set(step.id)`
+    - [x] Add `cancelDelete(): void` — sets `deletingStepId.set(null)`
+    - [x] Add `doDelete(): void` — guards `isDeletingStep()` double-submit; sets `isDeletingStep(true)`; calls `stepService.deleteStep(this.tripId, this.deletingStepId()!)`; on success: `deletingStepId.set(null)`; on error: sets a `deleteError` signal with `'Failed to delete step.'`; always calls `finalize(() => isDeletingStep.set(false))`
+    - [x] Add `deleteError = signal<string | null>(null)` for delete error display
+  - [x] In `rollplan-client/src/app/steps/step-list/step-list.component.html` — within the existing VIEW MODE `<ng-container>` for each step:
+    - [x] Add a "Delete" button alongside the existing "Edit" button in the actions row
+    - [x] Below the step info row, add an inline confirm block `*ngIf="deletingStepId() === step.id"` containing: confirmation message (`"Remove this step? This cannot be undone."`), a red "Delete" button with `[disabled]="isDeletingStep()"` and `(click)="doDelete()"`, and a "Cancel" button with `(click)="cancelDelete()"`
+    - [x] Optionally show `deleteError()` within the confirm block
 
-- [ ] Task 6: Angular — Unit tests (AC: #1, #2, #3)
-  - [ ] In `rollplan-client/src/app/steps/step-list/step-list.component.spec.ts`:
-    - [ ] Add `deleteStepSpy` to the mock `StepService` stub (returns `of(undefined)` by default)
-    - [ ] Add test: `should show confirm dialog when confirmDelete is called` — seed step in signal, call `confirmDelete(mockStep)`, assert `deletingStepId()` equals `mockStep.id`
-    - [ ] Add test: `should hide confirm dialog on cancelDelete` — call `confirmDelete(mockStep)` then `cancelDelete()`, assert `deletingStepId()` is null
-    - [ ] Add test: `should call deleteStep on doDelete` — call `confirmDelete(mockStep)`, then `doDelete()`, assert `deleteStepSpy` called with tripId and mockStep.id
+- [x] Task 6: Angular — Unit tests (AC: #1, #2, #3)
+  - [x] In `rollplan-client/src/app/steps/step-list/step-list.component.spec.ts`:
+    - [x] Add `deleteStepSpy` to the mock `StepService` stub (returns `of(undefined)` by default)
+    - [x] Add test: `should show confirm dialog when confirmDelete is called` — seed step in signal, call `confirmDelete(mockStep)`, assert `deletingStepId()` equals `mockStep.id`
+    - [x] Add test: `should hide confirm dialog on cancelDelete` — call `confirmDelete(mockStep)` then `cancelDelete()`, assert `deletingStepId()` is null
+    - [x] Add test: `should call deleteStep on doDelete` — call `confirmDelete(mockStep)`, then `doDelete()`, assert `deleteStepSpy` called with tripId and mockStep.id
 
 ## Dev Notes
 
@@ -288,7 +288,7 @@ New endpoint: `DELETE /api/v1/trips/{tripId}/steps/{stepId}` — JWT required, r
 
 ### Agent Model Used
 
-(to be filled)
+claude-sonnet-4-6
 
 ### File List
 
@@ -303,4 +303,4 @@ New endpoint: `DELETE /api/v1/trips/{tripId}/steps/{stepId}` — JWT required, r
 
 ### Change Log
 
-(to be filled)
+- Implemented Story 3.4: added DELETE /api/v1/trips/{tripId}/steps/{stepId} endpoint, DeleteStepAsync in StepService (ownership check → Remove → SaveChangesAsync → bool), deleteStep in Angular StepService (filter from _steps signal), inline per-step delete confirmation in StepListComponent (deletingStepId signal, confirmDelete/cancelDelete/doDelete methods, red inline confirm block in VIEW MODE). 105 Angular tests pass (17 files). (Date: 2026-05-10)

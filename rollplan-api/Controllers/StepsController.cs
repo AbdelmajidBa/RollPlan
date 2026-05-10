@@ -49,4 +49,12 @@ public class StepsController : ControllerBase
         var step = await _stepService.UpdateStepAsync(userId, tripId, stepId, request);
         return step is null ? NotFound() : Ok(step);
     }
+
+    [HttpDelete("{stepId:guid}")]
+    public async Task<IActionResult> DeleteStep(Guid tripId, Guid stepId)
+    {
+        var userId = GetCurrentUserId();
+        var deleted = await _stepService.DeleteStepAsync(userId, tripId, stepId);
+        return deleted ? NoContent() : NotFound();
+    }
 }

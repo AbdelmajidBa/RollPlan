@@ -19,19 +19,22 @@ describe('StepListComponent', () => {
   let getStepsSpy: ReturnType<typeof vi.fn>;
   let addStepSpy: ReturnType<typeof vi.fn>;
   let updateStepSpy: ReturnType<typeof vi.fn>;
+  let deleteStepSpy: ReturnType<typeof vi.fn>;
   let stepsSignal: ReturnType<typeof signal<Step[]>>;
 
   beforeEach(async () => {
     getStepsSpy = vi.fn();
     addStepSpy = vi.fn();
     updateStepSpy = vi.fn();
+    deleteStepSpy = vi.fn();
     stepsSignal = signal<Step[]>([]);
 
     const stepServiceStub = {
       steps: stepsSignal.asReadonly(),
       getSteps: getStepsSpy,
       addStep: addStepSpy,
-      updateStep: updateStepSpy
+      updateStep: updateStepSpy,
+      deleteStep: deleteStepSpy
     };
 
     await TestBed.configureTestingModule({
@@ -160,5 +163,42 @@ describe('StepListComponent', () => {
     fixture.componentInstance.startEdit(mockStep);
     fixture.componentInstance.cancelEdit();
     expect(fixture.componentInstance.editingStepId()).toBeNull();
+  });
+
+  it('should show confirm dialog when confirmDelete is called', () => {
+    getStepsSpy.mockReturnValue(of([mockStep]));
+    const fixture = TestBed.createComponent(StepListComponent);
+    fixture.componentInstance.tripId = '11111111-1111-1111-1111-111111111111';
+    stepsSignal.set([mockStep]);
+    fixture.detectChanges();
+
+    fixture.componentInstance.confirmDelete(mockStep);
+    expect(fixture.componentInstance.deletingStepId()).toBe(mockStep.id);
+  });
+
+  it('should hide confirm dialog on cancelDelete', () => {
+    getStepsSpy.mockReturnValue(of([mockStep]));
+    const fixture = TestBed.createComponent(StepListComponent);
+    fixture.componentInstance.tripId = '11111111-1111-1111-1111-111111111111';
+    fixture.detectChanges();
+
+    fixture.componentInstance.confirmDelete(mockStep);
+    fixture.componentInstance.cancelDelete();
+    expect(fixture.componentInstance.deletingStepId()).toBeNull();
+  });
+
+  it('should call deleteStep on doDelete', () => {
+    getStepsSpy.mockReturnValue(of([mockStep]));
+    deleteStepSpy.mockReturnValue(of(undefined));
+    const fixture = TestBed.createComponent(StepListComponent);
+    fixture.componentInstance.tripId = '11111111-1111-1111-1111-111111111111';
+    fixture.detectChanges();
+
+    fixture.componentInstance.confirmDelete(mockStep);
+    fixture.componentInstance.doDelete();
+    expect(deleteStepSpy).toHaveBeenCalledWith(
+      '11111111-1111-1111-1111-111111111111',
+      mockStep.id
+    );
   });
 });

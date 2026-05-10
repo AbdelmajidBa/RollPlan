@@ -66,4 +66,10 @@ export class StepService {
       .put<Step>(`${API_BASE_URL}/trips/${tripId}/steps/${stepId}`, request)
       .pipe(tap(updated => this._steps.update(list => list.map(s => s.id === stepId ? updated : s))));
   }
+
+  deleteStep(tripId: string, stepId: string): Observable<void> {
+    return this.http
+      .delete<void>(`${API_BASE_URL}/trips/${tripId}/steps/${stepId}`)
+      .pipe(tap(() => this._steps.update(list => list.filter(s => s.id !== stepId))));
+  }
 }

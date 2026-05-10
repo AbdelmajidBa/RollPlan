@@ -89,6 +89,24 @@ public class StepService : IStepService
         return MapToResponse(step);
     }
 
+    public async Task<bool> DeleteStepAsync(Guid userId, Guid tripId, Guid stepId)
+    {
+        var trip = await _dbContext.Trips
+            .FirstOrDefaultAsync(t => t.Id == tripId && t.UserId == userId);
+
+        if (trip is null) return false;
+
+        var step = await _dbContext.Steps
+            .FirstOrDefaultAsync(s => s.Id == stepId && s.TripId == tripId);
+
+        if (step is null) return false;
+
+        _dbContext.Steps.Remove(step);
+        await _dbContext.SaveChangesAsync();
+
+        return true;
+    }
+
     private static StepResponse MapToResponse(Step step) => new()
     {
         Id = step.Id,
