@@ -1,6 +1,6 @@
 # Story 3.4: Delete Step
 
-Status: review
+Status: done
 
 ## Story
 
@@ -307,9 +307,9 @@ claude-sonnet-4-6
 
 ### Review Findings
 
-- [ ] [Review][Patch] `confirmDelete` switches delete target while `isDeletingStep` is true — confirm button silently does nothing for the new target [step-list.component.ts:124]
-- [ ] [Review][Patch] Missing test for `doDelete` error path — `deleteError` signal and `isDeletingStep` reset on failure are untested [step-list.component.spec.ts]
-- [ ] [Review][Patch] `startEdit` does not clear `deletingStepId` — delete confirm reappears after edit is saved for the same step [step-list.component.ts:103]
+- [x] [Review][Patch] `confirmDelete` switches delete target while `isDeletingStep` is true — confirm button silently does nothing for the new target [step-list.component.ts:124]
+- [x] [Review][Patch] Missing test for `doDelete` error path — `deleteError` signal and `isDeletingStep` reset on failure are untested [step-list.component.spec.ts]
+- [x] [Review][Patch] `startEdit` does not clear `deletingStepId` — delete confirm reappears after edit is saved for the same step [step-list.component.ts:103]
 
 - [x] [Review][Defer] Controller conflates trip-not-owned and step-not-found as same 404 [StepsController.cs] — deferred, pre-existing (same as story 3.3 W2)
 - [x] [Review][Defer] Confirm dialog has no focus trap / Escape key handling [step-list.component.html] — deferred, UX polish not a bug

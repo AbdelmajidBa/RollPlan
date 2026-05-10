@@ -105,6 +105,8 @@ export class StepListComponent implements OnInit, OnDestroy {
   }
 
   startEdit(step: Step): void {
+    this.deletingStepId.set(null);
+    this.deleteError.set(null);
     this.editingStepId.set(step.id);
     this.editForm.patchValue({
       name: step.name,
@@ -125,6 +127,7 @@ export class StepListComponent implements OnInit, OnDestroy {
   }
 
   confirmDelete(step: Step): void {
+    if (this.isDeletingStep()) return;
     this.deletingStepId.set(step.id);
     this.deleteError.set(null);
   }

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { StepListComponent } from './step-list.component';
 import { StepService, Step } from '../services/step.service';
@@ -200,5 +200,18 @@ describe('StepListComponent', () => {
       '11111111-1111-1111-1111-111111111111',
       mockStep.id
     );
+  });
+
+  it('should set deleteError and reset isDeletingStep on doDelete error', () => {
+    getStepsSpy.mockReturnValue(of([mockStep]));
+    deleteStepSpy.mockReturnValue(throwError(() => new Error('server error')));
+    const fixture = TestBed.createComponent(StepListComponent);
+    fixture.componentInstance.tripId = '11111111-1111-1111-1111-111111111111';
+    fixture.detectChanges();
+
+    fixture.componentInstance.confirmDelete(mockStep);
+    fixture.componentInstance.doDelete();
+    expect(fixture.componentInstance.deleteError()).toBe('Failed to delete step.');
+    expect(fixture.componentInstance.isDeletingStep()).toBe(false);
   });
 });
