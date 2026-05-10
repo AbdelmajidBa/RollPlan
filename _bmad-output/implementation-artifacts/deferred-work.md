@@ -1,5 +1,10 @@
 # Deferred Work
 
+## Deferred from: code review of 3-2-search-step-location-via-autocomplete (2026-05-10)
+
+- **Empty location name from missing Place fields** — `place.formatted_address ?? place.name ?? ''` can yield an empty string for unusual place types where both fields are absent. Very unlikely when `fields: ['formatted_address', 'name', 'geometry']` are explicitly requested. Revisit if real-world reports emerge.
+- **Directive selector allows non-input elements** — `[appPlacesAutocomplete]` can be applied to any element, but `google.maps.places.Autocomplete` requires an `HTMLInputElement`. Currently enforced by convention only. Add a type guard or restrict the selector (e.g., `input[appPlacesAutocomplete]`) in a future directive hardening pass.
+
 ## Deferred from: code review of stories 2-3, 2-4, 2-5, 3-1 (2026-05-10)
 
 - **MIME-type validation trusts client `Content-Type` header** (2-3) — `IFormFile.ContentType` is caller-supplied and not verified against file magic bytes. Server-side magic-byte inspection needed before public launch.
