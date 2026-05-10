@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { StepService, StepType } from '../services/step.service';
+import { PlacesAutocompleteDirective } from '../../shared/directives/places-autocomplete.directive';
+import { PlaceSelectedEvent } from '../../core/services/places.service';
 
 @Component({
   selector: 'app-step-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, PlacesAutocompleteDirective],
   templateUrl: './step-list.component.html'
 })
 export class StepListComponent implements OnInit {
@@ -28,6 +30,8 @@ export class StepListComponent implements OnInit {
     name: ['', [Validators.required, Validators.maxLength(200)]],
     type: ['', Validators.required],
     location: [''],
+    latitude: [null as number | null],
+    longitude: [null as number | null],
     date: [''],
     startTime: ['']
   });
@@ -56,6 +60,10 @@ export class StepListComponent implements OnInit {
     this.formError.set(null);
   }
 
+  onPlaceSelected(event: PlaceSelectedEvent): void {
+    this.form.patchValue({ location: event.name, latitude: event.lat, longitude: event.lng });
+  }
+
   onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -66,12 +74,14 @@ export class StepListComponent implements OnInit {
     this.isSubmitting.set(true);
     this.formError.set(null);
 
-    const { name, type, location, date, startTime } = this.form.value;
+    const { name, type, location, date, startTime, latitude, longitude } = this.form.value;
 
     this.stepService.addStep(this.tripId, {
       name,
       type,
       location: location?.trim() || undefined,
+      latitude: latitude ?? undefined,
+      longitude: longitude ?? undefined,
       date: date || undefined,
       startTime: startTime || undefined
     }).pipe(

@@ -11,6 +11,8 @@ export interface Step {
   name: string;
   type: StepType;
   location?: string;
+  latitude?: number;
+  longitude?: number;
   date?: string;
   startTime?: string;
   sortOrder: number;
@@ -23,6 +25,8 @@ export interface CreateStepRequest {
   name: string;
   type: StepType;
   location?: string;
+  latitude?: number;
+  longitude?: number;
   date?: string;
   startTime?: string;
 }

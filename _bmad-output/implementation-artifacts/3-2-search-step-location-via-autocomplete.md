@@ -1,6 +1,6 @@
 # Story 3.2: Search Step Location via Autocomplete
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -24,42 +24,42 @@ So that I can quickly find and attach accurate location data to a step.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Backend — Add Latitude/Longitude to Step entity + migration (AC: #1)
-  - [ ] In `rollplan-api/Models/Entities/Step.cs`: add `public double? Latitude { get; set; }` and `public double? Longitude { get; set; }` after the `Location` property
-  - [ ] Create `rollplan-api/Migrations/20260509000005_AddStepCoordinates.cs` — `AddColumn<double>` for `latitude` and `longitude` on table `steps` (both nullable, type `double precision`) with Down using `DropColumn`
-  - [ ] Create `rollplan-api/Migrations/20260509000005_AddStepCoordinates.Designer.cs` — copy pattern from `20260509000004_ChangeTripDatesToDate.Designer.cs`; update Trip entity (DateOnly? for start_date/end_date) and Step entity (add Latitude + Longitude as `double?` / `"double precision"`)
-  - [ ] Update `rollplan-api/Migrations/AppDbContextModelSnapshot.cs` — add `b.Property<double?>("Latitude").HasColumnType("double precision").HasColumnName("latitude");` and same for `Longitude` inside the Step entity block (after Location property)
+- [x] Task 1: Backend — Add Latitude/Longitude to Step entity + migration (AC: #1)
+  - [x] In `rollplan-api/Models/Entities/Step.cs`: add `public double? Latitude { get; set; }` and `public double? Longitude { get; set; }` after the `Location` property
+  - [x] Create `rollplan-api/Migrations/20260509000005_AddStepCoordinates.cs` — `AddColumn<double>` for `latitude` and `longitude` on table `steps` (both nullable, type `double precision`) with Down using `DropColumn`
+  - [x] Create `rollplan-api/Migrations/20260509000005_AddStepCoordinates.Designer.cs` — copy pattern from `20260509000004_ChangeTripDatesToDate.Designer.cs`; update Trip entity (DateOnly? for start_date/end_date) and Step entity (add Latitude + Longitude as `double?` / `"double precision"`)
+  - [x] Update `rollplan-api/Migrations/AppDbContextModelSnapshot.cs` — add `b.Property<double?>("Latitude").HasColumnType("double precision").HasColumnName("latitude");` and same for `Longitude` inside the Step entity block (after Location property)
 
-- [ ] Task 2: Backend — Update DTOs and StepService (AC: #1)
-  - [ ] In `rollplan-api/Models/DTOs/Steps/CreateStepRequest.cs`: add `public double? Latitude { get; set; }` and `public double? Longitude { get; set; }`
-  - [ ] In `rollplan-api/Models/DTOs/Steps/StepResponse.cs`: add `public double? Latitude { get; set; }` and `public double? Longitude { get; set; }`
-  - [ ] In `rollplan-api/Services/StepService.cs` `AddStepAsync`: set `Latitude = request.Latitude` and `Longitude = request.Longitude` on the new `Step` object (alongside existing fields)
-  - [ ] In `rollplan-api/Services/StepService.cs` `MapToResponse`: add `Latitude = step.Latitude` and `Longitude = step.Longitude` to the returned `StepResponse`
+- [x] Task 2: Backend — Update DTOs and StepService (AC: #1)
+  - [x] In `rollplan-api/Models/DTOs/Steps/CreateStepRequest.cs`: add `public double? Latitude { get; set; }` and `public double? Longitude { get; set; }`
+  - [x] In `rollplan-api/Models/DTOs/Steps/StepResponse.cs`: add `public double? Latitude { get; set; }` and `public double? Longitude { get; set; }`
+  - [x] In `rollplan-api/Services/StepService.cs` `AddStepAsync`: set `Latitude = request.Latitude` and `Longitude = request.Longitude` on the new `Step` object (alongside existing fields)
+  - [x] In `rollplan-api/Services/StepService.cs` `MapToResponse`: add `Latitude = step.Latitude` and `Longitude = step.Longitude` to the returned `StepResponse`
 
-- [ ] Task 3: Backend — Unit tests (AC: #1, #2)
-  - [ ] In `rollplan-api-tests/Services/StepServiceTests.cs`: add `AddStepAsync_StoresCoordinates_WhenProvided` — seed trip, call AddStepAsync with `Latitude = 48.8566` and `Longitude = 2.3522`, assert response has matching lat/lng and saved entity has matching lat/lng
-  - [ ] In `rollplan-api-tests/Services/StepServiceTests.cs`: add `AddStepAsync_StoresNullCoordinates_WhenNotProvided` — seed trip, call AddStepAsync with no Latitude/Longitude (null), assert response Latitude and Longitude are null
+- [x] Task 3: Backend — Unit tests (AC: #1, #2)
+  - [x] In `rollplan-api-tests/Services/StepServiceTests.cs`: add `AddStepAsync_StoresCoordinates_WhenProvided` — seed trip, call AddStepAsync with `Latitude = 48.8566` and `Longitude = 2.3522`, assert response has matching lat/lng and saved entity has matching lat/lng
+  - [x] In `rollplan-api-tests/Services/StepServiceTests.cs`: add `AddStepAsync_StoresNullCoordinates_WhenNotProvided` — seed trip, call AddStepAsync with no Latitude/Longitude (null), assert response Latitude and Longitude are null
 
-- [ ] Task 4: Angular — Update interfaces and create PlacesService (AC: #1, #2)
-  - [ ] In `rollplan-client/src/app/steps/services/step.service.ts`: add `latitude?: number` and `longitude?: number` to the `Step` interface and the `CreateStepRequest` interface
-  - [ ] Create `rollplan-client/src/app/core/services/places.service.ts` — see Dev Notes for full implementation
+- [x] Task 4: Angular — Update interfaces and create PlacesService (AC: #1, #2)
+  - [x] In `rollplan-client/src/app/steps/services/step.service.ts`: add `latitude?: number` and `longitude?: number` to the `Step` interface and the `CreateStepRequest` interface
+  - [x] Create `rollplan-client/src/app/core/services/places.service.ts` — see Dev Notes for full implementation
 
-- [ ] Task 5: Angular — Create PlacesAutocompleteDirective (AC: #1, #2)
-  - [ ] Create directory `rollplan-client/src/app/shared/directives/`
-  - [ ] Create `rollplan-client/src/app/shared/directives/places-autocomplete.directive.ts` — see Dev Notes for full implementation
+- [x] Task 5: Angular — Create PlacesAutocompleteDirective (AC: #1, #2)
+  - [x] Create directory `rollplan-client/src/app/shared/directives/`
+  - [x] Create `rollplan-client/src/app/shared/directives/places-autocomplete.directive.ts` — see Dev Notes for full implementation
 
-- [ ] Task 6: Angular — Update StepListComponent for autocomplete (AC: #1, #2)
+- [x] Task 6: Angular — Update StepListComponent for autocomplete (AC: #1, #2)
   - [ ] In `rollplan-client/src/app/steps/step-list/step-list.component.ts`:
-    - [ ] Add `PlacesAutocompleteDirective` to the component's `imports` array
-    - [ ] Add `latitude` and `longitude` form controls to the `FormGroup` (both `[null]` default, no validators)
-    - [ ] Add `onPlaceSelected(event: PlaceSelectedEvent): void` method — sets `this.form.patchValue({ location: event.name, latitude: event.lat, longitude: event.lng })`
-    - [ ] In `onSubmit()`: add `latitude: this.form.value.latitude ?? undefined` and `longitude: this.form.value.longitude ?? undefined` to the `addStep` call's request object
-  - [ ] In `rollplan-client/src/app/steps/step-list/step-list.component.html`: add `appPlacesAutocomplete (placeSelected)="onPlaceSelected($event)"` to the location `<input>` element (the `id="stepLocation"` input)
+    - [x] Add `PlacesAutocompleteDirective` to the component's `imports` array
+    - [x] Add `latitude` and `longitude` form controls to the `FormGroup` (both `[null]` default, no validators)
+    - [x] Add `onPlaceSelected(event: PlaceSelectedEvent): void` method — sets `this.form.patchValue({ location: event.name, latitude: event.lat, longitude: event.lng })`
+    - [x] In `onSubmit()`: add `latitude: this.form.value.latitude ?? undefined` and `longitude: this.form.value.longitude ?? undefined` to the `addStep` call's request object
+  - [x] In `rollplan-client/src/app/steps/step-list/step-list.component.html`: add `appPlacesAutocomplete (placeSelected)="onPlaceSelected($event)"` to the location `<input>` element (the `id="stepLocation"` input)
 
-- [ ] Task 7: Angular — Unit tests (AC: #1, #2)
-  - [ ] Create `rollplan-client/src/app/core/services/places.service.spec.ts`: 2 tests — `should be created` and `isAvailable should return false when google is not loaded`
-  - [ ] Create `rollplan-client/src/app/shared/directives/places-autocomplete.directive.spec.ts`: 2 tests — `should create` and `should not throw when google.maps is unavailable`
-  - [ ] In `rollplan-client/src/app/steps/step-list/step-list.component.spec.ts`: add `PlacesAutocompleteDirective` stub to the TestBed setup; add test `should set lat/lng form values on placeSelected`
+- [x] Task 7: Angular — Unit tests (AC: #1, #2)
+  - [x] Create `rollplan-client/src/app/core/services/places.service.spec.ts`: 2 tests — `should be created` and `isAvailable should return false when google is not loaded`
+  - [x] Create `rollplan-client/src/app/shared/directives/places-autocomplete.directive.spec.ts`: 2 tests — `should create` and `should not throw when google.maps is unavailable`
+  - [x] In `rollplan-client/src/app/steps/step-list/step-list.component.spec.ts`: add `PlacesAutocompleteDirective` stub to the TestBed setup; add test `should set lat/lng form values on placeSelected`
 
 ## Dev Notes
 
@@ -427,4 +427,23 @@ claude-sonnet-4-6
 
 ### File List
 
+- `rollplan-api/Models/Entities/Step.cs` (modified)
+- `rollplan-api/Models/DTOs/Steps/CreateStepRequest.cs` (modified)
+- `rollplan-api/Models/DTOs/Steps/StepResponse.cs` (modified)
+- `rollplan-api/Services/StepService.cs` (modified)
+- `rollplan-api/Migrations/20260509000005_AddStepCoordinates.cs` (new)
+- `rollplan-api/Migrations/20260509000005_AddStepCoordinates.Designer.cs` (new)
+- `rollplan-api/Migrations/AppDbContextModelSnapshot.cs` (modified)
+- `rollplan-api-tests/Services/StepServiceTests.cs` (modified)
+- `rollplan-client/src/app/steps/services/step.service.ts` (modified)
+- `rollplan-client/src/app/core/services/places.service.ts` (new)
+- `rollplan-client/src/app/core/services/places.service.spec.ts` (new)
+- `rollplan-client/src/app/shared/directives/places-autocomplete.directive.ts` (new)
+- `rollplan-client/src/app/shared/directives/places-autocomplete.directive.spec.ts` (new)
+- `rollplan-client/src/app/steps/step-list/step-list.component.ts` (modified)
+- `rollplan-client/src/app/steps/step-list/step-list.component.html` (modified)
+- `rollplan-client/src/app/steps/step-list/step-list.component.spec.ts` (modified)
+
 ### Change Log
+
+- Implemented Story 3.2: added Latitude/Longitude to Step entity with migration 20260509000005, updated DTOs and StepService, created PlacesService (dynamic Google Maps script loading with graceful fallback) and PlacesAutocompleteDirective (standalone, emits placeSelected event), wired directive into StepListComponent location field. 98 Angular tests pass (17 files). (Date: 2026-05-10)

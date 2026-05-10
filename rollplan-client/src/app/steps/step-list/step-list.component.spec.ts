@@ -92,4 +92,19 @@ describe('StepListComponent', () => {
       expect.objectContaining({ name: 'Ferry Crossing', type: 'Travel' })
     );
   });
+
+  it('should set lat/lng form values on placeSelected', () => {
+    getStepsSpy.mockReturnValue(of([]));
+    const fixture = TestBed.createComponent(StepListComponent);
+    fixture.componentInstance.tripId = '11111111-1111-1111-1111-111111111111';
+    fixture.detectChanges();
+    fixture.componentInstance.showAddForm.set(true);
+    fixture.detectChanges();
+
+    fixture.componentInstance.onPlaceSelected({ name: 'Eiffel Tower, Paris', lat: 48.8584, lng: 2.2945 });
+
+    expect(fixture.componentInstance.form.value.location).toBe('Eiffel Tower, Paris');
+    expect(fixture.componentInstance.form.value.latitude).toBe(48.8584);
+    expect(fixture.componentInstance.form.value.longitude).toBe(2.2945);
+  });
 });

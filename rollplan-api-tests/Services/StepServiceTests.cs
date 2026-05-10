@@ -136,4 +136,47 @@ public class StepServiceTests : IDisposable
         Assert.NotNull(result);
         Assert.Equal(3, result.SortOrder);
     }
+
+    [Fact]
+    public async Task AddStepAsync_StoresCoordinates_WhenProvided()
+    {
+        var trip = SeedTrip();
+        var request = new CreateStepRequest
+        {
+            Name = "Eiffel Tower",
+            Type = StepType.Activity,
+            Location = "Paris, France",
+            Latitude = 48.8566,
+            Longitude = 2.3522
+        };
+
+        var result = await _service.AddStepAsync(_userId, trip.Id, request);
+
+        Assert.NotNull(result);
+        Assert.Equal(48.8566, result.Latitude);
+        Assert.Equal(2.3522, result.Longitude);
+
+        var saved = await _dbContext.Steps.FindAsync(result.Id);
+        Assert.NotNull(saved);
+        Assert.Equal(48.8566, saved.Latitude);
+        Assert.Equal(2.3522, saved.Longitude);
+    }
+
+    [Fact]
+    public async Task AddStepAsync_StoresNullCoordinates_WhenNotProvided()
+    {
+        var trip = SeedTrip();
+        var request = new CreateStepRequest
+        {
+            Name = "Somewhere",
+            Type = StepType.Activity,
+            Location = "Unknown Place"
+        };
+
+        var result = await _service.AddStepAsync(_userId, trip.Id, request);
+
+        Assert.NotNull(result);
+        Assert.Null(result.Latitude);
+        Assert.Null(result.Longitude);
+    }
 }

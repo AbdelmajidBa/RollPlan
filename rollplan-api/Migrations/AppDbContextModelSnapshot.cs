@@ -285,9 +285,17 @@ namespace RollPlan.Api.Migrations
                         .HasColumnType("date")
                         .HasColumnName("date");
 
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("double precision")
+                        .HasColumnName("latitude");
+
                     b.Property<string>("Location")
                         .HasColumnType("text")
                         .HasColumnName("location");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("double precision")
+                        .HasColumnName("longitude");
 
                     b.Property<string>("Name")
                         .IsRequired()
