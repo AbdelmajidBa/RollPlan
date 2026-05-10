@@ -1,5 +1,16 @@
 # Deferred Work
 
+## Deferred from: code review of 3-3-edit-step-details (2026-05-10)
+
+- **FluentValidation `.WithMessage` chaining after `.Must()`** [`UpdateStepRequestValidator.cs:19`] — same pattern as CreateStepRequestValidator reviewed in story 3.2; test coverage verifies correct behaviour. Audit if FluentValidation major version is upgraded.
+- **Controller conflates trip-not-owned and step-not-found into same 404** [`StepsController.cs`] — intentional; consistent with all other step/trip endpoints. Consider returning 403 for trip-not-owned only if the API gains a public-facing consumer.
+- **`StepType` default 0 silently accepted when `type` is absent from JSON body** [`UpdateStepRequest.cs`] — same pre-existing issue as CreateStepRequest (deferred in story 3-1). Fix by making `StepType?` nullable in the DTO.
+- **`UpdatedAt` set on entity before `SaveChangesAsync`** [`StepService.cs`] — EF DbContext is scoped per-request so in-memory inconsistency doesn't leak across requests. Revisit if a retry pattern is added.
+- **Validator error messages hardcode StepType enum values** [`UpdateStepRequestValidator.cs`] — same as CreateStepRequestValidator. Extract to a shared constant if enum values change.
+- **Other-field validation errors collapsed to a single banner with no per-field inline feedback** [`step-list.component.html`] — pre-existing UX limitation from the add-step form. Address in a UX polish pass (Epic 5+).
+- **`CreateStepRequest` and `UpdateStepRequest` TypeScript interfaces are structurally identical** [`step.service.ts`] — valid refactoring opportunity; merge into a single `StepPayload` type when a shared-types module is introduced.
+- **`SaveChangesAsync` `DbUpdateException` propagates as an unhandled 500** [`StepService.cs`] — pre-existing across all services. Address with a global exception-handling middleware in an infrastructure pass.
+
 ## Deferred from: code review of 3-2-search-step-location-via-autocomplete (2026-05-10)
 
 - **Empty location name from missing Place fields** — `place.formatted_address ?? place.name ?? ''` can yield an empty string for unusual place types where both fields are absent. Very unlikely when `fields: ['formatted_address', 'name', 'geometry']` are explicitly requested. Revisit if real-world reports emerge.

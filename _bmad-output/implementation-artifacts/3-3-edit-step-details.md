@@ -570,3 +570,16 @@ claude-sonnet-4-6
 ### Change Log
 
 - Implemented Story 3.3: added PUT /api/v1/trips/{tripId}/steps/{stepId} endpoint with UpdateStepRequest DTO + validator (same field rules as Create), UpdateStepAsync in StepService, updateStep in Angular StepService, and inline edit mode in StepListComponent (editingStepId signal, editForm, startEdit/cancelEdit/onEditSubmit methods, Edit button per step card, Places autocomplete on edit location field). 102 Angular tests pass (17 files). (Date: 2026-05-10)
+
+### Review Findings
+
+- [ ] [Review][Patch] `onEditSubmit` non-null assertion `editingStepId()!` without null guard — if called with no step in edit mode, throws runtime error [step-list.component.ts:137]
+
+- [x] [Review][Defer] FluentValidation `.WithMessage` chaining after `.Must()` [UpdateStepRequestValidator.cs:19] — deferred, pre-existing (same pattern as CreateStepRequestValidator reviewed in story 3.2)
+- [x] [Review][Defer] Controller conflates trip-not-owned and step-not-found into same 404 [StepsController.cs] — deferred, pre-existing design decision consistent across codebase
+- [x] [Review][Defer] `StepType` default 0 silently accepted when `type` omitted from JSON body [UpdateStepRequest.cs:4] — deferred, pre-existing same as CreateStepRequest
+- [x] [Review][Defer] `UpdatedAt` mutated on entity before `SaveChangesAsync` — in-memory state inconsistent if exception thrown [StepService.cs] — deferred, pre-existing
+- [x] [Review][Defer] Validator error messages hardcode StepType enum values [UpdateStepRequestValidator.cs:14] — deferred, pre-existing same as CreateStepRequestValidator
+- [x] [Review][Defer] Other-field validation errors collapsed to single banner with no per-field feedback [step-list.component.html] — deferred, pre-existing UX pattern
+- [x] [Review][Defer] `CreateStepRequest`/`UpdateStepRequest` TypeScript interfaces are duplicated [step.service.ts] — deferred, refactoring suggestion not a defect
+- [x] [Review][Defer] `SaveChangesAsync` `DbUpdateException` propagates as unhandled 500 [StepService.cs] — deferred, global exception handler concern pre-existing across all services
