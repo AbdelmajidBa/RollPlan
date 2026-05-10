@@ -1,6 +1,6 @@
 # Story 3.3: Edit Step Details
 
-Status: review
+Status: done
 
 ## Story
 
@@ -573,7 +573,7 @@ claude-sonnet-4-6
 
 ### Review Findings
 
-- [ ] [Review][Patch] `onEditSubmit` non-null assertion `editingStepId()!` without null guard — if called with no step in edit mode, throws runtime error [step-list.component.ts:137]
+- [x] [Review][Patch] `onEditSubmit` non-null assertion `editingStepId()!` without null guard — if called with no step in edit mode, throws runtime error [step-list.component.ts:137]
 
 - [x] [Review][Defer] FluentValidation `.WithMessage` chaining after `.Must()` [UpdateStepRequestValidator.cs:19] — deferred, pre-existing (same pattern as CreateStepRequestValidator reviewed in story 3.2)
 - [x] [Review][Defer] Controller conflates trip-not-owned and step-not-found into same 404 [StepsController.cs] — deferred, pre-existing design decision consistent across codebase

@@ -134,7 +134,11 @@ export class StepListComponent implements OnInit, OnDestroy {
     this.isEditSubmitting.set(true);
     this.editFormError.set(null);
 
-    const stepId = this.editingStepId()!;
+    const stepId = this.editingStepId();
+    if (!stepId) {
+      this.isEditSubmitting.set(false);
+      return;
+    }
     const { name, type, location, date, startTime, latitude, longitude } = this.editForm.value;
 
     this.stepService.updateStep(this.tripId, stepId, {
