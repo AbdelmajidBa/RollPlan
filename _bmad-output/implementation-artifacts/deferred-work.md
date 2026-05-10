@@ -1,5 +1,16 @@
 # Deferred Work
 
+## Deferred from: code review of 3-5-reorder-steps (2026-05-10)
+
+- **Steps missing from `StepIds` retain stale SortOrder** [`StepService.cs`] — v1 intentional per Dev Notes ("missing/extra IDs are ignored or skip sort assignment"). Address with a strict full-list validation in a future hardening pass.
+- **Response sorted from in-memory list, not re-queried DB state** [`StepService.cs`] — consequence of above; steps absent from request keep pre-save order in the response. Acceptable for v1; add a re-query in the hardening pass.
+- **Race condition on concurrent reorder requests** [`StepService.cs`] — no row locking or EF optimistic concurrency. Out of scope for v1. Add serializable transaction or `RowVersion` concurrency token in a resilience pass.
+- **No validation that all `StepIds` belong to the trip** [`StepService.cs`] — foreign IDs silently skipped (no IDOR risk since the query is already scoped to tripId). v1 intentional per Dev Notes. Enforce in a hardening pass.
+- **`subscribe()` without `takeUntilDestroyed` on `reorderSteps`** [`step-list.component.ts`] — pre-existing pattern in all service calls. Address in an Angular lifecycle hygiene pass (also deferred in 3-4).
+- **`onDrop` reads `this.steps()` signal rather than `event.container.data`** [`step-list.component.ts`] — index drift theoretical in single-user context. Monitor for CDK version changes that affect event data binding.
+- **No backend tests for edge cases (partial StepIds, empty list, duplicate IDs)** [`StepServiceTests.cs`] — happy path and ownership covered; edge cases deferred for a backend test expansion pass.
+- **Duplicate IDs in `StepIds` cause last-write-wins corruption on same step** [`StepService.cs`] — benign in normal use; add deduplication in the validator when the hardening pass adds `ReorderStepsRequestValidator`.
+
 ## Deferred from: code review of 3-4-delete-step (2026-05-10)
 
 - **Confirm dialog has no focus trap or Escape key handling** [`step-list.component.html`] — UX polish; address in an accessibility pass.

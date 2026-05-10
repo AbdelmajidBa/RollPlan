@@ -70,6 +70,20 @@ So that my itinerary reflects the correct sequence of events.
     - [x] Add test: `should call reorderSteps when step is dropped at new position` — call `onDrop` with a mock `CdkDragDrop` event (`previousIndex: 0, currentIndex: 1`, `container.data: [mockStep, mockStep2]`), assert `reorderStepsSpy` called with correct tripId and reordered IDs
     - [x] Add test: `should not call reorderSteps when dropped at same position` — call `onDrop` with `previousIndex: 0, currentIndex: 0`, assert `reorderStepsSpy` not called
 
+### Review Findings
+
+- [ ] [Review][Patch] Non-null assertion on `snapshot.find()` can spread `undefined` into optimistic state [rollplan-client/src/app/steps/services/step.service.ts]
+- [ ] [Review][Patch] Missing FluentValidation validator for `ReorderStepsRequest` — empty `StepIds` passes silently to service [rollplan-api/Models/DTOs/Steps/ReorderStepsRequest.cs]
+- [ ] [Review][Patch] No Angular unit test covering `onDrop` error path (`reorderError` signal not tested) — AC #3 [rollplan-client/src/app/steps/step-list/step-list.component.spec.ts]
+- [x] [Review][Defer] Steps missing from `StepIds` retain stale SortOrder (v1 intentional per Dev Notes) [rollplan-api/Services/StepService.cs] — deferred, v1 by design
+- [x] [Review][Defer] Response sorted from in-memory list, not re-queried DB state (consequence of above) [rollplan-api/Services/StepService.cs] — deferred, v1 by design
+- [x] [Review][Defer] Race condition on concurrent reorder requests (no row locking or optimistic concurrency) — deferred, architectural, out of scope v1
+- [x] [Review][Defer] No validation that all `StepIds` belong to the trip (foreign IDs silently skipped, no IDOR risk) — deferred, v1 by design per Dev Notes
+- [x] [Review][Defer] `subscribe()` without `takeUntilDestroyed` — pre-existing pattern in all service calls — deferred, pre-existing
+- [x] [Review][Defer] `onDrop` reads `this.steps()` signal rather than `event.container.data` — index drift theoretical in single-user context — deferred, pre-existing
+- [x] [Review][Defer] No backend tests for edge cases (partial StepIds, empty list, duplicate IDs) — deferred, low priority
+- [x] [Review][Defer] Duplicate IDs in `StepIds` cause last-write-wins corruption on same step — deferred, edge case
+
 ## Dev Notes
 
 ### Prerequisite: Install Angular CDK
