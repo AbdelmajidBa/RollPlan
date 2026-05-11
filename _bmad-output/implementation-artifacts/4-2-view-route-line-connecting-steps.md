@@ -1,6 +1,6 @@
 # Story 4.2: View Route Line Connecting Steps
 
-Status: review
+Status: done
 
 ## Story
 
@@ -38,6 +38,10 @@ So that I can see the path of my trip at a glance.
   - [x] In `trip-map.component.spec.ts`: add `mockPolyline = { addTo: vi.fn().mockReturnThis(), remove: vi.fn() }` and `polyline: vi.fn(() => mockPolyline)` to the `vi.mock('leaflet', ...)` factory
   - [x] Test: `should draw polyline when 2+ steps have coordinates` — provide 2 steps with coords, assert `L.polyline` was called
   - [x] Test: `should not draw polyline when fewer than 2 steps have coordinates` — provide 1 step with coords, assert `L.polyline` was NOT called
+
+### Review Findings
+
+- [x] [Review][Defer] No explicit test for AC #3/#4 (signal update triggers polyline redraw/removal) — covered mechanically by existing `effect()` but untested; pre-existing gap pattern across all reactive map tests — deferred, pre-existing
 
 ## Dev Notes
 
