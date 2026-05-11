@@ -1,5 +1,10 @@
 # Deferred Work
 
+## Deferred from: code review of 4-3-tap-pin-to-open-step-details (2026-05-11)
+
+- **XSS: step fields injected raw into Leaflet popup HTML** [`trip-map.component.ts:buildPopupHtml`] — `step.name`, `step.date`, `step.startTime` are template-interpolated directly into the HTML string passed to `bindPopup()`. No escaping or sanitization applied. Low risk for v1 (single-user; step data server-validated), but must be addressed with DOMPurify or a Content Security Policy before multi-user or public launch.
+- **Popup HTML not reactive to `tripId` input changes post-bind** [`trip-map.component.ts:buildPopupHtml`] — Leaflet bakes the popup HTML string at `bindPopup()` call time. If `tripId` changes after markers are drawn, the "View in trip" link in existing popups will reflect the old value. In practice `tripId` is immutable for the life of the trip detail page (set once in `ngOnInit`), so this cannot trigger in current usage. Address if `TripMapComponent` is ever reused in a context where `tripId` changes dynamically.
+
 ## Deferred from: code review of 4-2-view-route-line-connecting-steps (2026-05-11)
 
 - **No explicit test for AC #3/#4 (signal update triggers polyline redraw)** [`trip-map.component.spec.ts`] — The `effect()` mechanically covers reactive redraw, but there is no test that updates `stepsSignal` after component creation and asserts `L.polyline` is called again and the old polyline is removed. Same gap exists in story 4.1 for marker redraw. Address in a map-component test hardening pass.

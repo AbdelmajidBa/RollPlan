@@ -38,6 +38,12 @@ So that I can quickly access step information from the map.
   - [x] Test: `should bind popup to markers when steps have coordinates` — assert `circleMarker(...).bindPopup` was called (via `vi.mocked` on the returned mock)
   - [x] Test: `should include step name in popup HTML` — spy on `buildPopupHtml` or assert `bindPopup` was called with HTML containing the step name
 
+### Review Findings
+
+- [ ] [Review][Patch] "View in trip" link branch untested — `tripId` is never set on the `TripMapComponent` under test, so `buildPopupHtml` always takes the no-link branch; AC #3 link presence is unverified [`trip-map.component.spec.ts`]
+- [x] [Review][Defer] XSS: step fields (`name`, `date`, `startTime`) injected raw into Leaflet popup HTML without sanitization [`trip-map.component.ts:buildPopupHtml`] — deferred, v1 personal-project; step data validated server-side; address with DOMPurify or Content Security Policy before multi-user/public launch
+- [x] [Review][Defer] Popup HTML not reactive to `tripId` input changes after initial bind — Leaflet bakes the HTML string at `bindPopup()` call time; if `tripId` ever changes post-init, existing popups show stale link [`trip-map.component.ts:buildPopupHtml`] — deferred, pre-existing; `tripId` is set once in `ngOnInit` and never changes in current routing
+
 ## Dev Notes
 
 ### Scope: Minimal Changes — Two Files
