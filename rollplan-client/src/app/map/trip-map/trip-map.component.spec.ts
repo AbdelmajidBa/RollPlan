@@ -1,5 +1,11 @@
 import { vi } from 'vitest';
 
+const mockMarker = vi.hoisted(() => ({
+  bindTooltip: vi.fn().mockReturnThis(),
+  bindPopup: vi.fn().mockReturnThis(),
+  addTo: vi.fn().mockReturnThis()
+}));
+
 vi.mock('leaflet', () => {
   const mockLayer = { addTo: vi.fn().mockReturnThis(), clearLayers: vi.fn() };
   const mockMap = {
@@ -9,7 +15,6 @@ vi.mock('leaflet', () => {
     invalidateSize: vi.fn(),
     remove: vi.fn()
   };
-  const mockMarker = { bindTooltip: vi.fn().mockReturnThis(), addTo: vi.fn().mockReturnThis() };
   const mockPolyline = { addTo: vi.fn().mockReturnThis(), remove: vi.fn() };
   return {
     map: vi.fn(() => mockMap),
@@ -51,6 +56,20 @@ const stepWithCoords2: Step = {
   updatedAt: '2026-05-01T00:00:00Z'
 };
 
+const stepWithCoordsAndDate: Step = {
+  id: 'aaaa-0004',
+  tripId: 'bbbb-0001',
+  name: 'Ferry Crossing',
+  type: 'Travel',
+  sortOrder: 2,
+  latitude: 49.0,
+  longitude: 2.5,
+  date: '2026-05-10',
+  startTime: '14:00',
+  createdAt: '2026-05-01T00:00:00Z',
+  updatedAt: '2026-05-01T00:00:00Z'
+};
+
 const stepNoCoords: Step = {
   id: 'aaaa-0002',
   tripId: 'bbbb-0001',
@@ -67,6 +86,8 @@ describe('TripMapComponent', () => {
   beforeEach(async () => {
     stepsSignal = signal<Step[]>([]);
     vi.mocked(L.polyline).mockClear();
+    vi.mocked(L.circleMarker).mockClear();
+    mockMarker.bindPopup.mockClear();
 
     await TestBed.configureTestingModule({
       imports: [TripMapComponent],
@@ -119,5 +140,24 @@ describe('TripMapComponent', () => {
     const fixture = TestBed.createComponent(TripMapComponent);
     fixture.detectChanges();
     expect(vi.mocked(L.polyline)).not.toHaveBeenCalled();
+  });
+
+  it('should bind popup to markers when steps have coordinates', () => {
+    stepsSignal.set([stepWithCoords]);
+    const fixture = TestBed.createComponent(TripMapComponent);
+    fixture.detectChanges();
+    expect(vi.mocked(L.circleMarker)).toHaveBeenCalled();
+    expect(mockMarker.bindPopup).toHaveBeenCalledTimes(1);
+  });
+
+  it('should include step name and type in popup HTML', () => {
+    stepsSignal.set([stepWithCoordsAndDate]);
+    const fixture = TestBed.createComponent(TripMapComponent);
+    fixture.detectChanges();
+    const html: string = mockMarker.bindPopup.mock.calls[0][0];
+    expect(html).toContain('Ferry Crossing');
+    expect(html).toContain('Travel');
+    expect(html).toContain('2026-05-10');
+    expect(html).toContain('14:00');
   });
 });

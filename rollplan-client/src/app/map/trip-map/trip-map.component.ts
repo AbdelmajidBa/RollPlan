@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy, ViewChild, ElementRef, inject, signal, effect } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, ViewChild, ElementRef, inject, signal, effect, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';
 import { StepService, Step } from '../../steps/services/step.service';
@@ -18,6 +18,7 @@ export class TripMapComponent implements AfterViewInit, OnDestroy {
   private readonly stepService = inject(StepService);
 
   readonly mapEmpty = signal(true);
+  @Input() tripId = '';
 
   constructor() {
     effect(() => {
@@ -59,6 +60,7 @@ export class TripMapComponent implements AfterViewInit, OnDestroy {
         fillOpacity: 0.9
       })
         .bindTooltip(`${step.sortOrder}. ${step.name}`)
+        .bindPopup(this.buildPopupHtml(step))
         .addTo(this.markersLayer);
       bounds.push(latlng);
     });
@@ -79,6 +81,19 @@ export class TripMapComponent implements AfterViewInit, OnDestroy {
       this.map!.fitBounds(L.latLngBounds(bounds), { padding: [40, 40] });
     }
     setTimeout(() => this.map?.invalidateSize(), 0);
+  }
+
+  private buildPopupHtml(step: Step): string {
+    const parts: string[] = [
+      `<strong>${step.name}</strong>`,
+      `<span>${step.type}</span>`
+    ];
+    if (step.date) parts.push(`<span>${step.date}</span>`);
+    if (step.startTime) parts.push(`<span>${step.startTime}</span>`);
+    if (this.tripId) {
+      parts.push(`<a href="/trips/${this.tripId}" style="display:block;margin-top:6px;font-size:0.8rem">View in trip</a>`);
+    }
+    return `<div style="min-width:150px">${parts.join('<br/>')}</div>`;
   }
 
   ngOnDestroy(): void {
