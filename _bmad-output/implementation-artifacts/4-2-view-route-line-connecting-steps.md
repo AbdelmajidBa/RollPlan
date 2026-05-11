@@ -1,6 +1,6 @@
 # Story 4.2: View Route Line Connecting Steps
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -28,16 +28,16 @@ So that I can see the path of my trip at a glance.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Add polyline rendering to TripMapComponent (AC: #1, #2, #3, #4)
-  - [ ] Add `private routeLine?: L.Polyline` field to `TripMapComponent`
-  - [ ] In `updateMarkers()`: before drawing pins, call `this.routeLine?.remove()` and reset to `undefined`
-  - [ ] After building the `bounds` array (which is in sortOrder), if `located.length >= 2` draw `L.polyline(bounds, { color: '#0ea5e9', weight: 3, opacity: 0.6 }).addTo(this.map!)` and store as `this.routeLine`
-  - [ ] Verify polyline redraws automatically on steps signal change (already handled by existing `effect()`)
+- [x] Task 1: Add polyline rendering to TripMapComponent (AC: #1, #2, #3, #4)
+  - [x] Add `private routeLine?: L.Polyline` field to `TripMapComponent`
+  - [x] In `updateMarkers()`: before drawing pins, call `this.routeLine?.remove()` and reset to `undefined`
+  - [x] After building the `bounds` array (which is in sortOrder), if `located.length >= 2` draw `L.polyline(bounds, { color: '#0ea5e9', weight: 3, opacity: 0.6 }).addTo(this.map!)` and store as `this.routeLine`
+  - [x] Verify polyline redraws automatically on steps signal change (already handled by existing `effect()`)
 
-- [ ] Task 2: Update Leaflet mock and add unit tests (AC: #1, #2)
-  - [ ] In `trip-map.component.spec.ts`: add `mockPolyline = { addTo: vi.fn().mockReturnThis(), remove: vi.fn() }` and `polyline: vi.fn(() => mockPolyline)` to the `vi.mock('leaflet', ...)` factory
-  - [ ] Test: `should draw polyline when 2+ steps have coordinates` — provide 2 steps with coords, assert `L.polyline` was called
-  - [ ] Test: `should not draw polyline when fewer than 2 steps have coordinates` — provide 1 step with coords, assert `L.polyline` was NOT called
+- [x] Task 2: Update Leaflet mock and add unit tests (AC: #1, #2)
+  - [x] In `trip-map.component.spec.ts`: add `mockPolyline = { addTo: vi.fn().mockReturnThis(), remove: vi.fn() }` and `polyline: vi.fn(() => mockPolyline)` to the `vi.mock('leaflet', ...)` factory
+  - [x] Test: `should draw polyline when 2+ steps have coordinates` — provide 2 steps with coords, assert `L.polyline` was called
+  - [x] Test: `should not draw polyline when fewer than 2 steps have coordinates` — provide 1 step with coords, assert `L.polyline` was NOT called
 
 ## Dev Notes
 
@@ -315,7 +315,7 @@ This story is purely frontend. `latitude`, `longitude`, and `sortOrder` are alre
 
 ### Agent Model Used
 
-(to be filled)
+claude-sonnet-4-6
 
 ### File List
 
@@ -324,4 +324,10 @@ This story is purely frontend. `latitude`, `longitude`, and `sortOrder` are alre
 
 ### Change Log
 
-(to be filled)
+- Added `private routeLine?: L.Polyline` field to `TripMapComponent`
+- In `updateMarkers()`: clears existing polyline with `routeLine?.remove()`, draws `L.polyline(bounds, ...)` when 2+ located steps, stores reference as `this.routeLine`
+- Polyline styled sky-500 (`#0ea5e9`), weight 3, opacity 0.6 to match pin colour scheme
+- Reactive redraw on step reorder/edit covered by existing `effect()` — no additional wiring needed
+- Updated Leaflet mock: added `mockPolyline` + `polyline` factory; added `vi.mocked(L.polyline).mockClear()` in `beforeEach`
+- Added 2 new tests: polyline drawn when 2+ coords (asserts call + args), not drawn when < 2 coords
+- All 115 Angular tests pass (was 113 — 2 new)

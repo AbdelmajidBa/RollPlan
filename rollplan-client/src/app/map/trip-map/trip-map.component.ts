@@ -14,6 +14,7 @@ export class TripMapComponent implements AfterViewInit, OnDestroy {
 
   private map?: L.Map;
   private readonly markersLayer = L.layerGroup();
+  private routeLine?: L.Polyline;
   private readonly stepService = inject(StepService);
 
   readonly mapEmpty = signal(true);
@@ -61,6 +62,16 @@ export class TripMapComponent implements AfterViewInit, OnDestroy {
         .addTo(this.markersLayer);
       bounds.push(latlng);
     });
+
+    this.routeLine?.remove();
+    this.routeLine = undefined;
+    if (located.length >= 2) {
+      this.routeLine = L.polyline(bounds, {
+        color: '#0ea5e9',
+        weight: 3,
+        opacity: 0.6
+      }).addTo(this.map!);
+    }
 
     if (located.length === 1) {
       this.map!.setView(bounds[0], 13);
