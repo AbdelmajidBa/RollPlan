@@ -1,6 +1,6 @@
 # Story 4.1: View Steps as Map Pins
 
-Status: review
+Status: done
 
 ## Story
 
@@ -57,11 +57,11 @@ So that I can visualize the geography of my trip.
 
 ### Review Findings
 
-- [ ] [Review][Patch] Tooltip uses filtered array index (`i+1`) instead of step `sortOrder` — violates AC 5; step 3 (second with coords) shows as "2." in tooltip while the step list shows it as "3." [trip-map.component.ts:53]
-- [ ] [Review][Patch] `@types/leaflet` placed in `dependencies` instead of `devDependencies` — type-only package should not ship to production [package.json:20]
-- [ ] [Review][Patch] `fitBounds` with a single located step produces zero-area bounds, causing Leaflet to zoom to maximum zoom level [trip-map.component.ts:64]
-- [ ] [Review][Patch] Leaflet initialized on hidden container (`display:none` via `mapEmpty=true`); `map.invalidateSize()` never called after container is revealed, causing broken tile layout on first pin [trip-map.component.ts:43]
-- [ ] [Review][Patch] Silent `catch {}` swallows all Leaflet init errors including programming bugs with no logging [trip-map.component.ts:38]
+- [x] [Review][Patch] Tooltip uses filtered array index (`i+1`) instead of step `sortOrder` — violates AC 5; step 3 (second with coords) shows as "2." in tooltip while the step list shows it as "3." [trip-map.component.ts:53]
+- [x] [Review][Patch] `@types/leaflet` placed in `dependencies` instead of `devDependencies` — type-only package should not ship to production [package.json:20]
+- [x] [Review][Patch] `fitBounds` with a single located step produces zero-area bounds, causing Leaflet to zoom to maximum zoom level [trip-map.component.ts:64]
+- [x] [Review][Patch] Leaflet initialized on hidden container (`display:none` via `mapEmpty=true`); `map.invalidateSize()` never called after container is revealed, causing broken tile layout on first pin [trip-map.component.ts:43]
+- [x] [Review][Patch] Silent `catch {}` swallows all Leaflet init errors including programming bugs with no logging [trip-map.component.ts:38]
 - [x] [Review][Defer] `markersLayer` initialized at field declaration before Leaflet map exists — SSR/constructor side-effect concern [trip-map.component.ts:18] — deferred, pre-existing
 
 ## Dev Notes

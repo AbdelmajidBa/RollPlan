@@ -6,6 +6,7 @@ vi.mock('leaflet', () => {
     setView: vi.fn().mockReturnThis(),
     addLayer: vi.fn(),
     fitBounds: vi.fn(),
+    invalidateSize: vi.fn(),
     remove: vi.fn()
   };
   const mockMarker = { bindTooltip: vi.fn().mockReturnThis(), addTo: vi.fn().mockReturnThis() };

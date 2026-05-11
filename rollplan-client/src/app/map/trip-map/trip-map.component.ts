@@ -35,8 +35,8 @@ export class TripMapComponent implements AfterViewInit, OnDestroy {
       }).addTo(this.map);
       this.markersLayer.addTo(this.map);
       this.updateMarkers(this.stepService.steps());
-    } catch {
-      // Leaflet failed to initialize — mapEmpty stays true, container remains hidden
+    } catch (err) {
+      console.error('TripMapComponent: Leaflet failed to initialize', err);
     }
   }
 
@@ -48,7 +48,7 @@ export class TripMapComponent implements AfterViewInit, OnDestroy {
     if (located.length === 0) return;
 
     const bounds: [number, number][] = [];
-    located.forEach((step, i) => {
+    located.forEach((step) => {
       const latlng: [number, number] = [step.latitude!, step.longitude!];
       L.circleMarker(latlng, {
         radius: 8,
@@ -57,12 +57,17 @@ export class TripMapComponent implements AfterViewInit, OnDestroy {
         weight: 2,
         fillOpacity: 0.9
       })
-        .bindTooltip(`${i + 1}. ${step.name}`)
+        .bindTooltip(`${step.sortOrder}. ${step.name}`)
         .addTo(this.markersLayer);
       bounds.push(latlng);
     });
 
-    this.map!.fitBounds(L.latLngBounds(bounds), { padding: [40, 40] });
+    if (located.length === 1) {
+      this.map!.setView(bounds[0], 13);
+    } else {
+      this.map!.fitBounds(L.latLngBounds(bounds), { padding: [40, 40] });
+    }
+    setTimeout(() => this.map?.invalidateSize(), 0);
   }
 
   ngOnDestroy(): void {
