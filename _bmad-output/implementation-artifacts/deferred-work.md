@@ -1,5 +1,9 @@
 # Deferred Work
 
+## Deferred from: code review of 4-1-view-steps-as-map-pins (2026-05-11)
+
+- **`markersLayer` initialized at field declaration before Leaflet map exists** [`trip-map.component.ts:18`] — `L.layerGroup()` called at class instantiation (before `ngAfterViewInit`). In a browser-only SPA this is harmless, but it triggers Leaflet import-time side-effects during DI construction. Defer until SSR or prerendering is considered.
+
 ## Deferred from: code review of 3-5-reorder-steps (2026-05-10)
 
 - **Steps missing from `StepIds` retain stale SortOrder** [`StepService.cs`] — v1 intentional per Dev Notes ("missing/extra IDs are ignored or skip sort assignment"). Address with a strict full-list validation in a future hardening pass.
