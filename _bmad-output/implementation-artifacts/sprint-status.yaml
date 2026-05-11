@@ -74,7 +74,7 @@ development_status:
   4-1-view-steps-as-map-pins: done
   4-2-view-route-line-connecting-steps: done
   4-3-tap-pin-to-open-step-details: done
-  4-4-toggle-between-map-and-list-view: backlog
+  4-4-toggle-between-map-and-list-view: ready-for-dev
   epic-4-retrospective: optional
 
   # ─── Epic 5: Moment Cards (Notes & Photos) ───
