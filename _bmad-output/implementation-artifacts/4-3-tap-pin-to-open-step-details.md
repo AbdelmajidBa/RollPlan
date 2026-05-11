@@ -1,6 +1,6 @@
 # Story 4.3: Tap Pin to Open Step Details
 
-Status: review
+Status: done
 
 ## Story
 
@@ -40,7 +40,7 @@ So that I can quickly access step information from the map.
 
 ### Review Findings
 
-- [ ] [Review][Patch] "View in trip" link branch untested — `tripId` is never set on the `TripMapComponent` under test, so `buildPopupHtml` always takes the no-link branch; AC #3 link presence is unverified [`trip-map.component.spec.ts`]
+- [x] [Review][Patch] "View in trip" link branch untested — `tripId` is never set on the `TripMapComponent` under test, so `buildPopupHtml` always takes the no-link branch; AC #3 link presence is unverified [`trip-map.component.spec.ts`]
 - [x] [Review][Defer] XSS: step fields (`name`, `date`, `startTime`) injected raw into Leaflet popup HTML without sanitization [`trip-map.component.ts:buildPopupHtml`] — deferred, v1 personal-project; step data validated server-side; address with DOMPurify or Content Security Policy before multi-user/public launch
 - [x] [Review][Defer] Popup HTML not reactive to `tripId` input changes after initial bind — Leaflet bakes the HTML string at `bindPopup()` call time; if `tripId` ever changes post-init, existing popups show stale link [`trip-map.component.ts:buildPopupHtml`] — deferred, pre-existing; `tripId` is set once in `ngOnInit` and never changes in current routing
 

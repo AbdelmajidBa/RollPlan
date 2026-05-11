@@ -153,11 +153,14 @@ describe('TripMapComponent', () => {
   it('should include step name and type in popup HTML', () => {
     stepsSignal.set([stepWithCoordsAndDate]);
     const fixture = TestBed.createComponent(TripMapComponent);
+    fixture.componentInstance.tripId = 'bbbb-0001';
     fixture.detectChanges();
     const html: string = mockMarker.bindPopup.mock.calls[0][0];
     expect(html).toContain('Ferry Crossing');
     expect(html).toContain('Travel');
     expect(html).toContain('2026-05-10');
     expect(html).toContain('14:00');
+    expect(html).toContain('href="/trips/bbbb-0001"');
+    expect(html).toContain('View in trip');
   });
 });
