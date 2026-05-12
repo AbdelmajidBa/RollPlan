@@ -1,5 +1,10 @@
 # Deferred Work
 
+## Deferred from: code review of 4-4-toggle-between-map-and-list-view (2026-05-12)
+
+- **`sessionStorage` calls not wrapped in try/catch** [`trip-detail.component.ts:ngOnInit,setView`] — throws `SecurityError` in Safari private browsing / ITP. v1 personal project; pre-existing SPA-wide pattern; address in a resilience pass before public launch.
+- **`tripId` non-null asserted from route params without null guard** [`trip-detail.component.ts:ngOnInit`] — pre-existing across all detail components; not introduced by this story. Address in a general input-validation pass.
+
 ## Deferred from: code review of 4-3-tap-pin-to-open-step-details (2026-05-11)
 
 - **XSS: step fields injected raw into Leaflet popup HTML** [`trip-map.component.ts:buildPopupHtml`] — `step.name`, `step.date`, `step.startTime` are template-interpolated directly into the HTML string passed to `bindPopup()`. No escaping or sanitization applied. Low risk for v1 (single-user; step data server-validated), but must be addressed with DOMPurify or a Content Security Policy before multi-user or public launch.

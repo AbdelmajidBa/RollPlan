@@ -1,6 +1,6 @@
 # Story 4.4: Toggle Between Map and List View
 
-Status: review
+Status: done
 
 ## Story
 
@@ -40,6 +40,12 @@ So that I can choose the most useful way to review my trip.
   - [x] Test: `should switch to map view when setView called` — `activeView()` is `'map'` after `setView('map')`
   - [x] Test: `should persist view selection to sessionStorage` — after `setView('map')`, `sessionStorage.getItem('tripDetailView')` is `'map'`
   - [x] Test: `should restore map view from sessionStorage on init` — set `sessionStorage.setItem('tripDetailView', 'map')` before `detectChanges()`, then assert `activeView() === 'map'`
+
+### Review Findings
+
+- [ ] [Review][Patch] `should default to list view` never calls `detectChanges` — `ngOnInit` is not invoked; test validates the signal constructor default, not that `ngOnInit` preserves `'list'` when sessionStorage is empty [`trip-detail.component.spec.ts`]
+- [x] [Review][Defer] `sessionStorage` calls not wrapped in try/catch — throws `SecurityError` in Safari private browsing / ITP [`trip-detail.component.ts:ngOnInit,setView`] — deferred, v1 personal project; pre-existing SPA-wide pattern; address in a resilience pass before public launch
+- [x] [Review][Defer] `tripId` non-null asserted from route params without null guard [`trip-detail.component.ts:ngOnInit`] — deferred, pre-existing across all detail components; not introduced by this diff
 
 ## Dev Notes
 

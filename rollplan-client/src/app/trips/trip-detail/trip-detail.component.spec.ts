@@ -149,6 +149,7 @@ describe('TripDetailComponent', () => {
   it('should default to list view', () => {
     getTripSpy.mockReturnValue(of(mockTrip));
     const fixture = TestBed.createComponent(TripDetailComponent);
+    fixture.detectChanges();
     expect(fixture.componentInstance.activeView()).toBe('list');
   });
 
