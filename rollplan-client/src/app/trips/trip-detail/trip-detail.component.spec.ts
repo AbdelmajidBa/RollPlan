@@ -23,6 +23,7 @@ describe('TripDetailComponent', () => {
   let currentTripSignal: ReturnType<typeof signal<Trip | null>>;
 
   beforeEach(async () => {
+    sessionStorage.clear();
     getTripSpy = vi.fn();
     updateTripSpy = vi.fn();
     setTripStatusSpy = vi.fn();
@@ -143,5 +144,33 @@ describe('TripDetailComponent', () => {
     fixture.componentInstance.form.patchValue({ name: 'Updated Name' });
     fixture.componentInstance.onSubmit();
     expect(updateTripSpy).toHaveBeenCalledWith(mockTrip.id, expect.objectContaining({ name: 'Updated Name' }));
+  });
+
+  it('should default to list view', () => {
+    getTripSpy.mockReturnValue(of(mockTrip));
+    const fixture = TestBed.createComponent(TripDetailComponent);
+    expect(fixture.componentInstance.activeView()).toBe('list');
+  });
+
+  it('should switch to map view when setView called', () => {
+    getTripSpy.mockReturnValue(of(mockTrip));
+    const fixture = TestBed.createComponent(TripDetailComponent);
+    fixture.componentInstance.setView('map');
+    expect(fixture.componentInstance.activeView()).toBe('map');
+  });
+
+  it('should persist view selection to sessionStorage', () => {
+    getTripSpy.mockReturnValue(of(mockTrip));
+    const fixture = TestBed.createComponent(TripDetailComponent);
+    fixture.componentInstance.setView('map');
+    expect(sessionStorage.getItem('tripDetailView')).toBe('map');
+  });
+
+  it('should restore map view from sessionStorage on init', () => {
+    sessionStorage.setItem('tripDetailView', 'map');
+    getTripSpy.mockReturnValue(of(mockTrip));
+    const fixture = TestBed.createComponent(TripDetailComponent);
+    fixture.detectChanges();
+    expect(fixture.componentInstance.activeView()).toBe('map');
   });
 });

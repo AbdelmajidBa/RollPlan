@@ -1,6 +1,6 @@
 # Story 4.4: Toggle Between Map and List View
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -24,22 +24,22 @@ So that I can choose the most useful way to review my trip.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Add `activeView` signal and `setView()` to TripDetailComponent (AC: #1, #2, #3)
-  - [ ] Add `activeView = signal<'list' | 'map'>('list')` field to `TripDetailComponent`
-  - [ ] In `ngOnInit`: read `sessionStorage.getItem('tripDetailView')` and if the value is `'map'`, call `this.activeView.set('map')`
-  - [ ] Add `setView(view: 'list' | 'map'): void` method: `this.activeView.set(view); sessionStorage.setItem('tripDetailView', view);`
+- [x] Task 1: Add `activeView` signal and `setView()` to TripDetailComponent (AC: #1, #2, #3)
+  - [x] Add `activeView = signal<'list' | 'map'>('list')` field to `TripDetailComponent`
+  - [x] In `ngOnInit`: read `sessionStorage.getItem('tripDetailView')` and if the value is `'map'`, call `this.activeView.set('map')`
+  - [x] Add `setView(view: 'list' | 'map'): void` method: `this.activeView.set(view); sessionStorage.setItem('tripDetailView', view);`
 
-- [ ] Task 2: Add toggle UI and conditional rendering to the template (AC: #1, #2)
-  - [ ] In `trip-detail.component.html`, inside `<ng-container *ngIf="!isEditing()">`, add a two-button toggle group (List / Map) after the trip info card and before the child components
-  - [ ] Change `<app-step-list [tripId]="tripId">` to `<app-step-list *ngIf="activeView() === 'list'" [tripId]="tripId">`
-  - [ ] Change `<app-trip-map [tripId]="tripId">` to `<app-trip-map *ngIf="activeView() === 'map'" [tripId]="tripId">`
+- [x] Task 2: Add toggle UI and conditional rendering to the template (AC: #1, #2)
+  - [x] In `trip-detail.component.html`, inside `<ng-container *ngIf="!isEditing()">`, add a two-button toggle group (List / Map) after the trip info card and before the child components
+  - [x] Change `<app-step-list [tripId]="tripId">` to `<app-step-list *ngIf="activeView() === 'list'" [tripId]="tripId">`
+  - [x] Change `<app-trip-map [tripId]="tripId">` to `<app-trip-map *ngIf="activeView() === 'map'" [tripId]="tripId">`
 
-- [ ] Task 3: Add unit tests (AC: #1, #2, #3)
-  - [ ] In `trip-detail.component.spec.ts`: add `sessionStorage.clear()` to `beforeEach`
-  - [ ] Test: `should default to list view` — `activeView()` is `'list'` on create
-  - [ ] Test: `should switch to map view when setView called` — `activeView()` is `'map'` after `setView('map')`
-  - [ ] Test: `should persist view selection to sessionStorage` — after `setView('map')`, `sessionStorage.getItem('tripDetailView')` is `'map'`
-  - [ ] Test: `should restore map view from sessionStorage on init` — set `sessionStorage.setItem('tripDetailView', 'map')` before `detectChanges()`, then assert `activeView() === 'map'`
+- [x] Task 3: Add unit tests (AC: #1, #2, #3)
+  - [x] In `trip-detail.component.spec.ts`: add `sessionStorage.clear()` to `beforeEach`
+  - [x] Test: `should default to list view` — `activeView()` is `'list'` on create
+  - [x] Test: `should switch to map view when setView called` — `activeView()` is `'map'` after `setView('map')`
+  - [x] Test: `should persist view selection to sessionStorage` — after `setView('map')`, `sessionStorage.getItem('tripDetailView')` is `'map'`
+  - [x] Test: `should restore map view from sessionStorage on init` — set `sessionStorage.setItem('tripDetailView', 'map')` before `detectChanges()`, then assert `activeView() === 'map'`
 
 ## Dev Notes
 
@@ -230,7 +230,7 @@ Purely frontend — no new API endpoints, no new services. `activeView` is local
 
 ### Agent Model Used
 
-(to be filled)
+claude-sonnet-4-6
 
 ### File List
 
@@ -240,4 +240,9 @@ Purely frontend — no new API endpoints, no new services. `activeView` is local
 
 ### Change Log
 
-(to be filled)
+- Added `activeView = signal<'list' | 'map'>('list')` field to `TripDetailComponent`
+- In `ngOnInit`: reads `sessionStorage.getItem('tripDetailView')` and restores `'map'` if previously selected
+- Added `setView(view)` method: updates signal and writes to `sessionStorage`
+- In `trip-detail.component.html`: added two-button toggle (List / Map) with sky-600 active / slate-800 inactive styling; wrapped `<app-step-list>` and `<app-trip-map>` in `*ngIf="activeView() === '...'"` so only one renders at a time
+- In spec: added `sessionStorage.clear()` to `beforeEach`; added 4 new tests (default view, setView, sessionStorage persistence, sessionStorage restore on init)
+- All 121 Angular tests pass (was 117 — 4 new)

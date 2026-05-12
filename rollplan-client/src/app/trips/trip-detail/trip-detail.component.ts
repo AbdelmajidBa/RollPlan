@@ -41,12 +41,16 @@ export class TripDetailComponent implements OnInit {
   });
 
   tripId = '';
+  activeView = signal<'list' | 'map'>('list');
   private selectedFile: File | null = null;
 
   get nameControl() { return this.form.get('name')!; }
 
   ngOnInit(): void {
     this.tripId = this.route.snapshot.paramMap.get('id')!;
+    if (sessionStorage.getItem('tripDetailView') === 'map') {
+      this.activeView.set('map');
+    }
     this.tripService.getTrip(this.tripId).subscribe({
       next: () => {
         this.initForm();
@@ -77,6 +81,11 @@ export class TripDetailComponent implements OnInit {
 
   cancelEditing(): void {
     this.isEditing.set(false);
+  }
+
+  setView(view: 'list' | 'map'): void {
+    this.activeView.set(view);
+    sessionStorage.setItem('tripDetailView', view);
   }
 
   onFileChange(event: Event): void {

@@ -88,8 +88,31 @@
           </div>
         </div>
 
-        <app-step-list [tripId]="tripId"></app-step-list>
-        <app-trip-map [tripId]="tripId"></app-trip-map>
+        <div class="mt-6 flex gap-2">
+          <button
+            (click)="setView('list')"
+            [class.bg-sky-600]="activeView() === 'list'"
+            [class.text-white]="activeView() === 'list'"
+            [class.bg-slate-800]="activeView() !== 'list'"
+            [class.text-slate-400]="activeView() !== 'list'"
+            class="rounded-2xl px-4 py-2 text-sm font-semibold transition hover:text-white"
+          >
+            List
+          </button>
+          <button
+            (click)="setView('map')"
+            [class.bg-sky-600]="activeView() === 'map'"
+            [class.text-white]="activeView() === 'map'"
+            [class.bg-slate-800]="activeView() !== 'map'"
+            [class.text-slate-400]="activeView() !== 'map'"
+            class="rounded-2xl px-4 py-2 text-sm font-semibold transition hover:text-white"
+          >
+            Map
+          </button>
+        </div>
+
+        <app-step-list *ngIf="activeView() === 'list'" [tripId]="tripId"></app-step-list>
+        <app-trip-map *ngIf="activeView() === 'map'" [tripId]="tripId"></app-trip-map>
       </ng-container>
 
       <ng-container *ngIf="isEditing()">
