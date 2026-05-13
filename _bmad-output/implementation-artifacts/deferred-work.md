@@ -1,5 +1,14 @@
 # Deferred Work
 
+## Deferred from: code review of 5-1-add-edit-and-remove-note-on-a-step (2026-05-12)
+
+- **Whitespace-only note input silently discarded** [`step-list.component.ts:onSubmit,onEditSubmit`] — `note?.trim() || undefined` trims all whitespace including newlines. Consistent with existing `location?.trim() || undefined` pattern. User typing only newlines has input silently dropped. Address if user feedback surfaces.
+- **Note server validation error shown in generic banner, not inline to textarea** [`step-list.component.ts:onSubmit,onEditSubmit`] — AC #5 technically met (error is visible), but UX inconsistency with the Name field which gets `setErrors` inline. Address in a UX polish pass.
+- **`form.reset()` leaves note control as `null` after cancel** [`step-list.component.ts:cancelAdd,cancelEdit`] — Angular `FormGroup.reset()` semantics; same as all other optional fields. No data loss in practice. Pre-existing Angular behavior.
+- **No client template test for note display hiding (AC #4 "hidden if absent")** [`step-list.component.spec.ts`] — Consistent with existing pattern; no rendering tests for location/date/startTime display exist either.
+- **No validator unit tests for 2000-char boundary** — Pre-existing: no FluentValidation unit tests exist anywhere in the project.
+- **`UpdateStepAsync_UpdatesNote` asserts response only, not persisted DB row** [`StepServiceTests.cs`] — Consistent with most existing UpdateStep tests. Coordinate tests are the only exception that also queries the DB.
+
 ## Deferred from: code review of 4-4-toggle-between-map-and-list-view (2026-05-12)
 
 - **`sessionStorage` calls not wrapped in try/catch** [`trip-detail.component.ts:ngOnInit,setView`] — throws `SecurityError` in Safari private browsing / ITP. v1 personal project; pre-existing SPA-wide pattern; address in a resilience pass before public launch.
