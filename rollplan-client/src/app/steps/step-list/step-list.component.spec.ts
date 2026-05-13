@@ -277,6 +277,63 @@ describe('StepListComponent', () => {
     expect(reorderStepsSpy).not.toHaveBeenCalled();
   });
 
+  it('should include note in addStep call when note is provided', () => {
+    getStepsSpy.mockReturnValue(of([]));
+    addStepSpy.mockReturnValue(of(mockStep));
+    const fixture = TestBed.createComponent(StepListComponent);
+    fixture.componentInstance.tripId = '11111111-1111-1111-1111-111111111111';
+    fixture.detectChanges();
+    fixture.componentInstance.showAddForm.set(true);
+    fixture.componentInstance.form.patchValue({ name: 'Café Stop', type: 'Activity', note: 'Great view' });
+    fixture.componentInstance.onSubmit();
+    expect(addStepSpy).toHaveBeenCalledWith(
+      '11111111-1111-1111-1111-111111111111',
+      expect.objectContaining({ note: 'Great view' })
+    );
+  });
+
+  it('should prepopulate note in edit form when step has note', () => {
+    const mockStepWithNote: Step = { ...mockStep, note: 'Existing note text' };
+    getStepsSpy.mockReturnValue(of([mockStepWithNote]));
+    const fixture = TestBed.createComponent(StepListComponent);
+    fixture.componentInstance.tripId = '11111111-1111-1111-1111-111111111111';
+    fixture.detectChanges();
+    fixture.componentInstance.startEdit(mockStepWithNote);
+    expect(fixture.componentInstance.editForm.value.note).toBe('Existing note text');
+  });
+
+  it('should include note in updateStep call', () => {
+    const mockStepWithNote: Step = { ...mockStep, note: 'Existing note text' };
+    getStepsSpy.mockReturnValue(of([mockStepWithNote]));
+    updateStepSpy.mockReturnValue(of({ ...mockStepWithNote, note: 'Updated note' }));
+    const fixture = TestBed.createComponent(StepListComponent);
+    fixture.componentInstance.tripId = '11111111-1111-1111-1111-111111111111';
+    fixture.detectChanges();
+    fixture.componentInstance.startEdit(mockStepWithNote);
+    fixture.componentInstance.editForm.patchValue({ note: 'Updated note' });
+    fixture.componentInstance.onEditSubmit();
+    expect(updateStepSpy).toHaveBeenCalledWith(
+      '11111111-1111-1111-1111-111111111111',
+      mockStepWithNote.id,
+      expect.objectContaining({ note: 'Updated note' })
+    );
+  });
+
+  it('should pass undefined note when note field is empty on submit', () => {
+    getStepsSpy.mockReturnValue(of([]));
+    addStepSpy.mockReturnValue(of(mockStep));
+    const fixture = TestBed.createComponent(StepListComponent);
+    fixture.componentInstance.tripId = '11111111-1111-1111-1111-111111111111';
+    fixture.detectChanges();
+    fixture.componentInstance.showAddForm.set(true);
+    fixture.componentInstance.form.patchValue({ name: 'Plain Step', type: 'Activity', note: '' });
+    fixture.componentInstance.onSubmit();
+    expect(addStepSpy).toHaveBeenCalledWith(
+      '11111111-1111-1111-1111-111111111111',
+      expect.objectContaining({ note: undefined })
+    );
+  });
+
   it('should set reorderError when reorderSteps returns an error', () => {
     getStepsSpy.mockReturnValue(of([mockStep, mockStep2]));
     reorderStepsSpy.mockReturnValue(throwError(() => new Error('server error')));

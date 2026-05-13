@@ -58,6 +58,7 @@
                 <span *ngIf="step.date">📅 {{ step.date }}</span>
                 <span *ngIf="step.startTime">🕐 {{ step.startTime }}</span>
               </div>
+              <p *ngIf="step.note" class="mt-2 text-sm text-slate-300 whitespace-pre-wrap">{{ step.note }}</p>
             </div>
             <div class="flex items-center gap-3 shrink-0">
               <button
@@ -173,6 +174,16 @@
               </div>
             </div>
 
+            <div>
+              <label class="block text-sm font-semibold text-slate-200 mb-1.5">Note</label>
+              <textarea
+                formControlName="note"
+                rows="3"
+                placeholder="Add a note for this step…"
+                class="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm text-slate-100 transition focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/25 resize-none"
+              ></textarea>
+            </div>
+
             <div class="flex gap-3 pt-1">
               <button
                 type="submit"
@@ -276,6 +287,17 @@
               class="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm text-slate-100 transition focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/25"
             />
           </div>
+        </div>
+
+        <div>
+          <label for="stepNote" class="block text-sm font-semibold text-slate-200 mb-1.5">Note</label>
+          <textarea
+            id="stepNote"
+            formControlName="note"
+            rows="3"
+            placeholder="Add a note for this step…"
+            class="w-full rounded-2xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm text-slate-100 transition focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/25 resize-none"
+          ></textarea>
         </div>
 
         <div class="flex gap-3 pt-1">

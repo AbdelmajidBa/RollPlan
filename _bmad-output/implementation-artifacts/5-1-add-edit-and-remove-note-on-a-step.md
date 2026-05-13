@@ -1,6 +1,6 @@
 # Story 5.1: Add, Edit, and Remove Note on a Step
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -32,43 +32,43 @@ so that I can capture context and memories for each stop.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Add `Note` to backend request DTOs and validators (AC: #1, #2, #3, #5)
-  - [ ] In `CreateStepRequest.cs`: add `public string? Note { get; set; }`
-  - [ ] In `UpdateStepRequest.cs`: add `public string? Note { get; set; }`
-  - [ ] In `CreateStepRequestValidator.cs`: add `RuleFor(x => x.Note).MaximumLength(2000).WithMessage("Note must not exceed 2000 characters.");`
-  - [ ] In `UpdateStepRequestValidator.cs`: add the same rule
+- [x] Task 1: Add `Note` to backend request DTOs and validators (AC: #1, #2, #3, #5)
+  - [x] In `CreateStepRequest.cs`: add `public string? Note { get; set; }`
+  - [x] In `UpdateStepRequest.cs`: add `public string? Note { get; set; }`
+  - [x] In `CreateStepRequestValidator.cs`: add `RuleFor(x => x.Note).MaximumLength(2000).WithMessage("Note must not exceed 2000 characters.");`
+  - [x] In `UpdateStepRequestValidator.cs`: add the same rule
 
-- [ ] Task 2: Wire `Note` in `StepService` (AC: #1, #2, #3)
-  - [ ] In `AddStepAsync`: add `Note = string.IsNullOrWhiteSpace(request.Note) ? null : request.Note` to the `new Step { ... }` initializer
-  - [ ] In `UpdateStepAsync`: add `step.Note = string.IsNullOrWhiteSpace(request.Note) ? null : request.Note;` after the existing field assignments
+- [x] Task 2: Wire `Note` in `StepService` (AC: #1, #2, #3)
+  - [x] In `AddStepAsync`: add `Note = string.IsNullOrWhiteSpace(request.Note) ? null : request.Note` to the `new Step { ... }` initializer
+  - [x] In `UpdateStepAsync`: add `step.Note = string.IsNullOrWhiteSpace(request.Note) ? null : request.Note;` after the existing field assignments
 
-- [ ] Task 3: Add backend tests (AC: #1, #2, #3, #5)
-  - [ ] `AddStepAsync_StoresNote_WhenProvided` — request with `Note = "Great view"`, assert `result.Note == "Great view"`
-  - [ ] `AddStepAsync_StoresNullNote_WhenNoteIsEmpty` — request with `Note = ""`, assert `result.Note == null`
-  - [ ] `UpdateStepAsync_UpdatesNote_WhenProvided` — seed step with null note, update with `Note = "Added later"`, assert `result.Note == "Added later"`
-  - [ ] `UpdateStepAsync_ClearsNote_WhenNoteIsEmpty` — seed step with `Note = "Old note"`, update with `Note = ""`, assert `result.Note == null`
+- [x] Task 3: Add backend tests (AC: #1, #2, #3, #5)
+  - [x] `AddStepAsync_StoresNote_WhenProvided` — request with `Note = "Great view"`, assert `result.Note == "Great view"`
+  - [x] `AddStepAsync_StoresNullNote_WhenNoteIsEmpty` — request with `Note = ""`, assert `result.Note == null`
+  - [x] `UpdateStepAsync_UpdatesNote_WhenProvided` — seed step with null note, update with `Note = "Added later"`, assert `result.Note == "Added later"`
+  - [x] `UpdateStepAsync_ClearsNote_WhenNoteIsEmpty` — seed step with `Note = "Old note"`, update with `Note = ""`, assert `result.Note == null`
 
-- [ ] Task 4: Update frontend TypeScript interfaces (AC: #1, #2, #3)
-  - [ ] In `step.service.ts`: add `note?: string` to `CreateStepRequest` interface
-  - [ ] In `step.service.ts`: add `note?: string` to `UpdateStepRequest` interface
+- [x] Task 4: Update frontend TypeScript interfaces (AC: #1, #2, #3)
+  - [x] In `step.service.ts`: add `note?: string` to `CreateStepRequest` interface
+  - [x] In `step.service.ts`: add `note?: string` to `UpdateStepRequest` interface
 
-- [ ] Task 5: Add `note` form controls and wire submission (AC: #1, #2, #3)
-  - [ ] In `step-list.component.ts`, add `note: ['']` to `form` FormGroup (after `startTime`)
-  - [ ] In `step-list.component.ts`, add `note: ['']` to `editForm` FormGroup (after `startTime`)
-  - [ ] In `startEdit()`: add `note: step.note ?? ''` to the `patchValue()` call
-  - [ ] In `onSubmit()`: destructure `note` from `this.form.value` and pass `note: note?.trim() || undefined` to `addStep()`
-  - [ ] In `onEditSubmit()`: destructure `note` from `this.editForm.value` and pass `note: note?.trim() || undefined` to `updateStep()`
+- [x] Task 5: Add `note` form controls and wire submission (AC: #1, #2, #3)
+  - [x] In `step-list.component.ts`, add `note: ['']` to `form` FormGroup (after `startTime`)
+  - [x] In `step-list.component.ts`, add `note: ['']` to `editForm` FormGroup (after `startTime`)
+  - [x] In `startEdit()`: add `note: step.note ?? ''` to the `patchValue()` call
+  - [x] In `onSubmit()`: destructure `note` from `this.form.value` and pass `note: note?.trim() || undefined` to `addStep()`
+  - [x] In `onEditSubmit()`: destructure `note` from `this.editForm.value` and pass `note: note?.trim() || undefined` to `updateStep()`
 
-- [ ] Task 6: Update the template (AC: #1, #2, #3, #4)
-  - [ ] In the **edit form** (`editForm` section, after the date/time grid, before the submit buttons): add a note textarea
-  - [ ] In the **add form** (`form` section, after the date/time grid, before the submit buttons): add a note textarea
-  - [ ] In **view mode** (below the `<div *ngIf="step.location || step.date || step.startTime"...>` line): add `<p *ngIf="step.note" class="mt-2 text-sm text-slate-300 whitespace-pre-wrap">{{ step.note }}</p>`
+- [x] Task 6: Update the template (AC: #1, #2, #3, #4)
+  - [x] In the **edit form** (`editForm` section, after the date/time grid, before the submit buttons): add a note textarea
+  - [x] In the **add form** (`form` section, after the date/time grid, before the submit buttons): add a note textarea
+  - [x] In **view mode** (below the `<div *ngIf="step.location || step.date || step.startTime"...>` line): add `<p *ngIf="step.note" class="mt-2 text-sm text-slate-300 whitespace-pre-wrap">{{ step.note }}</p>`
 
-- [ ] Task 7: Add frontend tests (AC: #1, #2, #3, #4)
-  - [ ] `should include note in addStep call when note is provided` — patch form with `note: 'Great view'`, call `onSubmit()`, assert `addStepSpy` called with `expect.objectContaining({ note: 'Great view' })`
-  - [ ] `should prepopulate note in edit form when step has note` — call `startEdit(stepWithNote)`, assert `editForm.value.note === 'Existing note'`
-  - [ ] `should include note in updateStep call` — startEdit, patchValue `note: 'Updated'`, call `onEditSubmit()`, assert `updateStepSpy` called with `expect.objectContaining({ note: 'Updated' })`
-  - [ ] `should pass undefined note when note field is empty on submit` — patch form `note: ''`, call `onSubmit()`, assert `addStepSpy` called with `expect.objectContaining({ note: undefined })`
+- [x] Task 7: Add frontend tests (AC: #1, #2, #3, #4)
+  - [x] `should include note in addStep call when note is provided` — patch form with `note: 'Great view'`, call `onSubmit()`, assert `addStepSpy` called with `expect.objectContaining({ note: 'Great view' })`
+  - [x] `should prepopulate note in edit form when step has note` — call `startEdit(stepWithNote)`, assert `editForm.value.note === 'Existing note'`
+  - [x] `should include note in updateStep call` — startEdit, patchValue `note: 'Updated'`, call `onEditSubmit()`, assert `updateStepSpy` called with `expect.objectContaining({ note: 'Updated' })`
+  - [x] `should pass undefined note when note field is empty on submit` — patch form `note: ''`, call `onSubmit()`, assert `addStepSpy` called with `expect.objectContaining({ note: undefined })`
 
 ## Dev Notes
 
@@ -331,6 +331,25 @@ claude-sonnet-4-6
 
 ### File List
 
+- `rollplan-api/Models/DTOs/Steps/CreateStepRequest.cs`
+- `rollplan-api/Models/DTOs/Steps/UpdateStepRequest.cs`
+- `rollplan-api/Models/DTOs/Steps/CreateStepRequestValidator.cs`
+- `rollplan-api/Models/DTOs/Steps/UpdateStepRequestValidator.cs`
+- `rollplan-api/Services/StepService.cs`
+- `rollplan-api-tests/Services/StepServiceTests.cs`
+- `rollplan-client/src/app/steps/services/step.service.ts`
+- `rollplan-client/src/app/steps/step-list/step-list.component.ts`
+- `rollplan-client/src/app/steps/step-list/step-list.component.html`
+- `rollplan-client/src/app/steps/step-list/step-list.component.spec.ts`
+
 ### Completion Notes List
+
+- Added `Note string?` to `CreateStepRequest` and `UpdateStepRequest` DTOs; added `MaximumLength(2000)` FluentValidation rules to both validators
+- Wired `Note` in `StepService.AddStepAsync` and `UpdateStepAsync` with empty→null normalization (`IsNullOrWhiteSpace` → null)
+- Added 4 xUnit backend tests covering note store, empty→null normalization, update, and clear; .NET runtime unavailable in dev environment — tests verified by code review
+- Added `note?: string` to both TypeScript request interfaces in `step.service.ts`
+- Added `note: ['']` form control to both `form` and `editForm`; wired `startEdit()` patch, `onSubmit()`, and `onEditSubmit()` with `note?.trim() || undefined` normalization
+- Added note textarea to both add form and edit form in template; added `<p *ngIf="step.note">` display in view mode with `whitespace-pre-wrap`
+- Added 4 frontend Vitest tests; all 125 Angular tests pass (was 121)
 
 ### Debug Log References

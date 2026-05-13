@@ -48,7 +48,8 @@ export class StepListComponent implements OnInit, OnDestroy {
     latitude: [null as number | null],
     longitude: [null as number | null],
     date: [''],
-    startTime: ['']
+    startTime: [''],
+    note: ['']
   });
 
   readonly editForm: FormGroup = this.fb.group({
@@ -58,7 +59,8 @@ export class StepListComponent implements OnInit, OnDestroy {
     latitude: [null as number | null],
     longitude: [null as number | null],
     date: [''],
-    startTime: ['']
+    startTime: [''],
+    note: ['']
   });
 
   constructor() {
@@ -118,7 +120,8 @@ export class StepListComponent implements OnInit, OnDestroy {
       latitude: step.latitude ?? null,
       longitude: step.longitude ?? null,
       date: step.date ?? '',
-      startTime: step.startTime ?? ''
+      startTime: step.startTime ?? '',
+      note: step.note ?? ''
     });
     this.editFormError.set(null);
   }
@@ -174,7 +177,7 @@ export class StepListComponent implements OnInit, OnDestroy {
       this.isEditSubmitting.set(false);
       return;
     }
-    const { name, type, location, date, startTime, latitude, longitude } = this.editForm.value;
+    const { name, type, location, date, startTime, latitude, longitude, note } = this.editForm.value;
 
     this.stepService.updateStep(this.tripId, stepId, {
       name,
@@ -183,7 +186,8 @@ export class StepListComponent implements OnInit, OnDestroy {
       latitude: latitude ?? undefined,
       longitude: longitude ?? undefined,
       date: date || undefined,
-      startTime: startTime || undefined
+      startTime: startTime || undefined,
+      note: note?.trim() || undefined
     }).pipe(
       finalize(() => this.isEditSubmitting.set(false))
     ).subscribe({
@@ -219,7 +223,7 @@ export class StepListComponent implements OnInit, OnDestroy {
     this.isSubmitting.set(true);
     this.formError.set(null);
 
-    const { name, type, location, date, startTime, latitude, longitude } = this.form.value;
+    const { name, type, location, date, startTime, latitude, longitude, note } = this.form.value;
 
     this.stepService.addStep(this.tripId, {
       name,
@@ -228,7 +232,8 @@ export class StepListComponent implements OnInit, OnDestroy {
       latitude: latitude ?? undefined,
       longitude: longitude ?? undefined,
       date: date || undefined,
-      startTime: startTime || undefined
+      startTime: startTime || undefined,
+      note: note?.trim() || undefined
     }).pipe(
       finalize(() => this.isSubmitting.set(false))
     ).subscribe({

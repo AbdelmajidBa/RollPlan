@@ -30,6 +30,7 @@ export interface CreateStepRequest {
   longitude?: number;
   date?: string;
   startTime?: string;
+  note?: string;
 }
 
 export interface UpdateStepRequest {
@@ -40,6 +41,7 @@ export interface UpdateStepRequest {
   longitude?: number;
   date?: string;
   startTime?: string;
+  note?: string;
 }
 
 @Injectable({ providedIn: 'root' })

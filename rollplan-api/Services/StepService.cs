@@ -52,6 +52,7 @@ public class StepService : IStepService
             Longitude = request.Longitude,
             Date = request.Date,
             StartTime = request.StartTime,
+            Note = string.IsNullOrWhiteSpace(request.Note) ? null : request.Note,
             SortOrder = maxOrder + 1,
             CreatedAt = now,
             UpdatedAt = now
@@ -82,6 +83,7 @@ public class StepService : IStepService
         step.Longitude = request.Longitude;
         step.Date = request.Date;
         step.StartTime = request.StartTime;
+        step.Note = string.IsNullOrWhiteSpace(request.Note) ? null : request.Note;
         step.UpdatedAt = DateTime.UtcNow;
 
         await _dbContext.SaveChangesAsync();

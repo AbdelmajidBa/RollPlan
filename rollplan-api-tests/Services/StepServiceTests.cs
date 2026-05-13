@@ -186,6 +186,50 @@ public class StepServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task AddStepAsync_StoresNote_WhenProvided()
+    {
+        var trip = SeedTrip();
+        var request = new CreateStepRequest { Name = "Café Stop", Type = StepType.Activity, Note = "Best croissants ever" };
+        var result = await _service.AddStepAsync(_userId, trip.Id, request);
+        Assert.NotNull(result);
+        Assert.Equal("Best croissants ever", result.Note);
+    }
+
+    [Fact]
+    public async Task AddStepAsync_StoresNullNote_WhenNoteIsEmpty()
+    {
+        var trip = SeedTrip();
+        var request = new CreateStepRequest { Name = "Café Stop", Type = StepType.Activity, Note = "" };
+        var result = await _service.AddStepAsync(_userId, trip.Id, request);
+        Assert.NotNull(result);
+        Assert.Null(result.Note);
+    }
+
+    [Fact]
+    public async Task UpdateStepAsync_UpdatesNote_WhenProvided()
+    {
+        var trip = SeedTrip();
+        var step = SeedStep(trip.Id, 1);
+        var request = new UpdateStepRequest { Name = step.Name, Type = step.Type, Note = "Added later" };
+        var result = await _service.UpdateStepAsync(_userId, trip.Id, step.Id, request);
+        Assert.NotNull(result);
+        Assert.Equal("Added later", result.Note);
+    }
+
+    [Fact]
+    public async Task UpdateStepAsync_ClearsNote_WhenNoteIsEmpty()
+    {
+        var trip = SeedTrip();
+        var step = SeedStep(trip.Id, 1);
+        step.Note = "Old note";
+        await _dbContext.SaveChangesAsync();
+        var request = new UpdateStepRequest { Name = step.Name, Type = step.Type, Note = "" };
+        var result = await _service.UpdateStepAsync(_userId, trip.Id, step.Id, request);
+        Assert.NotNull(result);
+        Assert.Null(result.Note);
+    }
+
+    [Fact]
     public async Task UpdateStepAsync_UpdatesStep_WhenOwned()
     {
         var trip = SeedTrip();

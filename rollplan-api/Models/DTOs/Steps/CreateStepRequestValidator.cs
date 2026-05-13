@@ -25,5 +25,8 @@ public class CreateStepRequestValidator : AbstractValidator<CreateStepRequest>
             .WithMessage("Longitude must be between -180 and 180.")
             .Must((req, _) => req.Latitude.HasValue).When(x => x.Longitude.HasValue)
             .WithMessage("Latitude is required when Longitude is provided.");
+
+        RuleFor(x => x.Note)
+            .MaximumLength(2000).WithMessage("Note must not exceed 2000 characters.");
     }
 }
