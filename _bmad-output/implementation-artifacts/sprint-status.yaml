@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-04-04
-last_updated: 2026-05-12
+last_updated: 2026-05-13
 project: RollPlan
 project_key: NOKEY
 tracking_system: file-system
@@ -79,7 +79,7 @@ development_status:
 
   # ─── Epic 5: Moment Cards (Notes & Photos) ───
   epic-5: in-progress
-  5-1-add-edit-and-remove-note-on-a-step: review
+  5-1-add-edit-and-remove-note-on-a-step: done
   5-2-upload-photos-to-a-step: backlog
   5-3-capture-photo-from-device-camera: backlog
   5-4-view-and-delete-photos-on-a-step: backlog

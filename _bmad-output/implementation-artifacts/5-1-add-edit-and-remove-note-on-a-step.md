@@ -1,6 +1,6 @@
 # Story 5.1: Add, Edit, and Remove Note on a Step
 
-Status: review
+Status: done
 
 ## Story
 
@@ -72,7 +72,7 @@ so that I can capture context and memories for each stop.
 
 ### Review Findings
 
-- [ ] [Review][Patch] Edit form note `<label>` has no `for` attribute and `<textarea>` has no `id` — add form uses `<label for="stepNote">` + `<textarea id="stepNote">` correctly, but the edit form note block has `<label>Note</label>` + `<textarea formControlName="note">` with no `for`/`id` pairing; screen readers cannot associate the label [`step-list.component.html`]
+- [x] [Review][Patch] Edit form note `<label>` has no `for` attribute and `<textarea>` has no `id` — add form uses `<label for="stepNote">` + `<textarea id="stepNote">` correctly, but the edit form note block has `<label>Note</label>` + `<textarea formControlName="note">` with no `for`/`id` pairing; screen readers cannot associate the label [`step-list.component.html`]
 - [x] [Review][Defer] Whitespace-only note input (e.g. newlines only) silently discarded — `note?.trim() || undefined` trims all whitespace including `\n`; consistent with existing `location?.trim() || undefined` pattern across all fields; address if user feedback surfaces [`step-list.component.ts:onSubmit,onEditSubmit`] — deferred, pre-existing normalization pattern
 - [x] [Review][Defer] Note server validation error (AC #5) shown in generic banner, not inline to textarea — `onSubmit`/`onEditSubmit` error handlers extract Note/note key into `formError` banner, not `setErrors` on the control; AC #5 technically met (error is visible); UX inconsistency with Name field [`step-list.component.ts:onSubmit,onEditSubmit`] — deferred, address in UX polish pass
 - [x] [Review][Defer] `form.reset()` after cancel leaves note control as `null` not `''` — Angular behavior, same as all other optional fields; `null?.trim()` is `undefined` so submission still works correctly [`step-list.component.ts:cancelAdd,cancelEdit`] — deferred, pre-existing Angular reset semantics
